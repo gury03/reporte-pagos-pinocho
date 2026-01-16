@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal para Reportar Pagos - Telegram</title>
+    <title>Portal para Reportar Pagos - Ayacucho</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #0088cc, #34b7f1);
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
             text-align: center;
             padding: 20px;
             margin: 0;
@@ -31,7 +31,7 @@
         }
         
         h1 {
-            color: #0088cc;
+            color: #1e3c72;
             font-size: 28px;
             margin-bottom: 10px;
         }
@@ -93,8 +93,8 @@
         
         input:focus {
             outline: none;
-            border-color: #0088cc;
-            box-shadow: 0 0 0 3px rgba(0, 136, 204, 0.2);
+            border-color: #1e3c72;
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.2);
         }
         
         input::placeholder {
@@ -110,7 +110,7 @@
         }
         
         button {
-            background: linear-gradient(to right, #0088cc, #34b7f1);
+            background: linear-gradient(to right, #1e3c72, #2a5298);
             color: white;
             border: none;
             cursor: pointer;
@@ -121,9 +121,9 @@
         }
         
         button:hover {
-            background: linear-gradient(to right, #34b7f1, #0088cc);
+            background: linear-gradient(to right, #2a5298, #1e3c72);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 136, 204, 0.4);
+            box-shadow: 0 5px 15px rgba(30, 60, 114, 0.4);
         }
         
         button:active {
@@ -139,11 +139,11 @@
         
         /* Estilos para subida de archivos */
         .file-upload {
-            border: 2px dashed #0088cc;
+            border: 2px dashed #1e3c72;
             text-align: center;
             cursor: pointer;
             padding: 25px 15px;
-            background-color: rgba(0, 136, 204, 0.05);
+            background-color: rgba(30, 60, 114, 0.05);
             position: relative;
             overflow: hidden;
         }
@@ -154,8 +154,8 @@
         }
         
         .file-upload:hover {
-            background-color: rgba(0, 136, 204, 0.1);
-            border-color: #34b7f1;
+            background-color: rgba(30, 60, 114, 0.1);
+            border-color: #2a5298;
         }
         
         .file-upload.required:hover {
@@ -175,7 +175,7 @@
         
         .file-upload .upload-icon {
             font-size: 40px;
-            color: #0088cc;
+            color: #1e3c72;
             margin-bottom: 10px;
         }
         
@@ -192,9 +192,9 @@
             display: none;
             margin-top: 10px;
             padding: 10px;
-            background-color: #e3f2fd;
+            background-color: #e8edf7;
             border-radius: 8px;
-            border-left: 4px solid #0088cc;
+            border-left: 4px solid #1e3c72;
         }
         
         .file-info.show {
@@ -226,10 +226,10 @@
             display: none;
             font-size: 36px;
             font-weight: bold;
-            color: #0088cc;
+            color: #1e3c72;
             animation: celebrar 2s infinite;
             margin: 30px 0;
-            text-shadow: 0 0 10px rgba(0, 136, 204, 0.5);
+            text-shadow: 0 0 10px rgba(30, 60, 114, 0.5);
         }
         
         .confirmacion-modal {
@@ -288,7 +288,7 @@
             padding: 15px;
             margin: 15px 0;
             text-align: left;
-            border-left: 4px solid #0088cc;
+            border-left: 4px solid #1e3c72;
         }
         
         .resumen-item {
@@ -310,7 +310,7 @@
         }
         
         .resumen-valor {
-            color: #0088cc;
+            color: #1e3c72;
             font-weight: bold;
         }
         
@@ -321,7 +321,7 @@
             padding: 15px;
             background-color: #f9f9f9;
             border-radius: 8px;
-            border-left: 4px solid #0088cc;
+            border-left: 4px solid #1e3c72;
         }
         
         .status-message {
@@ -394,7 +394,7 @@
 </head>
 <body>
     <div class="container">
-        <div class="telegram-badge">Portal de Pagos</div>
+        <div class="telegram-badge">Pagos Ayacucho</div>
         <h1>Reporte de Pagos</h1>
         <p class="subtitle">Complete todos los campos requeridos <span class="requerido">*</span></p>
         
@@ -411,7 +411,6 @@
                 <label for="telefono">Número de cédula <span class="requerido">*</span></label>
                 <input type="text" id="telefono" placeholder="Ej: 12345678" required>
                 <div id="errorTelefono" class="error">Por favor, ingresa solo números.</div>
-                <div id="errorCedulaInvalida" class="error">La cédula ingresada no está registrada en el sistema.</div>
             </div>
             
             <div class="form-group">
@@ -480,7 +479,7 @@
     <!-- Modal de Confirmación -->
     <div id="confirmacionModal" class="confirmacion-modal">
         <div class="confirmacion-contenido">
-            <h2 style="color: #0088cc; margin-top: 0;">🔍 Confirmar Envío</h2>
+            <h2 style="color: #1e3c72; margin-top: 0;">🔍 Confirmar Envío</h2>
             <p style="color: #333; margin-bottom: 20px;">Por favor, revisa que toda la información sea correcta:</p>
             
             <div class="resumen-pago" id="resumenConfirmacion">
@@ -505,7 +504,7 @@
     <script>
         // ================= CONFIGURACIÓN TELEGRAM =================
         const CONFIG_TELEGRAM = {
-            botToken: "8510662416:AAFTJoW6T6JZwpNqKptlxJLzNK87UELht4",
+            botToken: "8510662416:AAFT7JoW6T6JZwpNqKptIxJlzNK87UELht4",
             chatId: "-5005498130",
             grupoNombre: "Pagos Ayacucho",
             apiUrl: "https://api.telegram.org/bot"
@@ -520,7 +519,8 @@
             
             // Generar hash único para identificar reportes
             generarHash: function(nombre, telefono, referencia, fecha, monto) {
-                return btoa(`${nombre}-${telefono}-${referencia}-${fecha}-${monto}`).substring(0, 20);
+                const datos = `${nombre}-${telefono}-${referencia}-${fecha}-${parseFloat(monto).toFixed(2)}`;
+                return btoa(datos).substring(0, 20);
             },
             
             // Verificar si ya se envió un reporte similar
@@ -560,27 +560,6 @@
                 this.hashActual = null;
             }
         };
-
-        // Lista de usuarios válidos
-        const USUARIOS_VALIDOS = [
-            { nombre: "Aura Sierra", cedula: "8765151" },
-            { nombre: "Ramona Leonet", cedula: "11340144" },
-            { nombre: "Franklin Martinez", cedula: "12966938" },
-            { nombre: "Milagros Evariste", cedula: "14010067" },
-            { nombre: "Milagros Del Valle Leonet", cedula: "18653874" },
-            { nombre: "Maritza Evariste", cedula: "16175332" },
-            { nombre: "Luisa Elvira Gonzalez", cedula: "14859201" },
-            { nombre: "Yanilse Azocar", cedula: "18081290" },
-            { nombre: "Denny Ramos", cedula: "17218815" },
-            { nombre: "Iraidis Mendez", cedula: "18865487" },
-            { nombre: "Eduardo Leonett", cedula: "20403409" },
-            { nombre: "Luis Leonett", cedula: "26341332" },
-            { nombre: "Yanisca Millan", cedula: "24878596" },
-            { nombre: "Diosnelys Galera", cedula: "26061595" },
-            { nombre: "Richard Leonett", cedula: "28347527" },
-            { nombre: "Arianny Leonett", cedula: "32108176" },
-            { nombre: "Marielitza Chacon", cedula: "19037055" }
-        ];
 
         // Variables globales
         let elementos = {};
@@ -623,7 +602,9 @@
             // Verificar bloqueo por envíos recientes
             verificarBloqueoReciente();
 
-            console.log('✅ Aplicación Telegram inicializada');
+            console.log('✅ Aplicación Pagos Ayacucho inicializada');
+            console.log('🤖 Bot configurado:', CONFIG_TELEGRAM.botToken ? '✅' : '❌');
+            console.log('👥 Grupo:', CONFIG_TELEGRAM.grupoNombre);
         }
 
         function configurarFecha() {
@@ -669,18 +650,18 @@
             // Drag & drop
             elementos.fileUploadArea.addEventListener('dragover', (e) => {
                 e.preventDefault();
-                elementos.fileUploadArea.style.backgroundColor = 'rgba(0, 136, 204, 0.15)';
-                elementos.fileUploadArea.style.borderColor = '#34b7f1';
+                elementos.fileUploadArea.style.backgroundColor = 'rgba(30, 60, 114, 0.15)';
+                elementos.fileUploadArea.style.borderColor = '#2a5298';
             });
             
             elementos.fileUploadArea.addEventListener('dragleave', () => {
-                elementos.fileUploadArea.style.backgroundColor = 'rgba(0, 136, 204, 0.05)';
+                elementos.fileUploadArea.style.backgroundColor = 'rgba(231, 76, 60, 0.05)';
                 elementos.fileUploadArea.style.borderColor = '#e74c3c';
             });
             
             elementos.fileUploadArea.addEventListener('drop', (e) => {
                 e.preventDefault();
-                elementos.fileUploadArea.style.backgroundColor = 'rgba(0, 136, 204, 0.05)';
+                elementos.fileUploadArea.style.backgroundColor = 'rgba(231, 76, 60, 0.05)';
                 elementos.fileUploadArea.style.borderColor = '#e74c3c';
                 
                 if (e.dataTransfer.files.length > 0) {
@@ -783,10 +764,6 @@
             if (errorTelefono) {
                 errorTelefono.style.display = input.value ? 'none' : 'block';
             }
-            const errorCedulaInvalida = document.getElementById('errorCedulaInvalida');
-            if (errorCedulaInvalida) {
-                errorCedulaInvalida.style.display = 'none';
-            }
         }
 
         function validarReferencia(input) {
@@ -852,10 +829,6 @@
             });
         }
 
-        function validarCedula(cedula) {
-            return USUARIOS_VALIDOS.some(usuario => usuario.cedula === cedula);
-        }
-
         // ================= VALIDACIÓN DEL FORMULARIO =================
         function validarFormulario() {
             const nombre = elementos.nombre.value.trim();
@@ -877,11 +850,10 @@
                 valido = false;
             }
 
-            // Validar cédula
-            if (!telefono || !/^\d+$/.test(telefono)) {
-                mostrarErrorElemento('errorTelefono', 'Por favor, ingresa solo números.');
+            // Validar cédula (solo que no esté vacía)
+            if (!telefono) {
+                mostrarErrorElemento('errorTelefono', 'Por favor, ingresa tu número de cédula.');
                 valido = false;
-            
             }
 
             // Validar referencia
@@ -1033,6 +1005,8 @@
             
             // Crear mensaje para Telegram
             const mensaje = `━━━━━━━━━━━━━━━━━━━━\n` +
+                           `📋 *REPORTE DE PAGO - Ayacucho*\n` +
+                           `━━━━━━━━━━━━━━━━━━━━\n` +
                            `👤 *Abonado:* ${nombre}\n` +
                            `🆔 *Cédula:* ${telefono}\n` +
                            `💰 *Monto:* Bs. ${montoFormateado}\n` +
@@ -1041,7 +1015,7 @@
                            `⏰ *Hora:* ${horaActual}\n` +
                            `━━━━━━━━━━━━━━━━━━━━\n`;
                                        
-            mostrarEstado(`📤 Enviando...`, 'info');
+            mostrarEstado(`📤 Enviando a Telegram...`, 'info');
             
             try {
                 // Registrar intento de envío (previene duplicados inmediatos)
@@ -1097,7 +1071,7 @@
                 throw new Error(`Telegram API error: ${data.description}`);
             }
             
-            console.log('✅ Pago Reportado, gracias');
+            console.log('✅ Mensaje enviado a Telegram');
             return data;
         }
 
@@ -1148,12 +1122,12 @@
             
             // Mostrar celebración
             if (elementos.mensajeCelebracion) {
-                elementos.mensajeCelebracion.innerHTML = `✅ Reporte Enviado<br>`;
+                elementos.mensajeCelebracion.innerHTML = `✅ Reporte Enviado Correctamente<br><small>Grupo: ${CONFIG_TELEGRAM.grupoNombre}</small>`;
                 elementos.mensajeCelebracion.style.display = 'block';
             }
             
             // Mostrar mensaje de éxito
-            mostrarEstado(`✅ Reporte enviado exitosamente`, 'success');
+            mostrarEstado(`✅ Reporte enviado exitosamente a Telegram`, 'success');
             
             // Mostrar efectos visuales
             mostrarEfectosTelegram();
@@ -1221,5 +1195,5 @@
         document.addEventListener('DOMContentLoaded', inicializarAplicacion);
     </script>
 </body>
-
 </html>
+
