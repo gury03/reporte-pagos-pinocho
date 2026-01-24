@@ -3,1197 +3,583 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal para Reportar Pagos - Ayacucho</title>
+    <title>Portal de Pagos ISP - Conectando con el mundo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            text-align: center;
-            padding: 20px;
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #7c3aed;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --gray-light: #e2e8f0;
+        }
+
+        * {
             margin: 0;
-            color: #fff;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            padding: 20px;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
         }
-        
+
         .container {
-            background-color: rgba(255, 255, 255, 0.95);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             width: 100%;
-            max-width: 500px;
-            margin: 20px;
-            backdrop-filter: blur(10px);
+            max-width: 1200px;
+            overflow: hidden;
         }
-        
-        h1 {
-            color: #1e3c72;
+
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo i {
+            font-size: 32px;
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 50%;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .logo p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .login-section {
+            padding: 50px;
+            text-align: center;
+        }
+
+        .login-card {
+            max-width: 500px;
+            margin: 0 auto;
+            background: var(--light);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .login-title {
             font-size: 28px;
+            color: var(--dark);
             margin-bottom: 10px;
         }
-        
-        .telegram-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, #0088cc, #34b7f1);
-            color: white;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 14px;
-            margin-bottom: 20px;
-            font-weight: bold;
+
+        .login-subtitle {
+            color: var(--gray);
+            margin-bottom: 30px;
         }
-        
-        .requerido {
-            color: #e74c3c;
-            font-weight: bold;
-        }
-        
-        .subtitle {
-            color: #333;
-            font-size: 16px;
-            margin-bottom: 25px;
-        }
-        
+
         .form-group {
             margin-bottom: 20px;
             text-align: left;
         }
-        
+
         label {
             display: block;
             margin-bottom: 8px;
-            color: #333;
-            font-weight: bold;
-            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark);
         }
-        
-        label span.requerido {
-            color: #e74c3c;
-            margin-left: 3px;
-        }
-        
-        input, button, .file-upload {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-        
+
         input {
-            background-color: #fff;
-            color: #333;
+            width: 100%;
+            padding: 14px;
+            border: 2px solid var(--gray-light);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
         }
-        
+
         input:focus {
             outline: none;
-            border-color: #1e3c72;
-            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.2);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
-        
-        input::placeholder {
-            color: #888;
-        }
-        
-        .error {
-            color: #e74c3c;
-            font-size: 13px;
-            margin-top: 5px;
-            display: none;
-            min-height: 20px;
-        }
-        
+
         button {
-            background: linear-gradient(to right, #1e3c72, #2a5298);
+            background: linear-gradient(to right, var(--primary), var(--secondary));
             color: white;
             border: none;
-            cursor: pointer;
-            font-weight: bold;
-            margin-top: 10px;
-            padding: 15px;
-            font-size: 18px;
-        }
-        
-        button:hover {
-            background: linear-gradient(to right, #2a5298, #1e3c72);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(30, 60, 114, 0.4);
-        }
-        
-        button:active {
-            transform: translateY(0);
-        }
-        
-        button:disabled {
-            background: #cccccc;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        
-        /* Estilos para subida de archivos */
-        .file-upload {
-            border: 2px dashed #1e3c72;
-            text-align: center;
-            cursor: pointer;
-            padding: 25px 15px;
-            background-color: rgba(30, 60, 114, 0.05);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .file-upload.required {
-            border: 2px dashed #e74c3c;
-            background-color: rgba(231, 76, 60, 0.05);
-        }
-        
-        .file-upload:hover {
-            background-color: rgba(30, 60, 114, 0.1);
-            border-color: #2a5298;
-        }
-        
-        .file-upload.required:hover {
-            background-color: rgba(231, 76, 60, 0.1);
-            border-color: #c0392b;
-        }
-        
-        .file-upload input[type="file"] {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            cursor: pointer;
-        }
-        
-        .file-upload .upload-icon {
-            font-size: 40px;
-            color: #1e3c72;
-            margin-bottom: 10px;
-        }
-        
-        .file-upload.required .upload-icon {
-            color: #e74c3c;
-        }
-        
-        .file-upload .upload-text {
-            color: #666;
-            font-size: 14px;
-        }
-        
-        .file-info {
-            display: none;
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #e8edf7;
+            padding: 16px;
             border-radius: 8px;
-            border-left: 4px solid #1e3c72;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
         }
-        
-        .file-info.show {
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+            display: block;
+        }
+
+        .message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+            display: block;
+        }
+
+        .dashboard-section {
+            display: none;
+            padding: 30px;
+        }
+
+        .user-card {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        
-        .file-preview {
-            max-width: 200px;
-            margin: 10px auto;
+
+        .user-info h2 {
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        .user-info p {
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .card {
+            background: white;
+            border: 2px solid var(--gray-light);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .debt-amount {
+            text-align: center;
+            padding: 30px;
+            background: var(--light);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .debt-label {
+            color: var(--gray);
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .debt-total {
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--danger);
+        }
+
+        .debt-total.paid {
+            color: var(--success);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .info-box {
+            padding: 15px;
             border-radius: 8px;
-            overflow: hidden;
-            border: 2px solid #ddd;
-            display: none;
+            border-left: 4px solid var(--primary);
         }
-        
-        .file-preview.show {
-            display: block;
+
+        .info-box.plan {
+            background: #e0f2fe;
+            border-left-color: #0ea5e9;
         }
-        
-        .file-preview img {
+
+        .info-box.fee {
+            background: #dcfce7;
+            border-left-color: #22c55e;
+        }
+
+        .info-box.status {
+            background: #fef3c7;
+            border-left-color: #f59e0b;
+        }
+
+        .info-box-label {
+            font-size: 14px;
+            color: #0c4a6e;
+            margin-bottom: 5px;
+        }
+
+        .info-box-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #0369a1;
+        }
+
+        .payments-table {
             width: 100%;
-            height: auto;
-            display: block;
+            border-collapse: collapse;
+            margin-top: 20px;
         }
-        
-        .celebrar {
-            display: none;
-            font-size: 36px;
-            font-weight: bold;
-            color: #1e3c72;
-            animation: celebrar 2s infinite;
-            margin: 30px 0;
-            text-shadow: 0 0 10px rgba(30, 60, 114, 0.5);
+
+        .payments-table th {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
         }
-        
-        .confirmacion-modal {
+
+        .payments-table td {
+            padding: 15px;
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .payments-table tr:hover {
+            background: var(--light);
+        }
+
+        .modal {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            z-index: 1000;
-            justify-content: center;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
             align-items: center;
-        }
-        
-        .confirmacion-modal.show {
-            display: flex;
-        }
-        
-        .confirmacion-contenido {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            max-width: 400px;
-            width: 90%;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-        
-        .confirmacion-botones {
-            display: flex;
-            gap: 15px;
-            margin-top: 25px;
             justify-content: center;
+            z-index: 1000;
+            padding: 20px;
         }
-        
-        .confirmacion-botones button {
-            flex: 1;
-            max-width: 150px;
-            padding: 12px;
-            font-size: 16px;
-            margin: 0;
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 30px;
         }
-        
-        .btn-confirmar {
-            background: linear-gradient(to right, #2ecc71, #27ae60) !important;
+
+        .payment-method-card {
+            background: var(--light);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid var(--gray-light);
         }
-        
-        .btn-cancelar {
-            background: linear-gradient(to right, #e74c3c, #c0392b) !important;
+
+        .copy-all-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 15px;
+            transition: all 0.3s;
         }
-        
-        .resumen-pago {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 15px;
-            margin: 15px 0;
-            text-align: left;
-            border-left: 4px solid #1e3c72;
+
+        .copy-all-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
         }
-        
-        .resumen-item {
+
+        .copy-all-btn.success {
+            background: var(--success);
+        }
+
+        .payment-detail {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 8px;
-            padding-bottom: 8px;
-            border-bottom: 1px dashed #dee2e6;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
         }
-        
-        .resumen-item:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-        }
-        
-        .resumen-label {
-            font-weight: bold;
-            color: #333;
-        }
-        
-        .resumen-valor {
-            color: #1e3c72;
-            font-weight: bold;
-        }
-        
-        .info-message {
-            color: #666;
-            font-size: 14px;
-            margin-top: 25px;
-            padding: 15px;
-            background-color: #f9f9f9;
-            border-radius: 8px;
-            border-left: 4px solid #1e3c72;
-        }
-        
-        .status-message {
-            display: none;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            font-weight: bold;
-            text-align: center;
-        }
-        
-        .status-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .status-error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .status-warning {
-            background-color: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeaa7;
-        }
-        
-        .contador-intentos {
-            font-size: 12px;
-            color: #666;
-            margin-top: 5px;
-            text-align: center;
-        }
-        
-        @keyframes celebrar {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-        
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
-            }
-            
+
+        @media (max-width: 768px) {
             .container {
+                border-radius: 0;
+            }
+            
+            .login-section, .dashboard-section {
                 padding: 20px;
-                margin: 10px;
             }
             
-            h1 {
-                font-size: 24px;
-            }
-            
-            .celebrar {
-                font-size: 28px;
-            }
-            
-            .confirmacion-botones {
+            .user-card {
                 flex-direction: column;
+                text-align: center;
+                gap: 20px;
             }
             
-            .confirmacion-botones button {
-                max-width: 100%;
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
             }
+            
+            .debt-total {
+                font-size: 36px;
+            }
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .action-buttons button {
+            width: auto;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+        }
+
+        .btn-secondary {
+            background: var(--gray);
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--gray);
+            cursor: pointer;
+            width: auto;
+            padding: 5px;
+        }
+
+        .close-btn:hover {
+            color: var(--dark);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="telegram-badge">Pagos Ayacucho</div>
-        <h1>Reporte de Pagos</h1>
-        <p class="subtitle">Complete todos los campos requeridos <span class="requerido">*</span></p>
-        
-        <div id="statusMessage" class="status-message"></div>
-        
-        <form id="suspensionForm">
-            <div class="form-group">
-                <label for="nombre">Nombre del abonado <span class="requerido">*</span></label>
-                <input type="text" id="nombre" placeholder="Ingresa tu nombre completo" required>
-                <div id="errorNombre" class="error">Por favor, ingresa tu nombre completo.</div>
-            </div>
-            
-            <div class="form-group">
-                <label for="telefono">Número de cédula <span class="requerido">*</span></label>
-                <input type="text" id="telefono" placeholder="Ej: 12345678" required>
-                <div id="errorTelefono" class="error">Por favor, ingresa solo números.</div>
-            </div>
-            
-            <div class="form-group">
-                <label for="referencia">Referencia del pago <span class="requerido">*</span></label>
-                <input type="text" id="referencia" placeholder="Mínimo 6 dígitos" required>
-                <div id="errorReferencia" class="error">La referencia debe tener al menos 6 números.</div>
-            </div>
-            
-            <div class="form-group">
-                <label for="fecha">Fecha de pago <span class="requerido">*</span></label>
-                <input type="date" id="fecha" required>
-                <div id="errorFecha" class="error">Por favor, selecciona una fecha válida.</div>
-            </div>
-            
-            <div class="form-group">
-                <label for="monto">Monto pagado (Bs.) <span class="requerido">*</span></label>
-                <input type="text" id="monto" placeholder="Ej: 50.00" required>
-                <div id="errorMonto" class="error">Por favor, ingresa un monto válido en Bs. (ej: 50.00).</div>
-            </div>
-            
-            <div class="form-group">
-                <label>Comprobante de pago <span class="requerido">*</span></label>
-                <div class="file-upload required" id="fileUploadArea">
-                    <div class="upload-icon">📎</div>
-                    <div class="upload-text">
-                        <strong>Haz clic para subir comprobante (OBLIGATORIO)</strong><br>
-                        <small>Arrastra y suelta imágenes o PDF</small><br>
-                        <small>Máximo: 10MB - Formatos: JPG, PNG, PDF</small>
-                    </div>
-                    <input type="file" id="comprobante" accept="image/*,.pdf" required>
-                </div>
-                
-                <div id="errorComprobante" class="error">Por favor, sube tu comprobante de pago.</div>
-                
-                <div id="fileInfo" class="file-info">
-                    <div>
-                        <strong id="fileName">Sin archivo seleccionado</strong>
-                        <span id="fileSize"></span>
-                    </div>
-                    <button type="button" onclick="eliminarArchivo()" style="width: auto; padding: 5px 10px; background: #e74c3c;">❌ Eliminar</button>
-                </div>
-                
-                <div id="filePreview" class="file-preview">
-                    <img id="previewImage" src="" alt="Vista previa">
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-database"></i>
+                <div>
+                    <h1>Portal de Pagos ISP</h1>
+                    <p>Conectando con el mundo</p>
                 </div>
             </div>
-            
-            <div class="contador-intentos" id="contadorIntentos">
-                ⚠️ Máximo 1 envío por reporte
+            <div id="serverStatus">
+                <i class="fas fa-circle" id="statusIcon" style="color: #ef4444; margin-right: 8px;"></i>
+                <span id="statusText">Verificando conexión...</span>
             </div>
-            
-            <button type="button" id="btnEnviar">📤 Reportar Pago</button>
-        </form>
-        
-        <div id="mensajeRespuesta" class="info-message" style="display: none;"></div>
-        
-        <p class="info-message">
-            <strong>⚠️ Importante:</strong><br>
-            1. Todos los campos son obligatorios<br>
-            2. El comprobante es REQUERIDO para validar el pago<br>
-            3. Se mostrará una confirmación antes de enviar<br>
-            4. Solo se puede enviar una vez por reporte
-        </p>
-    </div>
+        </div>
 
-    <!-- Modal de Confirmación -->
-    <div id="confirmacionModal" class="confirmacion-modal">
-        <div class="confirmacion-contenido">
-            <h2 style="color: #1e3c72; margin-top: 0;">🔍 Confirmar Envío</h2>
-            <p style="color: #333; margin-bottom: 20px;">Por favor, revisa que toda la información sea correcta:</p>
-            
-            <div class="resumen-pago" id="resumenConfirmacion">
-                <!-- Aquí se insertará el resumen dinámicamente -->
+        <!-- Login Section -->
+        <div class="login-section" id="loginSection">
+            <div class="login-card">
+                <h2 class="login-title">
+                    <i class="fas fa-sign-in-alt"></i> Acceso Abonados
+                </h2>
+                <p class="login-subtitle">Ingresa tus datos para acceder al sistema</p>
+                
+                <div id="loginMessage" class="message"></div>
+                
+                <div class="form-group">
+                    <label>Nombre Completo *</label>
+                    <input type="text" id="nombre" placeholder="Ej: Aura Sierra">
+                </div>
+                
+                <div class="form-group">
+                    <label>Cédula / Código *</label>
+                    <input type="text" id="codigo" placeholder="Ej: 8765151">
+                </div>
+                
+                <div class="form-group">
+                    <label>Teléfono *</label>
+                    <input type="text" id="telefono" placeholder="Ej: 0412-1234567">
+                </div>
+                
+                <button id="btnLogin" onclick="login()">
+                    <i class="fas fa-search"></i> Consultar
+                </button>
+                
+                <div style="margin-top: 30px; padding: 20px; background: #f1f5f9; border-radius: 8px; font-size: 14px; color: #64748b;">
+                    <p><strong><i class="fas fa-info-circle"></i> Información:</strong></p>
+                    <p>Creado por Robertsystems</p>
+                </div>
             </div>
-            
-            <p style="color: #666; font-size: 14px; margin: 15px 0;">
-                <strong>⚠️ Advertencia:</strong> Solo podrás enviar este reporte una vez. 
-                Verifica que los datos sean correctos.
-            </p>
-            
-            <div class="confirmacion-botones">
-                <button class="btn-cancelar" onclick="cancelarEnvio()">❌ Cancelar</button>
-                <button class="btn-confirmar" onclick="confirmarEnvio()">✅ Confirmar y Enviar</button>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div class="dashboard-section" id="dashboardSection">
+            <!-- User Info -->
+            <div class="user-card">
+                <div class="user-info">
+                    <h2 id="userName">Nombre del Abonado</h2>
+                    <p><i class="fas fa-id-card"></i> Código: <span id="userCode">000000</span></p>
+                    <p><i class="fas fa-wifi"></i> PPPoE: <span id="userPppoe">usuario_pppoe</span></p>
+                    <p><i class="fas fa-map-marker-alt"></i> Zona: <span id="userZone">Sin zona</span></p>
+                </div>
+                <button onclick="logout()" style="width: auto; padding: 10px 20px;">
+                    <i class="fas fa-sign-out-alt"></i> Salir
+                </button>
+            </div>
+
+            <!-- Debt Summary -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-file-invoice-dollar"></i> Estado de Cuenta</h2>
+                    <div>
+                        <button onclick="switchCurrency('BS')" id="btnBs" style="width: auto; margin-right: 10px; background: var(--primary);">Bs.</button>
+                        <button onclick="switchCurrency('USD')" id="btnUsd" style="width: auto; background: var(--gray);">USD $</button>
+                    </div>
+                </div>
+                
+                <div id="debtMessage" class="message"></div>
+                
+                <div class="debt-amount">
+                    <div class="debt-label">DEUDA TOTAL PENDIENTE</div>
+                    <div class="debt-total" id="debtTotal">0,00</div>
+                    <div style="color: var(--gray); font-size: 14px; margin-top: 10px;" id="debtMonths">
+                        Consultando base de datos...
+                    </div>
+                    <div style="color: var(--gray); font-size: 14px; margin-top: 5px;">
+                        Tasa: 1 USD = <span id="exchangeRate">36.50</span> Bs.
+                    </div>
+                </div>
+                
+                <div class="info-grid">
+                    <div class="info-box plan">
+                        <div class="info-box-label">Plan actual</div>
+                        <div class="info-box-value" id="userPlan">Consultando...</div>
+                    </div>
+                    <div class="info-box fee">
+                        <div class="info-box-label">Mensualidad</div>
+                        <div class="info-box-value" id="monthlyFee">0,00</div>
+                    </div>
+                    <div class="info-box status">
+                        <div class="info-box-label">Estado</div>
+                        <div class="info-box-value" id="userStatus">Consultando...</div>
+                    </div>
+                </div>
+
+                <!-- Botón para registrar pago -->
+                <div class="action-buttons">
+                    <button onclick="showPaymentModal()" class="btn-primary">
+                        <i class="fas fa-credit-card"></i> Registrar Pago
+                    </button>
+                    <button onclick="loadDebts()" class="btn-secondary">
+                        <i class="fas fa-sync-alt"></i> Actualizar Deuda
+                    </button>
+                </div>
+            </div>
+
+            <!-- Payments History -->
+            <div class="card">
+                <h2><i class="fas fa-history"></i> Historial de Pagos</h2>
+                
+                <div id="historyMessage" class="message"></div>
+                
+                <div style="overflow-x: auto;">
+                    <table class="payments-table" id="paymentsTable">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Mes</th>
+                                <th>Monto (Bs.)</th>
+                                <th>Monto ($)</th>
+                                <th>Referencia</th>
+                                <th>Método</th>
+                            </tr>
+                        </thead>
+                        <tbody id="paymentsBody">
+                            <!-- Datos cargados desde la base de datos -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div id="noPayments" style="text-align: center; padding: 40px; color: var(--gray); display: none;">
+                    <i class="fas fa-file-invoice" style="font-size: 48px; opacity: 0.5; margin-bottom: 20px;"></i>
+                    <h3>No hay pagos registrados</h3>
+                    <p>Cuando realices tu primer pago, aparecerá aquí tu historial</p>
+                </div>
             </div>
         </div>
     </div>
-
-    <!-- Mensaje de celebración -->
-    <div id="mensajeCelebracion" class="celebrar">✅ Reporte Enviado Correctamente</div>
-
-    <script>
-        // ================= CONFIGURACIÓN TELEGRAM =================
-        const CONFIG_TELEGRAM = {
-            botToken: "8510662416:AAFT7JoW6T6JZwpNqKptIxJlzNK87UELht4",
-            chatId: "-5005498130",
-            grupoNombre: "Pagos Ayacucho",
-            apiUrl: "https://api.telegram.org/bot"
-        };
-
-        // ================= SISTEMA ANTI-DUPLICADOS =================
-        const SISTEMA_ANTIDUPLICADOS = {
-            reporteEnviado: false,
-            hashActual: null,
-            tiempoBloqueo: 5 * 60 * 1000, // 5 minutos en milisegundos
-            ultimoEnvio: null,
-            
-            // Generar hash único para identificar reportes
-            generarHash: function(nombre, telefono, referencia, fecha, monto) {
-                const datos = `${nombre}-${telefono}-${referencia}-${fecha}-${parseFloat(monto).toFixed(2)}`;
-                return btoa(datos).substring(0, 20);
-            },
-            
-            // Verificar si ya se envió un reporte similar
-            verificarDuplicado: function(hash) {
-                if (this.reporteEnviado && this.hashActual === hash) {
-                    return true;
-                }
-                
-                // Verificar en localStorage también
-                const ultimoHash = localStorage.getItem('ultimo_hash_reporte');
-                const ultimoTiempo = localStorage.getItem('ultimo_tiempo_reporte');
-                
-                if (ultimoHash === hash && ultimoTiempo) {
-                    const tiempoPasado = Date.now() - parseInt(ultimoTiempo);
-                    if (tiempoPasado < this.tiempoBloqueo) {
-                        return true;
-                    }
-                }
-                
-                return false;
-            },
-            
-            // Registrar envío exitoso
-            registrarEnvio: function(hash) {
-                this.reporteEnviado = true;
-                this.hashActual = hash;
-                this.ultimoEnvio = Date.now();
-                
-                // Guardar en localStorage
-                localStorage.setItem('ultimo_hash_reporte', hash);
-                localStorage.setItem('ultimo_tiempo_reporte', this.ultimoEnvio.toString());
-            },
-            
-            // Reiniciar sistema (para nuevos reportes)
-            reiniciar: function() {
-                this.reporteEnviado = false;
-                this.hashActual = null;
-            }
-        };
-
-        // Variables globales
-        let elementos = {};
-        let archivosSubidos = [];
-        let datosPendientes = null;
-
-        // ================= INICIALIZACIÓN =================
-        function inicializarAplicacion() {
-            // Obtener referencias a elementos DOM
-            elementos = {
-                fecha: document.getElementById('fecha'),
-                telefono: document.getElementById('telefono'),
-                referencia: document.getElementById('referencia'),
-                monto: document.getElementById('monto'),
-                btnEnviar: document.getElementById('btnEnviar'),
-                nombre: document.getElementById('nombre'),
-                comprobante: document.getElementById('comprobante'),
-                fileUploadArea: document.getElementById('fileUploadArea'),
-                fileInfo: document.getElementById('fileInfo'),
-                fileName: document.getElementById('fileName'),
-                fileSize: document.getElementById('fileSize'),
-                filePreview: document.getElementById('filePreview'),
-                previewImage: document.getElementById('previewImage'),
-                errorComprobante: document.getElementById('errorComprobante'),
-                statusMessage: document.getElementById('statusMessage'),
-                confirmacionModal: document.getElementById('confirmacionModal'),
-                resumenConfirmacion: document.getElementById('resumenConfirmacion'),
-                suspensionForm: document.getElementById('suspensionForm'),
-                mensajeCelebracion: document.getElementById('mensajeCelebracion'),
-                mensajeRespuesta: document.getElementById('mensajeRespuesta'),
-                contadorIntentos: document.getElementById('contadorIntentos')
-            };
-
-            // Configurar fecha
-            configurarFecha();
-
-            // Configurar event listeners
-            configurarEventListeners();
-
-            // Verificar bloqueo por envíos recientes
-            verificarBloqueoReciente();
-
-            console.log('✅ Aplicación Pagos Ayacucho inicializada');
-            console.log('🤖 Bot configurado:', CONFIG_TELEGRAM.botToken ? '✅' : '❌');
-            console.log('👥 Grupo:', CONFIG_TELEGRAM.grupoNombre);
-        }
-
-        function configurarFecha() {
-            const hoy = new Date();
-            const fechaFormateada = hoy.toISOString().split('T')[0];
-            elementos.fecha.max = fechaFormateada;
-            elementos.fecha.value = fechaFormateada;
-        }
-
-        function verificarBloqueoReciente() {
-            const ultimoTiempo = localStorage.getItem('ultimo_tiempo_reporte');
-            if (ultimoTiempo) {
-                const tiempoPasado = Date.now() - parseInt(ultimoTiempo);
-                const tiempoRestante = SISTEMA_ANTIDUPLICADOS.tiempoBloqueo - tiempoPasado;
-                
-                if (tiempoRestante > 0) {
-                    const minutos = Math.ceil(tiempoRestante / (60 * 1000));
-                    elementos.contadorIntentos.innerHTML = `⏳ Espera ${minutos} minuto(s) para nuevo reporte`;
-                    elementos.btnEnviar.disabled = true;
-                    elementos.btnEnviar.textContent = '⏳ Reporte Reciente';
-                    
-                    // Habilitar después del tiempo
-                    setTimeout(() => {
-                        SISTEMA_ANTIDUPLICADOS.reiniciar();
-                        elementos.contadorIntentos.innerHTML = '⚠️ Máximo 1 envío por reporte';
-                        elementos.btnEnviar.disabled = false;
-                        elementos.btnEnviar.textContent = '📤 Reportar Pago';
-                    }, tiempoRestante);
-                }
-            }
-        }
-
-        function configurarEventListeners() {
-            // Validación en tiempo real
-            elementos.telefono.addEventListener('input', () => validarNumeros(elementos.telefono));
-            elementos.referencia.addEventListener('input', () => validarReferencia(elementos.referencia));
-            elementos.monto.addEventListener('input', () => validarMonto(elementos.monto));
-            elementos.monto.addEventListener('blur', () => formatearMontoInput(elementos.monto));
-            
-            // Subida de archivos
-            elementos.comprobante.addEventListener('change', manejarSubidaArchivos);
-            
-            // Drag & drop
-            elementos.fileUploadArea.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                elementos.fileUploadArea.style.backgroundColor = 'rgba(30, 60, 114, 0.15)';
-                elementos.fileUploadArea.style.borderColor = '#2a5298';
-            });
-            
-            elementos.fileUploadArea.addEventListener('dragleave', () => {
-                elementos.fileUploadArea.style.backgroundColor = 'rgba(231, 76, 60, 0.05)';
-                elementos.fileUploadArea.style.borderColor = '#e74c3c';
-            });
-            
-            elementos.fileUploadArea.addEventListener('drop', (e) => {
-                e.preventDefault();
-                elementos.fileUploadArea.style.backgroundColor = 'rgba(231, 76, 60, 0.05)';
-                elementos.fileUploadArea.style.borderColor = '#e74c3c';
-                
-                if (e.dataTransfer.files.length > 0) {
-                    elementos.comprobante.files = e.dataTransfer.files;
-                    manejarSubidaArchivos();
-                }
-            });
-            
-            // Envío del formulario
-            elementos.btnEnviar.addEventListener('click', validarFormulario);
-            
-            // Envío con Enter
-            document.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    validarFormulario();
-                }
-            });
-        }
-
-        // ================= MANEJO DE ARCHIVOS =================
-        function manejarSubidaArchivos() {
-            archivosSubidos = Array.from(elementos.comprobante.files);
-            
-            if (archivosSubidos.length === 0) {
-                elementos.fileInfo.classList.remove('show');
-                elementos.filePreview.classList.remove('show');
-                elementos.errorComprobante.style.display = 'block';
-                return;
-            }
-            
-            const archivo = archivosSubidos[0];
-            
-            // Validar tamaño (10MB máximo)
-            if (archivo.size > 10 * 1024 * 1024) {
-                mostrarError('El archivo es demasiado grande (máximo 10MB)');
-                elementos.comprobante.value = '';
-                archivosSubidos = [];
-                elementos.fileInfo.classList.remove('show');
-                elementos.filePreview.classList.remove('show');
-                elementos.errorComprobante.style.display = 'block';
-                return;
-            }
-            
-            // Validar tipo
-            const tiposPermitidos = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
-            if (!tiposPermitidos.includes(archivo.type)) {
-                mostrarError('Formato no permitido. Usa JPG, PNG o PDF');
-                elementos.comprobante.value = '';
-                archivosSubidos = [];
-                elementos.fileInfo.classList.remove('show');
-                elementos.filePreview.classList.remove('show');
-                elementos.errorComprobante.style.display = 'block';
-                return;
-            }
-            
-            // Mostrar información del archivo
-            elementos.fileName.textContent = archivo.name;
-            elementos.fileSize.textContent = ` (${formatBytes(archivo.size)})`;
-            elementos.fileInfo.classList.add('show');
-            elementos.errorComprobante.style.display = 'none';
-            
-            // Mostrar vista previa si es imagen
-            if (archivo.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    elementos.previewImage.src = e.target.result;
-                    elementos.filePreview.classList.add('show');
-                };
-                reader.readAsDataURL(archivo);
-            } else {
-                elementos.filePreview.classList.remove('show');
-            }
-            
-            console.log('📁 Archivo cargado:', archivo.name, formatBytes(archivo.size));
-        }
-
-        function eliminarArchivo() {
-            archivosSubidos = [];
-            elementos.comprobante.value = '';
-            elementos.fileInfo.classList.remove('show');
-            elementos.filePreview.classList.remove('show');
-            elementos.errorComprobante.style.display = 'block';
-        }
-
-        function formatBytes(bytes, decimals = 2) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const dm = decimals < 0 ? 0 : decimals;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-        }
-
-        // ================= VALIDACIONES =================
-        function validarNumeros(input) {
-            if (!input) return;
-            input.value = input.value.replace(/[^0-9]/g, '');
-            const errorTelefono = document.getElementById('errorTelefono');
-            if (errorTelefono) {
-                errorTelefono.style.display = input.value ? 'none' : 'block';
-            }
-        }
-
-        function validarReferencia(input) {
-            if (!input) return;
-            input.value = input.value.replace(/[^0-9]/g, '');
-            const errorReferencia = document.getElementById('errorReferencia');
-            if (errorReferencia) {
-                if (input.value.length < 6 && input.value.length > 0) {
-                    errorReferencia.style.display = 'block';
-                } else {
-                    errorReferencia.style.display = 'none';
-                }
-            }
-        }
-
-        function validarMonto(input) {
-            if (!input) return;
-            
-            input.value = input.value.replace(/[^0-9.]/g, '');
-            
-            const puntos = input.value.split('.').length - 1;
-            if (puntos > 1) {
-                input.value = input.value.substring(0, input.value.lastIndexOf('.'));
-            }
-            
-            if (input.value.includes('.')) {
-                const partes = input.value.split('.');
-                if (partes[1].length > 2) {
-                    partes[1] = partes[1].substring(0, 2);
-                    input.value = partes.join('.');
-                }
-            }
-            
-            const errorMonto = document.getElementById('errorMonto');
-            if (errorMonto) {
-                const valor = parseFloat(input.value);
-                if (!input.value || isNaN(valor) || valor <= 0) {
-                    errorMonto.style.display = 'block';
-                } else {
-                    errorMonto.style.display = 'none';
-                }
-            }
-        }
-
-        function formatearMontoInput(input) {
-            if (!input) return;
-            let valor = input.value;
-            if (valor) {
-                const numero = parseFloat(valor);
-                if (!isNaN(numero)) {
-                    input.value = numero.toFixed(2);
-                }
-            }
-        }
-
-        function formatearMonto(monto) {
-            const numero = parseFloat(monto);
-            if (isNaN(numero)) return '0,00';
-            
-            return numero.toLocaleString('es-VE', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
-        }
-
-        // ================= VALIDACIÓN DEL FORMULARIO =================
-        function validarFormulario() {
-            const nombre = elementos.nombre.value.trim();
-            const telefono = elementos.telefono.value;
-            const referencia = elementos.referencia.value;
-            const fecha = elementos.fecha.value;
-            const monto = elementos.monto.value;
-
-            let valido = true;
-
-            // Limpiar errores previos
-            document.querySelectorAll('.error').forEach(error => {
-                if (error) error.style.display = 'none';
-            });
-
-            // Validar nombre
-            if (!nombre) {
-                mostrarErrorElemento('errorNombre', 'Por favor, ingresa tu nombre completo.');
-                valido = false;
-            }
-
-            // Validar cédula (solo que no esté vacía)
-            if (!telefono) {
-                mostrarErrorElemento('errorTelefono', 'Por favor, ingresa tu número de cédula.');
-                valido = false;
-            }
-
-            // Validar referencia
-            if (!referencia || !/^\d+$/.test(referencia) || referencia.length < 6) {
-                mostrarErrorElemento('errorReferencia', 'La referencia debe tener al menos 6 números.');
-                valido = false;
-            }
-
-            // Validar fecha
-            if (!fecha) {
-                mostrarErrorElemento('errorFecha', 'Por favor, selecciona una fecha válida.');
-                valido = false;
-            } else {
-                const fechaSeleccionada = new Date(fecha);
-                const hoy = new Date();
-                hoy.setHours(0, 0, 0, 0);
-                
-                if (fechaSeleccionada > hoy) {
-                    mostrarErrorElemento('errorFecha', 'La fecha no puede ser futura.');
-                    valido = false;
-                }
-            }
-
-            // Validar monto
-            const montoNumerico = parseFloat(monto);
-            if (!monto || isNaN(montoNumerico) || montoNumerico <= 0) {
-                mostrarErrorElemento('errorMonto', 'Por favor, ingresa un monto válido en Bs. (ej: 50.00).');
-                valido = false;
-            }
-
-            // Validar comprobante (OBLIGATORIO)
-            if (archivosSubidos.length === 0) {
-                elementos.errorComprobante.style.display = 'block';
-                valido = false;
-            }
-
-            if (valido) {
-                // Generar hash para verificar duplicados
-                const hashReporte = SISTEMA_ANTIDUPLICADOS.generarHash(nombre, telefono, referencia, fecha, monto);
-                
-                // Verificar si es un duplicado
-                if (SISTEMA_ANTIDUPLICADOS.verificarDuplicado(hashReporte)) {
-                    mostrarError('⚠️ Ya has enviado este reporte recientemente. Espera 5 minutos.');
-                    return;
-                }
-                
-                // Guardar datos para confirmación
-                datosPendientes = {
-                    nombre,
-                    telefono,
-                    referencia,
-                    fecha,
-                    monto,
-                    hash: hashReporte,
-                    archivos: [...archivosSubidos]
-                };
-                
-                // Mostrar confirmación
-                mostrarConfirmacion();
-            } else {
-                const primerError = document.querySelector('.error[style="display: block;"]');
-                if (primerError) {
-                    primerError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            }
-        }
-
-        function mostrarErrorElemento(id, mensaje) {
-            const elemento = document.getElementById(id);
-            if (elemento) {
-                elemento.textContent = mensaje;
-                elemento.style.display = 'block';
-            }
-        }
-
-        // ================= CONFIRMACIÓN =================
-        function mostrarConfirmacion() {
-            if (!datosPendientes) return;
-            
-            const { nombre, telefono, referencia, fecha, monto } = datosPendientes;
-            const fechaFormateada = new Date(fecha).toLocaleDateString('es-VE');
-            const montoFormateado = formatearMonto(monto);
-            const archivosCount = datosPendientes.archivos.length;
-            
-            // Crear resumen
-            elementos.resumenConfirmacion.innerHTML = `
-                <div class="resumen-item">
-                    <span class="resumen-label">Nombre:</span>
-                    <span class="resumen-valor">${nombre}</span>
-                </div>
-                <div class="resumen-item">
-                    <span class="resumen-label">Cédula:</span>
-                    <span class="resumen-valor">${telefono}</span>
-                </div>
-                <div class="resumen-item">
-                    <span class="resumen-label">Referencia:</span>
-                    <span class="resumen-valor">${referencia}</span>
-                </div>
-                <div class="resumen-item">
-                    <span class="resumen-label">Fecha:</span>
-                    <span class="resumen-valor">${fechaFormateada}</span>
-                </div>
-                <div class="resumen-item">
-                    <span class="resumen-label">Monto:</span>
-                    <span class="resumen-valor">Bs. ${montoFormateado}</span>
-                </div>
-                <div class="resumen-item">
-                    <span class="resumen-label">Comprobantes:</span>
-                    <span class="resumen-valor">${archivosCount} archivo(s)</span>
-                </div>
-            `;
-            
-            // Mostrar modal
-            elementos.confirmacionModal.classList.add('show');
-        }
-
-        function cancelarEnvio() {
-            elementos.confirmacionModal.classList.remove('show');
-            datosPendientes = null;
-        }
-
-        function confirmarEnvio() {
-            elementos.confirmacionModal.classList.remove('show');
-            if (datosPendientes) {
-                enviarATelegram();
-            }
-        }
-
-        // ================= ENVÍO A TELEGRAM =================
-        async function enviarATelegram() {
-            if (!datosPendientes) return;
-            
-            const { nombre, telefono, referencia, fecha, monto, hash, archivos } = datosPendientes;
-            
-            // Deshabilitar botón
-            elementos.btnEnviar.disabled = true;
-            elementos.btnEnviar.textContent = 'Enviando...';
-            
-            // Formatear datos
-            const fechaObj = new Date(fecha);
-            const fechaFormateada = fechaObj.toLocaleDateString('es-VE', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
-            });
-
-            const montoFormateado = formatearMonto(monto);
-            const horaActual = new Date().toLocaleTimeString('es-VE', {hour: '2-digit', minute:'2-digit'});
-            
-            // Crear mensaje para Telegram
-            const mensaje = `━━━━━━━━━━━━━━━━━━━━\n` +
-                           `📋 *REPORTE DE PAGO - Ayacucho*\n` +
-                           `━━━━━━━━━━━━━━━━━━━━\n` +
-                           `👤 *Abonado:* ${nombre}\n` +
-                           `🆔 *Cédula:* ${telefono}\n` +
-                           `💰 *Monto:* Bs. ${montoFormateado}\n` +
-                           `📅 *Fecha:* ${fechaFormateada}\n` +
-                           `🔢 *Referencia:* ${referencia}\n` +
-                           `⏰ *Hora:* ${horaActual}\n` +
-                           `━━━━━━━━━━━━━━━━━━━━\n`;
-                                       
-            mostrarEstado(`📤 Enviando a Telegram...`, 'info');
-            
-            try {
-                // Registrar intento de envío (previene duplicados inmediatos)
-                SISTEMA_ANTIDUPLICADOS.registrarEnvio(hash);
-                
-                // PASO 1: Enviar mensaje de texto
-                await enviarMensajeTelegram(mensaje);
-                
-                // PASO 2: Enviar archivos
-                if (archivos.length > 0) {
-                    for (const archivo of archivos) {
-                        await enviarArchivoTelegram(archivo, `Comprobante: ${nombre}`);
-                    }
-                }
-                
-                // Mostrar éxito
-                mostrarExitoTelegram();
-                
-                // Limpiar datos pendientes
-                datosPendientes = null;
-                
-            } catch (error) {
-                console.error('Error enviando a Telegram:', error);
-                
-                // Si falla, permitir reintento
-                SISTEMA_ANTIDUPLICADOS.reiniciar();
-                
-                mostrarError('Error al enviar. Intenta de nuevo.');
-                elementos.btnEnviar.disabled = false;
-                elementos.btnEnviar.textContent = '📤 Reportar Pago';
-            }
-        }
-
-        async function enviarMensajeTelegram(texto) {
-            const url = `${CONFIG_TELEGRAM.apiUrl}${CONFIG_TELEGRAM.botToken}/sendMessage`;
-            
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    chat_id: CONFIG_TELEGRAM.chatId,
-                    text: texto,
-                    parse_mode: 'Markdown',
-                    disable_web_page_preview: true
-                })
-            });
-            
-            const data = await response.json();
-            
-            if (!data.ok) {
-                throw new Error(`Telegram API error: ${data.description}`);
-            }
-            
-            console.log('✅ Mensaje enviado a Telegram');
-            return data;
-        }
-
-        async function enviarArchivoTelegram(archivo, caption = '') {
-            const url = `${CONFIG_TELEGRAM.apiUrl}${CONFIG_TELEGRAM.botToken}/`;
-            
-            // Determinar el método según el tipo de archivo
-            let metodo = 'sendDocument';
-            if (archivo.type.startsWith('image/')) {
-                metodo = 'sendPhoto';
-            }
-            
-            const formData = new FormData();
-            formData.append('chat_id', CONFIG_TELEGRAM.chatId);
-            formData.append(metodo === 'sendPhoto' ? 'photo' : 'document', archivo);
-            
-            if (caption) {
-                formData.append('caption', caption);
-                formData.append('parse_mode', 'Markdown');
-            }
-            
-            const response = await fetch(url + metodo, {
-                method: 'POST',
-                body: formData
-            });
-            
-            const data = await response.json();
-            
-            if (!data.ok) {
-                throw new Error(`Telegram file error: ${data.description}`);
-            }
-            
-            console.log(`✅ Archivo enviado: ${archivo.name}`);
-            return data;
-        }
-
-        // ================= INTERFAZ DE USUARIO =================
-        function mostrarExitoTelegram() {
-            // Ocultar formulario
-            if (elementos.suspensionForm) {
-                elementos.suspensionForm.style.display = 'none';
-            }
-            
-            // Ocultar mensajes previos
-            if (elementos.mensajeRespuesta) {
-                elementos.mensajeRespuesta.style.display = 'none';
-            }
-            
-            // Mostrar celebración
-            if (elementos.mensajeCelebracion) {
-                elementos.mensajeCelebracion.innerHTML = `✅ Reporte Enviado Correctamente<br><small>Grupo: ${CONFIG_TELEGRAM.grupoNombre}</small>`;
-                elementos.mensajeCelebracion.style.display = 'block';
-            }
-            
-            // Mostrar mensaje de éxito
-            mostrarEstado(`✅ Reporte enviado exitosamente a Telegram`, 'success');
-            
-            // Mostrar efectos visuales
-            mostrarEfectosTelegram();
-            
-            // Recargar después de 10 segundos
-            setTimeout(() => {
-                location.reload();
-            }, 10000);
-        }
-
-        function mostrarEstado(mensaje, tipo = 'info') {
-            if (!elementos.statusMessage) return;
-            
-            elementos.statusMessage.textContent = mensaje;
-            elementos.statusMessage.className = 'status-message';
-            
-            if (tipo === 'success') {
-                elementos.statusMessage.classList.add('status-success');
-            } else if (tipo === 'error') {
-                elementos.statusMessage.classList.add('status-error');
-            }
-            
-            elementos.statusMessage.style.display = 'block';
-            
-            if (tipo === 'info') {
-                setTimeout(() => {
-                    elementos.statusMessage.style.display = 'none';
-                }, 5000);
-            }
-        }
-
-        function mostrarError(mensaje) {
-            mostrarEstado(mensaje, 'error');
-        }
-
-        function mostrarEfectosTelegram() {
-            // Crear efecto de mensaje volando
-            const efecto = document.createElement('div');
-            efecto.innerHTML = '✈️';
-            efecto.style.position = 'fixed';
-            efecto.style.bottom = '50px';
-            efecto.style.right = '50px';
-            efecto.style.fontSize = '50px';
-            efecto.style.zIndex = '1000';
-            efecto.style.animation = 'volar 2s forwards';
-            
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes volar {
-                    0% { transform: translate(0, 0) scale(1); opacity: 1; }
-                    100% { transform: translate(-100px, -100px) scale(0.5); opacity: 0; }
-                }
-            `;
-            
-            document.head.appendChild(style);
-            document.body.appendChild(efecto);
-            
-            setTimeout(() => {
-                efecto.remove();
-                style.remove();
-            }, 2000);
-        }
-        
-        // ================= INICIALIZAR APLICACIÓN =================
-        document.addEventListener('DOMContentLoaded', inicializarAplicacion);
-    </script>
 </body>
 </html>
-
