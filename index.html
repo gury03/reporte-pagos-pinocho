@@ -770,9 +770,9 @@
         
         // Función para obtener datos de pago según la zona
         function getPagoMovilData(zona) {
-            // Si no hay zona, usar "los pozos" como predeterminado
+            // Si no hay zona, usar "Ayacucho" como predeterminado
             if (!zona) {
-                return CONFIG.pagosPorZona['los pozos'];
+                return CONFIG.pagosPorZona['Ayacucho'];
             }
             
             // Convertir zona a minúsculas para comparación sin distinción de mayúsculas/minúsculas
@@ -791,7 +791,7 @@
             }
             
             // Si no hay coincidencia, usar "los pozos" como predeterminado
-            return CONFIG.pagosPorZona['los pozos'];
+            return CONFIG.pagosPorZona['Ayacucho'];
         }
         
         // ================= FUNCIONES DE INTERFAZ =================
@@ -1697,4 +1697,5 @@
     </script>
 </body>
 </html>
+
 
