@@ -770,16 +770,9 @@
         
         // Función para obtener datos de pago según la zona
         function getPagoMovilData(zona) {
-            // Valor predeterminado por si no hay coincidencias
-            const defaultPago = {
-                banco: '0102 Venezuela',
-                telefono: '04261308075',
-                cedula: '16318027'
-            };
-            
-            // Si no hay zona, usar el predeterminado
+            // Si no hay zona, usar "Ayacucho" como predeterminado
             if (!zona) {
-                return defaultPago;
+                return CONFIG.pagosPorZona['Ayacucho'];
             }
             
             // Convertir zona a minúsculas para comparación sin distinción de mayúsculas/minúsculas
@@ -797,8 +790,8 @@
                 }
             }
             
-            // Si no hay coincidencia, usar el predeterminado
-            return defaultPago;
+            // Si no hay coincidencia, usar "Ayacucho" como predeterminado
+            return CONFIG.pagosPorZona['Ayacucho'];
         }
         
         // ================= FUNCIONES DE INTERFAZ =================
@@ -1039,7 +1032,7 @@
             const montoEntero = Math.round(parseFloat(montoNumerico) || 0);
             
             // Formato: "0102 04261308075 16318027 MONTO" (sin decimales)
-            const textoCompleto = `0102 ${telefono} ${cedula} ${montoEntero}`
+            const textoCompleto = `0102 ${telefono} ${cedula} ${montoEntero}`;
             
             navigator.clipboard.writeText(textoCompleto).then(() => {
                 const button = document.getElementById('copyAllBtn');
