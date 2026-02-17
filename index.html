@@ -366,6 +366,14 @@
             border-radius: 6px;
         }
 
+        .file-info {
+            background: #f1f5f9;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+            display: none;
+        }
+
         @media (max-width: 768px) {
             .container {
                 border-radius: 0;
@@ -389,6 +397,10 @@
             
             .debt-total {
                 font-size: 36px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
             }
         }
 
@@ -461,12 +473,12 @@
                 
                 <div class="form-group">
                     <label>Nombre Completo *</label>
-                    <input type="text" id="nombre" placeholder="Ej: Juan Perez">
+                    <input type="text" id="nombre" placeholder="Ej: Aura Sierra">
                 </div>
                 
                 <div class="form-group">
                     <label>Cédula / Código *</label>
-                    <input type="text" id="codigo" placeholder="Ej: 12345678">
+                    <input type="text" id="codigo" placeholder="Ej: 8765151">
                 </div>
                 
                 <div class="form-group">
@@ -546,6 +558,9 @@
                     <button onclick="loadDebts()" class="btn-secondary">
                         <i class="fas fa-sync-alt"></i> Actualizar Deuda
                     </button>
+                    <button onclick="loadPayments()" class="btn-secondary">
+                        <i class="fas fa-history"></i> Ver Pagos
+                    </button>
                 </div>
             </div>
 
@@ -561,7 +576,7 @@
                             <tr>
                                 <th>Fecha</th>
                                 <th>Mes</th>
-                                <th>Monto (Bs.)</th>
+                                <th>Monto</th>
                                 <th>Monto ($)</th>
                                 <th>Referencia</th>
                                 <th>Método</th>
@@ -582,71 +597,47 @@
         </div>
     </div>
 
-    <!-- Modal para Registrar Pago -->
+    <!-- Payment Modal -->
     <div class="modal" id="paymentModal">
         <div class="modal-content">
-            <button class="close-btn" onclick="closePaymentModal()">
-                <i class="fas fa-times"></i>
-            </button>
-            
-            <h2><i class="fas fa-credit-card"></i> Registrar Pago</h2>
-            <p>Completa los datos para reportar tu pago</p>
+            <button class="close-btn" onclick="closePaymentModal()">×</button>
+            <h2><i class="fas fa-file-invoice"></i> Reportar Pago Realizado</h2>
             
             <div id="paymentMessage" class="message"></div>
             
-            <!-- Datos para Pago Móvil -->
+            <!-- Información de pago móvil -->
             <div class="payment-method-card">
-                <h3 style="margin-bottom: 15px; color: var(--primary);">
-                    <i class="fas fa-mobile-alt"></i> Datos para Pago Móvil
-                </h3>
+                <h3><i class="fas fa-mobile-alt"></i> Datos para Pago Móvil</h3>
+                <p>Para realizar tu pago, usa estos datos en tu banco:</p>
                 
-                <!-- Información de zona -->
-                <div style="margin-bottom: 15px; padding: 10px; background: #e0f2fe; border-radius: 6px; border-left: 4px solid #0ea5e9;">
-                    <p style="margin: 0; font-size: 14px; color: #0369a1;">
-                        <i class="fas fa-map-marker-alt"></i> 
-                        Zona actual: <span id="currentZone" style="font-weight: bold;"></span>
-                    </p>
+                <div style="margin-top: 15px; padding: 15px; background: #f8fafc; border-radius: 6px; margin-bottom: 20px;">
+                    <p><strong>Zona del abonado:</strong> <span id="currentZone">Sin zona</span></p>
                 </div>
                 
                 <div class="payment-detail">
-                    <div>
-                        <strong>Banco:</strong>
-                        <span id="pagoMovilBanco" style="font-weight: bold; color: var(--dark);">0102 Venezuela</span>
-                    </div>
+                    <span><strong>Banco:</strong></span>
+                    <span id="pagoMovilBanco">0102 Venezuela</span>
+                    <button onclick="copyToClipboard('0102 Venezuela', this)" style="width: auto; padding: 5px 10px; font-size: 12px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer;">Copiar</button>
                 </div>
-                
                 <div class="payment-detail">
-                    <div>
-                        <strong>Teléfono:</strong>
-                        <span id="pagoMovilTelefono" style="font-weight: bold; color: var(--dark);">04261308075</span>
-                    </div>
+                    <span><strong>Teléfono:</strong></span>
+                    <span id="pagoMovilTelefono">04141556654</span>
+                    <button onclick="copyToClipboard('04141556654', this)" style="width: auto; padding: 5px 10px; font-size: 12px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer;">Copiar</button>
                 </div>
-                
                 <div class="payment-detail">
-                    <div>
-                        <strong>Cédula/RIF:</strong>
-                        <span id="pagoMovilCedula" style="font-weight: bold; color: var(--dark);">16318027</span>
-                    </div>
+                    <span><strong>Cédula:</strong></span>
+                    <span id="pagoMovilCedula">17003079</span>
+                    <button onclick="copyToClipboard('17003079', this)" style="width: auto; padding: 5px 10px; font-size: 12px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer;">Copiar</button>
                 </div>
-                
                 <div class="payment-detail">
-                    <div>
-                        <strong>Monto a pagar:</strong>
-                        <span id="pagoMovilMonto" style="font-weight: bold; color: var(--danger); font-size: 18px;">0,00 Bs.</span>
-                    </div>
+                    <span><strong>Monto a pagar:</strong></span>
+                    <span id="pagoMovilMonto">0,00 Bs.</span>
+                    <button onclick="copyToClipboard('0,00 Bs.', this)" style="width: auto; padding: 5px 10px; font-size: 12px; background: var(--primary); color: white; border: none; border-radius: 4px; cursor: pointer;">Copiar</button>
                 </div>
                 
-                <!-- Botón para copiar todo -->
-                <button class="copy-all-btn" onclick="copyAllPagoMovil()" id="copyAllBtn">
-                    <i class="fas fa-copy"></i> Copiar Datos de Pago Móvil
+                <button class="copy-all-btn" id="copyAllBtn" onclick="copyAllPagoMovil()">
+                    <i class="fas fa-copy"></i> Copiar Todos los Datos (Formato Pago Móvil)
                 </button>
-                
-                <div style="margin-top: 15px; padding: 15px; background: #f0f9ff; border-radius: 8px; border-left: 4px solid var(--primary);">
-                    <p style="font-size: 14px; color: var(--gray); margin: 0;">
-                        <i class="fas fa-info-circle"></i> 
-                        Al hacer clic se copiará: "0102 04261308075 16318027 MONTO" (sin decimales)
-                    </p>
-                </div>
             </div>
             
             <!-- Formulario para reportar pago -->
@@ -678,7 +669,7 @@
                         <div style="font-size: 14px; color: var(--gray); margin-top: 5px;">Formatos: JPG, PNG, PDF - Máx: 10MB</div>
                     </div>
                     <input type="file" id="comprobante" accept="image/*,.pdf" style="display: none;">
-                    <div id="fileInfo" style="margin-top: 10px; padding: 10px; background: var(--light); border-radius: 8px; display: none;">
+                    <div id="fileInfo" class="file-info">
                         <span id="fileName"></span> (<span id="fileSize"></span>)
                         <button onclick="removeFile()" style="float: right; background: var(--danger); padding: 5px 10px; font-size: 12px; border: none; color: white; border-radius: 4px; cursor: pointer;">
                             <i class="fas fa-times"></i>
@@ -698,27 +689,29 @@
         </div>
     </div>
 
-    <!-- Modal de Confirmación -->
+    <!-- Confirmation Modal -->
     <div class="modal" id="confirmationModal">
         <div class="modal-content">
-            <button class="close-btn" onclick="closeModal()">
-                <i class="fas fa-times"></i>
-            </button>
+            <h2><i class="fas fa-check-circle"></i> Confirmar Pago</h2>
             
-            <h2><i class="fas fa-check-circle"></i> Confirmar Envío</h2>
-            <p>Revisa la información antes de enviar a Telegram:</p>
-            
-            <div style="background: var(--light); padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <div style="padding: 20px; background: #f0f9ff; border-radius: 8px; margin: 20px 0;">
+                <p><strong>Por favor, verifica los datos antes de enviar:</strong></p>
                 <p><strong>Abonado:</strong> <span id="confirmName"></span></p>
                 <p><strong>Referencia:</strong> <span id="confirmRef"></span></p>
                 <p><strong>Fecha:</strong> <span id="confirmDate"></span></p>
-                <p><strong>Monto:</strong> <span id="confirmAmount" style="color: var(--success); font-weight: bold;"></span></p>
+                <p><strong>Monto:</strong> <span id="confirmAmount"></span></p>
             </div>
             
+            <p style="color: var(--gray); margin-bottom: 20px;">
+                <i class="fas fa-info-circle"></i> Esta información será enviada al administrador por Telegram.
+            </p>
+            
             <div class="action-buttons">
-                <button onclick="closeModal()" class="btn-secondary">Cancelar</button>
                 <button onclick="sendToTelegram()" class="btn-success" id="btnConfirmTelegram">
-                    <i class="fas fa-paper-plane"></i> Enviar
+                    <i class="fas fa-paper-plane"></i> Enviar a Telegram
+                </button>
+                <button onclick="closeModal()" class="btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
                 </button>
             </div>
         </div>
@@ -730,7 +723,6 @@
         let currentCurrency = 'BS';
         let uploadedFile = null;
         let pendingPayment = null;
-        let refreshInterval = null; // [MEJORA] Para el refresco automático
         
         // ================= CONFIGURACIÓN =================
         const CONFIG = {
@@ -769,10 +761,17 @@
         // ================= FUNCIONES AUXILIARES =================
         
         // Función para obtener datos de pago según la zona
-        function getPagoMovilData(zona) {
-            // Si no hay zona, usar "Ayacucho" como predeterminado
+            function getPagoMovilData(zona) {
+            // Valor predeterminado por si no hay coincidencias
+            const defaultPago = {
+                banco: '0102 Venezuela',
+                telefono: '04261308075',
+                cedula: '16318027'
+            };
+            
+            // Si no hay zona, usar el predeterminado
             if (!zona) {
-                return CONFIG.pagosPorZona['Ayacucho'];
+                return defaultPago;
             }
             
             // Convertir zona a minúsculas para comparación sin distinción de mayúsculas/minúsculas
@@ -790,8 +789,8 @@
                 }
             }
             
-            // Si no hay coincidencia, usar "los pozos" como predeterminado
-            return CONFIG.pagosPorZona['Ayacucho'];
+            // Si no hay coincidencia, usar el predeterminado
+            return defaultPago;
         }
         
         // ================= FUNCIONES DE INTERFAZ =================
@@ -802,9 +801,6 @@
         }
         
         function logout() {
-            // [MEJORA] Detener refresco automático al salir
-            stopAutoRefresh();
-            
             currentUser = null;
             uploadedFile = null;
             pendingPayment = null;
@@ -939,7 +935,6 @@
             if (currentUser && currentUser.deuda_total_bs !== undefined) {
                 const montoBs = currentUser.deuda_total_bs;
                 const montoElement = document.getElementById('pagoMovilMonto');
-                // Formatear el monto con separadores de miles
                 const montoFormateado = formatCurrency(montoBs);
                 montoElement.textContent = montoFormateado + ' Bs.';
                 
@@ -968,11 +963,9 @@
                 const fecha = pago.fecha ? new Date(pago.fecha) : new Date();
                 const fechaFormateada = fecha.toLocaleDateString('es-VE');
                 
-                // Montos originales de la API
                 let montoBs = pago.monto_bs || pago.monto || 0;
                 let montoUsd = pago.monto_usd || (montoBs / CONFIG.tasaCambio);
                 
-                // Montos para mostrar según moneda seleccionada
                 let montoMostrar = montoBs;
                 let simboloMostrar = 'Bs.';
                 
@@ -1003,35 +996,26 @@
             const cedula = document.getElementById('pagoMovilCedula').textContent;
             const montoElement = document.getElementById('pagoMovilMonto').textContent;
             
-            // Extraer solo los números del monto (incluyendo decimales)
             const montoText = montoElement.replace(/[^0-9,.]/g, '');
             let montoNumerico;
             
-            // Determinar formato del número
             if (montoText.includes(',') && montoText.includes('.')) {
-                // Formato: 1.234,56 (puntos para miles, coma para decimal)
                 montoNumerico = montoText.replace(/\./g, '').replace(',', '.');
             } else if (montoText.includes(',')) {
-                // Si tiene coma, verificar si es decimal o miles
                 const lastCommaIndex = montoText.lastIndexOf(',');
                 const afterComma = montoText.substring(lastCommaIndex + 1);
                 
                 if (afterComma.length === 2) {
-                    // Probablemente decimales (ej: 1234,56)
                     montoNumerico = montoText.replace(',', '.');
                 } else {
-                    // Probablemente miles (ej: 1,234)
                     montoNumerico = montoText.replace(',', '');
                 }
             } else {
-                // Solo números y puntos
                 montoNumerico = montoText;
             }
             
-            // Convertir a número y redondear a entero (sin decimales)
             const montoEntero = Math.round(parseFloat(montoNumerico) || 0);
             
-            // Formato: "0102 04261308075 16318027 MONTO" (sin decimales)
             const textoCompleto = `0102 ${telefono} ${cedula} ${montoEntero}`;
             
             navigator.clipboard.writeText(textoCompleto).then(() => {
@@ -1089,7 +1073,6 @@
         function closePaymentModal() {
             document.getElementById('paymentModal').style.display = 'none';
             document.getElementById('paymentMessage').style.display = 'none';
-            // Solo limpiamos la interfaz, NO el archivo
             document.getElementById('referencia').value = '';
             document.getElementById('comprobante').value = '';
             document.getElementById('fileInfo').style.display = 'none';
@@ -1097,9 +1080,7 @@
         }
         
         function closeModal() {
-            // Cuando se cancela desde el modal de confirmación
             document.getElementById('confirmationModal').style.display = 'none';
-            // Limpiamos todo
             clearAllPaymentData();
         }
         
@@ -1210,7 +1191,6 @@
             
             pendingPayment = { referencia, fecha, monto: montoNum };
             console.log('✅ Pago validado:', pendingPayment);
-            // Solo ocultamos el modal, NO llamamos a closePaymentModal()
             document.getElementById('paymentModal').style.display = 'none';
             showConfirmationModal();
         }
@@ -1230,117 +1210,12 @@
         }
         
         function formatCurrency(amount) {
-            // Asegurarse de que amount sea un número
             const numAmount = typeof amount === 'string' ? parseFloat(amount.replace(/,/g, '')) : parseFloat(amount);
             
             return numAmount.toLocaleString('es-VE', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             });
-        }
-        
-        // ================= [MEJORA] FUNCIÓN PARA REFRESCAR DATOS DEL USUARIO =================
-        async function refreshUserData() {
-            if (!currentUser || !currentUser.usuario_pppoe) {
-                console.log('No hay usuario logueado para refrescar');
-                return false;
-            }
-
-            console.log('🔄 Refrescando datos para:', currentUser.usuario_pppoe);
-            
-            try {
-                // Llamar al mismo endpoint que el login, que ya trae todo: abonado, deudas, pagos y tasa
-                const response = await fetch(`${CONFIG.apiUrl}/verify-abonado`, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({ 
-                        nombre: currentUser.nombre, // Usamos datos guardados como referencia
-                        codigo: currentUser.usuario_pppoe, 
-                        telefono: currentUser.telefono 
-                    })
-                });
-                
-                const data = await response.json();
-                console.log('📊 Datos refrescados:', data);
-
-                if (data.success) {
-                    // ACTUALIZAR TASA DE CAMBIO
-                    if (data.tasa_cambio) {
-                        CONFIG.tasaCambio = parseFloat(data.tasa_cambio);
-                        document.getElementById('exchangeRate').textContent = 
-                            CONFIG.tasaCambio.toFixed(2);
-                    }
-                    
-                    // Actualizar currentUser con los nuevos datos, preservando la estructura
-                    currentUser = {
-                        ...data.abonado,
-                        tasa_cambio: data.tasa_cambio,
-                        deuda_total_bs: data.abonado.deuda_total_bs || 0,
-                        deuda_meses: data.deudas ? data.deudas.map(d => d.mes).join(', ') : '',
-                        pagos_cache: data.pagos || []
-                    };
-                    
-                    // Actualizar localStorage
-                    localStorage.setItem('portal_abonado', JSON.stringify({
-                        ...data.abonado,
-                        tasa_cambio: data.tasa_cambio,
-                        deuda_total_bs: data.abonado.deuda_total_bs || 0
-                    }));
-
-                    // Actualizar TODA la interfaz
-                    loadUserData(); // Esto actualiza nombre, plan, zona, etc.
-                    
-                    // Usar deuda_total_bs para mostrar
-                    const deudaBs = data.abonado.deuda_total_bs || 0;
-                    const meses = data.deudas ? data.deudas.map(d => d.mes).join(', ') : '';
-                    updateDebtDisplay(deudaBs, meses);
-                    
-                    if (data.pagos) {
-                        updatePaymentsTable(data.pagos);
-                    }
-
-                    console.log('✅ Datos refrescados correctamente');
-                    return true;
-                    
-                } else {
-                    console.error('❌ Error al refrescar datos:', data.message);
-                    return false;
-                }
-                
-            } catch (error) {
-                console.error('❌ Error en refreshUserData:', error);
-                return false;
-            }
-        }
-
-        // ================= [MEJORA] FUNCIONES PARA REFRESCO AUTOMÁTICO =================
-        function startAutoRefresh() {
-            // Limpiar intervalo existente si lo hay
-            if (refreshInterval) {
-                clearInterval(refreshInterval);
-            }
-            
-            // Configurar nuevo intervalo (cada 60 segundos = 60000 ms)
-            refreshInterval = setInterval(async () => {
-                console.log('⏰ Ejecutando refresco automático...');
-                if (currentUser) {
-                    await refreshUserData();
-                } else {
-                    // Si no hay usuario, detener el intervalo
-                    stopAutoRefresh();
-                }
-            }, 60000); // Ajusta este valor a tu gusto (30s = 30000, 60s = 60000)
-        }
-
-        function stopAutoRefresh() {
-            if (refreshInterval) {
-                clearInterval(refreshInterval);
-                refreshInterval = null;
-                console.log('⏹️ Refresco automático detenido');
-            }
         }
         
         // ================= ENVÍO A TELEGRAM CORREGIDO =================
@@ -1399,7 +1274,8 @@
                 // 5. Recargar datos
                 setTimeout(() => {
                     if (currentUser) {
-                        refreshUserData(); // [MEJORA] Usamos la nueva función
+                        loadDebts();
+                        loadPayments();
                     }
                 }, 1500);
                 
@@ -1508,7 +1384,6 @@
                     document.getElementById('statusIcon').style.color = '#10b981';
                     document.getElementById('statusText').textContent = 'Conectado';
                     
-                    // ACTUALIZAR TASA DE CAMBIO DESDE LA API
                     if (data.tasa_cambio) {
                         CONFIG.tasaCambio = parseFloat(data.tasa_cambio);
                         document.getElementById('exchangeRate').textContent = 
@@ -1553,14 +1428,12 @@
                 console.log('📊 Respuesta API login:', data);
                 
                 if (data.success) {
-                    // ACTUALIZAR TASA DE CAMBIO
                     if (data.tasa_cambio) {
                         CONFIG.tasaCambio = parseFloat(data.tasa_cambio);
                         document.getElementById('exchangeRate').textContent = 
                             CONFIG.tasaCambio.toFixed(2);
                     }
                     
-                    // Guardar datos del usuario
                     currentUser = {
                         ...data.abonado,
                         tasa_cambio: data.tasa_cambio,
@@ -1575,14 +1448,12 @@
                         deuda_total_bs: data.abonado.deuda_total_bs || 0
                     }));
                     
-                    // Mostrar dashboard
                     showMessage('loginMessage', '✅ Conexión exitosa', 'success');
                     
                     setTimeout(() => {
                         showDashboard();
                         loadUserData();
                         
-                        // Usar deuda_total_bs para mostrar
                         const deudaBs = data.abonado.deuda_total_bs || 0;
                         const meses = data.deudas ? data.deudas.map(d => d.mes).join(', ') : '';
                         
@@ -1592,12 +1463,8 @@
                             updatePaymentsTable(data.pagos);
                         }
                         
-                        // Actualizar estado de conexión
                         document.getElementById('statusIcon').style.color = '#10b981';
                         document.getElementById('statusText').textContent = 'Conectado';
-                        
-                        // [MEJORA] Programar refresco automático cada 60 segundos
-                        startAutoRefresh();
                         
                     }, 1000);
                     
@@ -1615,21 +1482,60 @@
             }
         }
         
-        // [MEJORA] Función loadDebts simplificada
         async function loadDebts() {
-            const success = await refreshUserData();
-            if (success) {
-                showMessage('debtMessage', '✅ Deuda actualizada correctamente', 'success');
-            } else {
+            if (!currentUser || !currentUser.usuario_pppoe) return;
+            
+            try {
+                const response = await fetch(`${CONFIG.apiUrl}/deudas/${currentUser.usuario_pppoe}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    if (data.tasa_cambio) {
+                        CONFIG.tasaCambio = parseFloat(data.tasa_cambio);
+                        document.getElementById('exchangeRate').textContent = 
+                            CONFIG.tasaCambio.toFixed(2);
+                    }
+                    
+                    currentUser.deuda_total_bs = data.deuda_total_bs || 0;
+                    currentUser.deuda_meses = data.meses_deuda || '';
+                    
+                    localStorage.setItem('portal_abonado', JSON.stringify({
+                        ...currentUser,
+                        tasa_cambio: CONFIG.tasaCambio
+                    }));
+                    
+                    updateDebtDisplay(data.deuda_total_bs, data.meses_deuda);
+                    showMessage('debtMessage', '✅ Deuda actualizada correctamente', 'success');
+                }
+            } catch (error) {
+                console.error('Error cargando deudas:', error);
                 showMessage('debtMessage', '❌ Error al actualizar la deuda', 'error');
             }
         }
         
-        // [MEJORA] Función loadPayments simplificada
         async function loadPayments() {
-            const success = await refreshUserData();
-            if (!success) {
-                console.log('No se pudieron cargar los pagos.');
+            if (!currentUser || !currentUser.usuario_pppoe) return;
+            
+            try {
+                const response = await fetch(`${CONFIG.apiUrl}/pagos/${currentUser.usuario_pppoe}`);
+                const data = await response.json();
+                
+                if (data.success && data.pagos && data.pagos.length > 0) {
+                    if (data.tasa_cambio) {
+                        CONFIG.tasaCambio = parseFloat(data.tasa_cambio);
+                        document.getElementById('exchangeRate').textContent = 
+                            CONFIG.tasaCambio.toFixed(2);
+                    }
+                    
+                    currentUser.pagos_cache = data.pagos;
+                    
+                    updatePaymentsTable(data.pagos);
+                } else {
+                    showNoPayments();
+                }
+            } catch (error) {
+                console.error('Error cargando pagos:', error);
+                showNoPayments();
             }
         }
         
@@ -1648,26 +1554,23 @@
             if (savedUser) {
                 try {
                     const userData = JSON.parse(savedUser);
-                    // [MEJORA] Asignación temporal para que refreshUserData funcione
                     currentUser = userData;
                     
-                    // Actualizar tasa si está guardada (será sobreescrita por refresh)
                     if (userData.tasa_cambio) {
                         CONFIG.tasaCambio = parseFloat(userData.tasa_cambio);
                         document.getElementById('exchangeRate').textContent = 
                             CONFIG.tasaCambio.toFixed(2);
                     }
                     
-                    // Mostrar dashboard inmediatamente
                     showDashboard();
                     loadUserData();
                     
-                    // Luego refrescar datos en segundo plano
-                    refreshUserData().then(() => {
-                        // Iniciar refresco automático después del primer refresco exitoso
-                        startAutoRefresh();
-                    });
+                    if (userData.deuda_total_bs !== undefined) {
+                        updateDebtDisplay(userData.deuda_total_bs, userData.deuda_meses || '');
+                    }
                     
+                    loadDebts();
+                    loadPayments();
                 } catch (e) {
                     console.error('Error cargando sesión:', e);
                     localStorage.removeItem('portal_abonado');
@@ -1683,19 +1586,28 @@
                         CONFIG.tasaCambio = data.tasa_cambio;
                         document.getElementById('exchangeRate').textContent = 
                             CONFIG.tasaCambio.toFixed(2);
-                        
-                        // [MEJORA] Si cambia la tasa, actualizar todos los montos en pantalla
-                        if (currentUser) {
-                            refreshUserData();
-                        }
                     }
                 } catch (error) {
                     // Silencioso
                 }
             }, 30000);
         });
+        
+        // Función auxiliar para copiar texto al portapapeles
+        function copyToClipboard(text, button) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = '✅ Copiado';
+                button.style.background = 'var(--success)';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '';
+                }, 2000);
+            }).catch(err => {
+                console.error('Error al copiar: ', err);
+            });
+        }
     </script>
 </body>
 </html>
-
-
