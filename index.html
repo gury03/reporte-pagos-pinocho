@@ -86,7 +86,6 @@
             flex-wrap: wrap;
         }
 
-        /* Icono pequeño de acceso técnico */
         .tech-icon {
             background: rgba(255,255,255,0.2);
             width: 35px;
@@ -593,18 +592,15 @@
             </div>
             
             <div class="header-controls">
-                <!-- Icono pequeño de acceso técnico -->
                 <div class="tech-icon" id="techIcon" onclick="showTechLoginModal()" title="Acceso Técnico">
                     <i class="fas fa-cog"></i>
                 </div>
                 
-                <!-- Información de Base de Datos (solo visible cuando hay sesión) -->
                 <div class="database-info" id="databaseInfo" style="display: none;">
                     <i class="fas fa-database"></i>
                     <span id="currentDatabase">No seleccionada</span>
                 </div>
                 
-                <!-- Estado del servidor -->
                 <div id="serverStatus">
                     <i class="fas fa-circle" id="statusIcon" style="color: #ef4444;"></i>
                     <span id="statusText">Verificando...</span>
@@ -612,7 +608,6 @@
             </div>
         </div>
 
-        <!-- Login Section -->
         <div class="login-section" id="loginSection">
             <div class="login-card">
                 <h2 class="login-title">
@@ -648,9 +643,7 @@
             </div>
         </div>
 
-        <!-- Dashboard Section -->
         <div class="dashboard-section" id="dashboardSection">
-            <!-- User Info -->
             <div class="user-card">
                 <div class="user-info">
                     <h2 id="userName">Nombre del Abonado</h2>
@@ -665,7 +658,6 @@
                 </div>
             </div>
 
-            <!-- Debt Summary -->
             <div class="card">
                 <div class="card-header">
                     <h2><i class="fas fa-file-invoice-dollar"></i> Estado de Cuenta</h2>
@@ -703,7 +695,6 @@
                     </div>
                 </div>
 
-                <!-- Botones de acción -->
                 <div class="action-buttons">
                     <button onclick="showPaymentModal()" class="btn-primary">
                         <i class="fas fa-credit-card"></i> Registrar Pago
@@ -714,7 +705,6 @@
                 </div>
             </div>
 
-            <!-- Payments History -->
             <div class="card">
                 <h2><i class="fas fa-history"></i> Historial de Pagos</h2>
                 
@@ -733,7 +723,6 @@
                             </tr>
                         </thead>
                         <tbody id="paymentsBody">
-                            <!-- Datos cargados desde la base de datos -->
                         </tbody>
                     </table>
                 </div>
@@ -747,7 +736,6 @@
         </div>
     </div>
 
-    <!-- Modal para Registrar Pago -->
     <div class="modal" id="paymentModal">
         <div class="modal-content">
             <button class="close-btn" onclick="closePaymentModal()">
@@ -759,13 +747,11 @@
             
             <div id="paymentMessage" class="message"></div>
             
-            <!-- Datos para Pago Móvil -->
             <div class="payment-method-card">
                 <h3 style="margin-bottom: 15px; color: var(--primary);">
                     <i class="fas fa-mobile-alt"></i> Datos para Pago Móvil
                 </h3>
                 
-                <!-- Información de zona -->
                 <div style="margin-bottom: 15px; padding: 10px; background: #e0f2fe; border-radius: 6px; border-left: 4px solid #0ea5e9;">
                     <p style="margin: 0; font-size: 14px; color: #0369a1;">
                         <i class="fas fa-map-marker-alt"></i> 
@@ -801,7 +787,6 @@
                     </div>
                 </div>
                 
-                <!-- Botón para copiar todo -->
                 <button class="copy-all-btn" onclick="copyAllPagoMovil()" id="copyAllBtn">
                     <i class="fas fa-copy"></i> Copiar Datos de Pago Móvil
                 </button>
@@ -814,7 +799,6 @@
                 </div>
             </div>
             
-            <!-- Formulario para reportar pago -->
             <div style="margin-top: 25px;">
                 <h3 style="margin-bottom: 15px; color: var(--primary);">
                     <i class="fas fa-file-invoice"></i> Reportar Pago Realizado
@@ -863,7 +847,6 @@
         </div>
     </div>
 
-    <!-- Modal de Confirmación de Pago -->
     <div class="modal" id="confirmationModal">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal()">
@@ -889,7 +872,6 @@
         </div>
     </div>
 
-    <!-- Modal de Login Técnico -->
     <div class="modal" id="techLoginModal">
         <div class="modal-content">
             <button class="close-btn" onclick="closeTechLoginModal()">
@@ -917,7 +899,6 @@
         </div>
     </div>
 
-    <!-- Modal de Selección de Base de Datos -->
     <div class="modal" id="techDatabaseModal">
         <div class="modal-content">
             <button class="close-btn" onclick="closeTechDatabaseModal()">
@@ -943,7 +924,6 @@
                 </div>
                 
                 <div class="database-list" id="databaseList">
-                    <!-- Las bases de datos se cargarán aquí dinámicamente -->
                 </div>
                 
                 <div style="margin-top: 20px;">
@@ -1028,6 +1008,8 @@
                         <div style="text-align: center; padding: 40px; color: var(--gray);">
                             <i class="fas fa-database" style="font-size: 48px; opacity: 0.5; margin-bottom: 20px;"></i>
                             <h3>No hay bases de datos disponibles</h3>
+                            <p style="margin-top: 10px;">${data.error || ''}</p>
+                            <p style="margin-top: 10px; font-size: 12px;">Path: ${data.path || 'No especificado'}</p>
                         </div>
                     `;
                 }
@@ -1092,7 +1074,6 @@
 
         // ================= FUNCIONES DE LOGIN TÉCNICO =================
         function showTechLoginModal() {
-            // Limpiar los campos cada vez que se abre el modal
             document.getElementById('techUser').value = '';
             document.getElementById('techPassword').value = '';
             document.getElementById('techLoginModal').style.display = 'flex';
@@ -1151,14 +1132,12 @@
             pendingPayment = null;
             isTechLoggedIn = false;
             
-            // Quitar la clase active del icono técnico
             document.getElementById('techIcon').classList.remove('active');
             
             document.getElementById('loginSection').style.display = 'block';
             document.getElementById('dashboardSection').style.display = 'none';
             document.getElementById('databaseInfo').style.display = 'none';
             
-            // Limpiar formularios
             document.getElementById('nombre').value = '';
             document.getElementById('codigo').value = '';
             document.getElementById('telefono').value = '';
