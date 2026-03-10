@@ -17,6 +17,7 @@
             --dark: #1e293b;
             --gray: #64748b;
             --gray-light: #e2e8f0;
+            --tech: #6b21a5;
         }
 
         * {
@@ -51,6 +52,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .logo {
@@ -74,6 +77,51 @@
         .logo p {
             opacity: 0.9;
             font-size: 14px;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        /* Icono pequeño de acceso técnico */
+        .tech-icon {
+            background: rgba(255,255,255,0.2);
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 18px;
+        }
+
+        .tech-icon:hover {
+            background: rgba(255,255,255,0.3);
+            transform: rotate(90deg);
+        }
+
+        .tech-icon.active {
+            background: var(--tech);
+            color: white;
+        }
+
+        .database-info {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .database-info i {
+            color: #10b981;
         }
 
         .login-section {
@@ -113,7 +161,7 @@
             color: var(--dark);
         }
 
-        input {
+        input, select {
             width: 100%;
             padding: 14px;
             border: 2px solid var(--gray-light);
@@ -122,7 +170,7 @@
             transition: all 0.3s;
         }
 
-        input:focus {
+        input:focus, select:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
@@ -186,6 +234,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
         }
 
         .user-info h2 {
@@ -196,6 +246,17 @@
         .user-info p {
             opacity: 0.9;
             margin-bottom: 5px;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .user-actions button {
+            width: auto;
+            padding: 10px 20px;
         }
 
         .card {
@@ -212,6 +273,8 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
         .debt-amount {
@@ -366,6 +429,76 @@
             border-radius: 6px;
         }
 
+        .database-selector-modal {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .database-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 15px 0;
+        }
+
+        .database-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border: 2px solid var(--gray-light);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .database-item:hover {
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .database-item.selected {
+            border-color: var(--success);
+            background: #f0fdf4;
+        }
+
+        .database-item i {
+            font-size: 24px;
+            color: var(--primary);
+        }
+
+        .database-item.selected i {
+            color: var(--success);
+        }
+
+        .database-item-info {
+            flex: 1;
+        }
+
+        .database-item-name {
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .database-item-desc {
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        .tech-footer {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f1f5f9;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #64748b;
+            text-align: center;
+        }
+
         @media (max-width: 768px) {
             .container {
                 border-radius: 0;
@@ -378,17 +511,28 @@
             .user-card {
                 flex-direction: column;
                 text-align: center;
-                gap: 20px;
+            }
+            
+            .user-actions {
+                justify-content: center;
             }
             
             .card-header {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 15px;
             }
             
             .debt-total {
                 font-size: 36px;
+            }
+            
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .header-controls {
+                justify-content: center;
             }
         }
 
@@ -413,6 +557,10 @@
 
         .btn-success {
             background: var(--success);
+        }
+
+        .btn-tech {
+            background: linear-gradient(to right, var(--tech), #9d4edd);
         }
 
         .close-btn {
@@ -443,9 +591,24 @@
                     <p>Conectando con el mundo</p>
                 </div>
             </div>
-            <div id="serverStatus">
-                <i class="fas fa-circle" id="statusIcon" style="color: #ef4444; margin-right: 8px;"></i>
-                <span id="statusText">Verificando conexión...</span>
+            
+            <div class="header-controls">
+                <!-- Icono pequeño de acceso técnico -->
+                <div class="tech-icon" id="techIcon" onclick="showTechLoginModal()" title="Acceso Técnico">
+                    <i class="fas fa-cog"></i>
+                </div>
+                
+                <!-- Información de Base de Datos (solo visible cuando hay sesión) -->
+                <div class="database-info" id="databaseInfo" style="display: none;">
+                    <i class="fas fa-database"></i>
+                    <span id="currentDatabase">No seleccionada</span>
+                </div>
+                
+                <!-- Estado del servidor -->
+                <div id="serverStatus">
+                    <i class="fas fa-circle" id="statusIcon" style="color: #ef4444;"></i>
+                    <span id="statusText">Verificando...</span>
+                </div>
             </div>
         </div>
 
@@ -461,12 +624,12 @@
                 
                 <div class="form-group">
                     <label>Nombre Completo *</label>
-                    <input type="text" id="nombre" placeholder="Ej: Aura Sierra">
+                    <input type="text" id="nombre" placeholder="Ej: Juan Perez">
                 </div>
                 
                 <div class="form-group">
                     <label>Cédula / Código *</label>
-                    <input type="text" id="codigo" placeholder="Ej: 8765151">
+                    <input type="text" id="codigo" placeholder="Ej: 12345678">
                 </div>
                 
                 <div class="form-group">
@@ -478,7 +641,7 @@
                     <i class="fas fa-search"></i> Consultar
                 </button>
                 
-                <div style="margin-top: 30px; padding: 20px; background: #f1f5f9; border-radius: 8px; font-size: 14px; color: #64748b;">
+                <div class="tech-footer">
                     <p><strong><i class="fas fa-info-circle"></i> Información:</strong></p>
                     <p>Creado por Robertsystems</p>
                 </div>
@@ -495,9 +658,11 @@
                     <p><i class="fas fa-wifi"></i> PPPoE: <span id="userPppoe">usuario_pppoe</span></p>
                     <p><i class="fas fa-map-marker-alt"></i> Zona: <span id="userZone">Sin zona</span></p>
                 </div>
-                <button onclick="logout()" style="width: auto; padding: 10px 20px;">
-                    <i class="fas fa-sign-out-alt"></i> Salir
-                </button>
+                <div class="user-actions">
+                    <button onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i> Salir
+                    </button>
+                </div>
             </div>
 
             <!-- Debt Summary -->
@@ -538,13 +703,13 @@
                     </div>
                 </div>
 
-                <!-- Botón para registrar pago -->
+                <!-- Botones de acción -->
                 <div class="action-buttons">
                     <button onclick="showPaymentModal()" class="btn-primary">
                         <i class="fas fa-credit-card"></i> Registrar Pago
                     </button>
-                    <button onclick="loadDebts()" class="btn-secondary">
-                        <i class="fas fa-sync-alt"></i> Actualizar Deuda
+                    <button onclick="refreshUserData()" class="btn-secondary">
+                        <i class="fas fa-sync-alt"></i> Actualizar
                     </button>
                 </div>
             </div>
@@ -698,7 +863,7 @@
         </div>
     </div>
 
-    <!-- Modal de Confirmación -->
+    <!-- Modal de Confirmación de Pago -->
     <div class="modal" id="confirmationModal">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal()">
@@ -724,34 +889,97 @@
         </div>
     </div>
 
+    <!-- Modal de Login Técnico -->
+    <div class="modal" id="techLoginModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeTechLoginModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <h2><i class="fas fa-cog"></i> Acceso Técnico</h2>
+            <p>Ingresa tus credenciales</p>
+            
+            <div id="techLoginMessage" class="message"></div>
+            
+            <div class="form-group">
+                <label>Usuario</label>
+                <input type="text" id="techUser" placeholder="Usuario">
+            </div>
+            
+            <div class="form-group">
+                <label>Contraseña</label>
+                <input type="password" id="techPassword" placeholder="Contraseña">
+            </div>
+            
+            <button onclick="validateTechLogin()" class="btn-tech">
+                <i class="fas fa-sign-in-alt"></i> Ingresar
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal de Selección de Base de Datos -->
+    <div class="modal" id="techDatabaseModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeTechDatabaseModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <h2><i class="fas fa-database"></i> Seleccionar Base de Datos</h2>
+            <p>Elige la base de datos que deseas consultar</p>
+            
+            <div id="databaseMessage" class="message"></div>
+            
+            <div class="database-selector-modal">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="color: var(--dark);">Bases de datos disponibles</h3>
+                    <button onclick="loadDatabases()" class="btn-secondary" style="width: auto; padding: 8px 15px;">
+                        <i class="fas fa-sync-alt"></i> Recargar
+                    </button>
+                </div>
+                
+                <div id="databaseLoading" style="text-align: center; padding: 30px; display: none;">
+                    <i class="fas fa-spinner fa-spin fa-3x" style="color: var(--primary);"></i>
+                    <p style="margin-top: 15px;">Cargando bases de datos...</p>
+                </div>
+                
+                <div class="database-list" id="databaseList">
+                    <!-- Las bases de datos se cargarán aquí dinámicamente -->
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <p style="font-size: 14px; color: var(--gray);">
+                        <i class="fas fa-info-circle"></i> 
+                        La selección se guardará automáticamente y se usará para todas las consultas.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button onclick="closeTechDatabaseModal()" class="btn-secondary">
+                    <i class="fas fa-times"></i> Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // ================= DECLARACIÓN DE VARIABLES GLOBALES =================
-        let currentUser = null;
-        let currentCurrency = 'BS';
-        let uploadedFile = null;
-        let pendingPayment = null;
-        let refreshInterval = null; // [MEJORA] Para el refresco automático
-        
         // ================= CONFIGURACIÓN =================
         const CONFIG = {
-            // URL de tu API en AWS (DIRECTA - sin proxy)
-            apiUrl: 'https://tight-rice-7142.thecrow859.workers.dev/api',
-            
-            // Telegram
+            apiUrl: 'https://tight-rice-7142.thecrow859.workers.dev//api',
             telegram: {
                 botToken: "8510662416:AAFT7JoW6T6JZwpNqKptIxJlzNK87UELht4",
                 chatId: "-5005498130"
             },
-            
-            // Tasa de cambio - SE ACTUALIZARÁ DESDE LA API
             tasaCambio: 36.50,
-            
-            // Configuración de pagos por zona
+            techCredentials: {
+                user: 'thecrow859',
+                password: 'Jrl16318027'
+            },
             pagosPorZona: {
-                'Ayacucho': {
+                'los pozos': {
                     banco: '0102 Venezuela',
-                    telefono: '04141556654',
-                    cedula: '17003079'
+                    telefono: '04261308075',
+                    cedula: '16318027'
                 },
                 'la mesa': {
                     banco: '0102 Venezuela',
@@ -765,52 +993,170 @@
                 }
             }
         };
-        
-        // ================= FUNCIONES AUXILIARES =================
-        
-        // Función para obtener datos de pago según la zona
-        function getPagoMovilData(zona) {
-            // Si no hay zona, usar "Ayacucho" como predeterminado
-            if (!zona) {
-                return CONFIG.pagosPorZona['Ayacucho'];
-            }
+
+        // ================= VARIABLES GLOBALES =================
+        let currentUser = null;
+        let currentCurrency = 'BS';
+        let uploadedFile = null;
+        let pendingPayment = null;
+        let refreshInterval = null;
+        let isTechLoggedIn = false;
+        let selectedDatabase = localStorage.getItem('selectedDatabase') || 'isp_control';
+
+        // ================= FUNCIONES DE BASE DE DATOS =================
+        async function loadDatabases() {
+            const dbLoading = document.getElementById('databaseLoading');
+            const dbList = document.getElementById('databaseList');
             
-            // Convertir zona a minúsculas para comparación sin distinción de mayúsculas/minúsculas
-            const zonaLower = zona.toLowerCase().trim();
+            dbLoading.style.display = 'block';
+            dbList.innerHTML = '';
             
-            // Buscar la zona exacta
-            if (CONFIG.pagosPorZona[zonaLower]) {
-                return CONFIG.pagosPorZona[zonaLower];
-            }
-            
-            // Buscar coincidencias parciales
-            for (const [key, value] of Object.entries(CONFIG.pagosPorZona)) {
-                if (zonaLower.includes(key)) {
-                    return value;
+            try {
+                const response = await fetch(`${CONFIG.apiUrl}/databases`, {
+                    headers: {
+                        'X-Database': selectedDatabase
+                    }
+                });
+                const data = await response.json();
+                
+                dbLoading.style.display = 'none';
+                
+                if (data.success && data.databases && data.databases.length > 0) {
+                    renderDatabaseList(data.databases);
+                } else {
+                    dbList.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: var(--gray);">
+                            <i class="fas fa-database" style="font-size: 48px; opacity: 0.5; margin-bottom: 20px;"></i>
+                            <h3>No hay bases de datos disponibles</h3>
+                        </div>
+                    `;
                 }
+            } catch (error) {
+                console.error('Error cargando bases de datos:', error);
+                dbLoading.style.display = 'none';
+                dbList.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--danger);">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 20px;"></i>
+                        <h3>Error al cargar bases de datos</h3>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderDatabaseList(databases) {
+            const dbList = document.getElementById('databaseList');
+            dbList.innerHTML = '';
+            
+            databases.forEach(db => {
+                const isSelected = db === selectedDatabase;
+                const dbItem = document.createElement('div');
+                dbItem.className = `database-item ${isSelected ? 'selected' : ''}`;
+                dbItem.onclick = () => selectDatabase(db);
+                
+                dbItem.innerHTML = `
+                    <i class="fas ${isSelected ? 'fa-check-circle' : 'fa-database'}"></i>
+                    <div class="database-item-info">
+                        <div class="database-item-name">${db}</div>
+                        <div class="database-item-desc">${isSelected ? '✓ Base de datos activa' : 'Haz clic para seleccionar'}</div>
+                    </div>
+                `;
+                
+                dbList.appendChild(dbItem);
+            });
+        }
+
+        function selectDatabase(database) {
+            selectedDatabase = database;
+            localStorage.setItem('selectedDatabase', database);
+            updateDatabaseInfo();
+            loadDatabases();
+            showMessage('databaseMessage', `✅ Base de datos cambiada a: ${database}`, 'success');
+            
+            if (currentUser) {
+                refreshUserData();
+            }
+        }
+
+        function updateDatabaseInfo() {
+            const dbInfo = document.getElementById('databaseInfo');
+            const currentDbSpan = document.getElementById('currentDatabase');
+            
+            if (selectedDatabase) {
+                dbInfo.style.display = 'flex';
+                currentDbSpan.textContent = selectedDatabase;
+            } else {
+                dbInfo.style.display = 'none';
+            }
+        }
+
+        // ================= FUNCIONES DE LOGIN TÉCNICO =================
+        function showTechLoginModal() {
+            // Limpiar los campos cada vez que se abre el modal
+            document.getElementById('techUser').value = '';
+            document.getElementById('techPassword').value = '';
+            document.getElementById('techLoginModal').style.display = 'flex';
+        }
+
+        function closeTechLoginModal() {
+            document.getElementById('techLoginModal').style.display = 'none';
+            document.getElementById('techLoginMessage').style.display = 'none';
+        }
+
+        function validateTechLogin() {
+            const user = document.getElementById('techUser').value.trim();
+            const password = document.getElementById('techPassword').value.trim();
+            
+            if (!user || !password) {
+                showMessage('techLoginMessage', '❌ Complete todos los campos', 'error');
+                return;
             }
             
-            // Si no hay coincidencia, usar "Ayacucho" como predeterminado
-            return CONFIG.pagosPorZona['Ayacucho'];
+            if (user === CONFIG.techCredentials.user && password === CONFIG.techCredentials.password) {
+                isTechLoggedIn = true;
+                document.getElementById('techIcon').classList.add('active');
+                closeTechLoginModal();
+                showTechDatabaseModal();
+                showMessage('loginMessage', '✅ Acceso técnico concedido', 'success');
+            } else {
+                showMessage('techLoginMessage', '❌ Usuario o contraseña incorrectos', 'error');
+            }
         }
-        
+
+        function showTechDatabaseModal() {
+            if (!isTechLoggedIn) {
+                showTechLoginModal();
+                return;
+            }
+            document.getElementById('techDatabaseModal').style.display = 'flex';
+            loadDatabases();
+        }
+
+        function closeTechDatabaseModal() {
+            document.getElementById('techDatabaseModal').style.display = 'none';
+            document.getElementById('databaseMessage').style.display = 'none';
+        }
+
         // ================= FUNCIONES DE INTERFAZ =================
-        
         function showDashboard() {
             document.getElementById('loginSection').style.display = 'none';
             document.getElementById('dashboardSection').style.display = 'block';
+            updateDatabaseInfo();
         }
         
         function logout() {
-            // [MEJORA] Detener refresco automático al salir
             stopAutoRefresh();
-            
             currentUser = null;
             uploadedFile = null;
             pendingPayment = null;
-            localStorage.removeItem('portal_abonado');
+            isTechLoggedIn = false;
+            
+            // Quitar la clase active del icono técnico
+            document.getElementById('techIcon').classList.remove('active');
+            
             document.getElementById('loginSection').style.display = 'block';
             document.getElementById('dashboardSection').style.display = 'none';
+            document.getElementById('databaseInfo').style.display = 'none';
             
             // Limpiar formularios
             document.getElementById('nombre').value = '';
@@ -820,7 +1166,6 @@
             document.getElementById('monto').value = '';
             removeFile();
             
-            // Resetear texto del botón "Consultar"
             const btn = document.getElementById('btnLogin');
             btn.disabled = false;
             btn.innerHTML = '<i class="fas fa-search"></i> Consultar';
@@ -829,26 +1174,26 @@
         function loadUserData() {
             if (!currentUser) return;
             
-            console.log('📊 Cargando datos del usuario:', currentUser);
-            
-            // Actualizar información básica
-            document.getElementById('userName').textContent = currentUser.nombre;
-            document.getElementById('userCode').textContent = currentUser.codigo;
+            document.getElementById('userName').textContent = currentUser.nombre || 'N/D';
+            document.getElementById('userCode').textContent = currentUser.codigo || 'N/D';
             document.getElementById('userPppoe').textContent = currentUser.usuario_pppoe || 'No asignado';
             
-            // ZONA
-            const zonaNombre = currentUser.zona_nombre || 'Sin zona';
+            let zonaNombre = 'Sin zona';
+            if (currentUser.zona_nombre) {
+                zonaNombre = currentUser.zona_nombre;
+            } else if (currentUser.zona) {
+                zonaNombre = currentUser.zona;
+            } else if (currentUser.zona_id) {
+                zonaNombre = `ID: ${currentUser.zona_id}`;
+            }
             document.getElementById('userZone').textContent = zonaNombre;
             
-            // PLAN
             const planNombre = currentUser.plan_nombre || 'Sin plan';
             document.getElementById('userPlan').textContent = planNombre;
             
-            // ESTADO
             const estado = currentUser.estado || 'Desconocido';
             document.getElementById('userStatus').textContent = estado;
             
-            // MENSUALIDAD
             if (currentUser.plan_precio !== undefined && currentUser.plan_precio !== null) {
                 const precioBs = parseFloat(currentUser.plan_precio);
                 updateMonthlyFeeDisplay(precioBs);
@@ -859,7 +1204,6 @@
                 document.getElementById('monthlyFee').textContent = '0,00 Bs.';
             }
             
-            // Actualizar monto para pago móvil
             updatePagoMovilMonto();
         }
         
@@ -879,7 +1223,6 @@
         function switchCurrency(currency) {
             currentCurrency = currency;
             
-            // Actualizar botones
             if (currency === 'BS') {
                 document.getElementById('btnBs').style.background = 'var(--primary)';
                 document.getElementById('btnUsd').style.background = 'var(--gray)';
@@ -888,18 +1231,15 @@
                 document.getElementById('btnUsd').style.background = 'var(--primary)';
             }
             
-            // Recalcular deuda
             if (currentUser && currentUser.deuda_total_bs !== undefined) {
                 const meses = currentUser.deuda_meses || '';
                 updateDebtDisplay(currentUser.deuda_total_bs, meses);
             }
             
-            // Recalcular mensualidad
             if (currentUser && currentUser.plan_precio !== undefined) {
                 updateMonthlyFeeDisplay(currentUser.plan_precio);
             }
             
-            // Recalcular pagos
             if (currentUser && currentUser.pagos_cache) {
                 updatePaymentsTable(currentUser.pagos_cache);
             }
@@ -910,7 +1250,6 @@
             const monthsElement = document.getElementById('debtMonths');
             const exchangeRateElement = document.getElementById('exchangeRate');
             
-            // Actualizar tasa en pantalla
             exchangeRateElement.textContent = CONFIG.tasaCambio.toFixed(2);
             
             let displayAmount = totalBs;
@@ -931,7 +1270,6 @@
                 monthsElement.textContent = `Meses pendientes: ${meses || 'Consultando...'}`;
             }
             
-            // Actualizar monto para pago móvil
             updatePagoMovilMonto();
         }
         
@@ -939,11 +1277,8 @@
             if (currentUser && currentUser.deuda_total_bs !== undefined) {
                 const montoBs = currentUser.deuda_total_bs;
                 const montoElement = document.getElementById('pagoMovilMonto');
-                // Formatear el monto con separadores de miles
                 const montoFormateado = formatCurrency(montoBs);
                 montoElement.textContent = montoFormateado + ' Bs.';
-                
-                // También actualizar el campo de monto en el formulario
                 document.getElementById('monto').value = montoBs.toFixed(2);
             }
         }
@@ -964,15 +1299,10 @@
             
             pagos.forEach(pago => {
                 const row = document.createElement('tr');
-                
                 const fecha = pago.fecha ? new Date(pago.fecha) : new Date();
                 const fechaFormateada = fecha.toLocaleDateString('es-VE');
-                
-                // Montos originales de la API
                 let montoBs = pago.monto_bs || pago.monto || 0;
                 let montoUsd = pago.monto_usd || (montoBs / CONFIG.tasaCambio);
-                
-                // Montos para mostrar según moneda seleccionada
                 let montoMostrar = montoBs;
                 let simboloMostrar = 'Bs.';
                 
@@ -989,7 +1319,6 @@
                     <td>${pago.referencia || 'N/A'}</td>
                     <td>${pago.metodo || 'Portal Web'}</td>
                 `;
-                
                 tbody.appendChild(row);
             });
             
@@ -997,55 +1326,35 @@
             document.getElementById('noPayments').style.display = 'none';
         }
         
-        // ================= FUNCIÓN: COPIAR DATOS DE PAGO MÓVIL =================
         function copyAllPagoMovil() {
             const telefono = document.getElementById('pagoMovilTelefono').textContent;
             const cedula = document.getElementById('pagoMovilCedula').textContent;
             const montoElement = document.getElementById('pagoMovilMonto').textContent;
-            
-            // Extraer solo los números del monto (incluyendo decimales)
             const montoText = montoElement.replace(/[^0-9,.]/g, '');
             let montoNumerico;
             
-            // Determinar formato del número
             if (montoText.includes(',') && montoText.includes('.')) {
-                // Formato: 1.234,56 (puntos para miles, coma para decimal)
                 montoNumerico = montoText.replace(/\./g, '').replace(',', '.');
             } else if (montoText.includes(',')) {
-                // Si tiene coma, verificar si es decimal o miles
                 const lastCommaIndex = montoText.lastIndexOf(',');
                 const afterComma = montoText.substring(lastCommaIndex + 1);
-                
-                if (afterComma.length === 2) {
-                    // Probablemente decimales (ej: 1234,56)
-                    montoNumerico = montoText.replace(',', '.');
-                } else {
-                    // Probablemente miles (ej: 1,234)
-                    montoNumerico = montoText.replace(',', '');
-                }
+                montoNumerico = afterComma.length === 2 ? montoText.replace(',', '.') : montoText.replace(',', '');
             } else {
-                // Solo números y puntos
                 montoNumerico = montoText;
             }
             
-            // Convertir a número y redondear a entero (sin decimales)
             const montoEntero = Math.round(parseFloat(montoNumerico) || 0);
-            
-            // Formato: "0102 04261308075 16318027 MONTO" (sin decimales)
             const textoCompleto = `0102 ${telefono} ${cedula} ${montoEntero}`;
             
             navigator.clipboard.writeText(textoCompleto).then(() => {
                 const button = document.getElementById('copyAllBtn');
                 const originalHTML = button.innerHTML;
-                
                 button.innerHTML = '<i class="fas fa-check"></i> ¡Copiado!';
                 button.classList.add('success');
-                
                 setTimeout(() => {
                     button.innerHTML = originalHTML;
                     button.classList.remove('success');
                 }, 2000);
-                
                 showMessage('paymentMessage', '✅ Todos los datos copiados en formato Pago Móvil', 'success');
             }).catch(err => {
                 console.error('Error al copiar: ', err);
@@ -1053,69 +1362,54 @@
             });
         }
         
-        // ================= MODALES =================
+        function getPagoMovilData(zona) {
+            if (!zona) return CONFIG.pagosPorZona['los pozos'];
+            const zonaLower = zona.toLowerCase().trim();
+            if (CONFIG.pagosPorZona[zonaLower]) return CONFIG.pagosPorZona[zonaLower];
+            for (const [key, value] of Object.entries(CONFIG.pagosPorZona)) {
+                if (zonaLower.includes(key)) return value;
+            }
+            return CONFIG.pagosPorZona['los pozos'];
+        }
         
         function showPaymentModal() {
             if (!currentUser) {
                 showMessage('paymentMessage', '❌ No hay sesión de usuario activa', 'error');
                 return;
             }
-            
-            // Obtener la zona del usuario
-            const userZone = currentUser.zona_nombre || 'Sin zona';
-            
-            // Obtener datos de pago según la zona
+            const userZone = currentUser.zona_nombre || currentUser.zona || 'Sin zona';
             const pagoData = getPagoMovilData(userZone);
-            
-            // Actualizar los datos en el modal
             document.getElementById('currentZone').textContent = userZone;
             document.getElementById('pagoMovilBanco').textContent = pagoData.banco;
             document.getElementById('pagoMovilTelefono').textContent = pagoData.telefono;
             document.getElementById('pagoMovilCedula').textContent = pagoData.cedula;
-            
-            // Actualizar monto en el modal
             updatePagoMovilMonto();
-            
-            // Configurar fecha actual
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('fechaPago').value = today;
-            
-            console.log('📁 uploadedFile al abrir modal de pago:', uploadedFile);
-            
-            // Mostrar modal
             document.getElementById('paymentModal').style.display = 'flex';
         }
         
         function closePaymentModal() {
             document.getElementById('paymentModal').style.display = 'none';
             document.getElementById('paymentMessage').style.display = 'none';
-            // Solo limpiamos la interfaz, NO el archivo
             document.getElementById('referencia').value = '';
             document.getElementById('comprobante').value = '';
             document.getElementById('fileInfo').style.display = 'none';
-            console.log('📁 uploadedFile al cerrar modal de pago:', uploadedFile);
         }
         
         function closeModal() {
-            // Cuando se cancela desde el modal de confirmación
             document.getElementById('confirmationModal').style.display = 'none';
-            // Limpiamos todo
             clearAllPaymentData();
         }
         
         function showConfirmationModal() {
             if (!currentUser || !pendingPayment) return;
-            
-            console.log('📁 uploadedFile al mostrar confirmación:', uploadedFile);
-            
             const fechaObj = new Date(pendingPayment.fecha);
             const fechaFormateada = fechaObj.toLocaleDateString('es-VE');
-            
             document.getElementById('confirmName').textContent = currentUser.nombre;
             document.getElementById('confirmRef').textContent = pendingPayment.referencia;
             document.getElementById('confirmDate').textContent = fechaFormateada;
             document.getElementById('confirmAmount').textContent = formatCurrency(pendingPayment.monto) + ' Bs.';
-            
             document.getElementById('confirmationModal').style.display = 'flex';
         }
         
@@ -1126,46 +1420,30 @@
             document.getElementById('monto').value = '';
             document.getElementById('comprobante').value = '';
             document.getElementById('fileInfo').style.display = 'none';
-            console.log('🧹 Todos los datos de pago limpiados');
         }
         
-        // ================= MANEJO DE ARCHIVOS =================
         function handleFileUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
-            
-            // Validar tamaño
             if (file.size > 10 * 1024 * 1024) {
                 showMessage('paymentMessage', 'El archivo es demasiado grande (máximo 10MB)', 'error');
                 return;
             }
-            
-            // Validar tipo
             const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
             if (!allowedTypes.includes(file.type)) {
                 showMessage('paymentMessage', 'Formato no permitido. Usa JPG, PNG o PDF', 'error');
                 return;
             }
-            
             uploadedFile = file;
-            
-            // Mostrar información del archivo
             document.getElementById('fileInfo').style.display = 'block';
             document.getElementById('fileName').textContent = file.name;
             document.getElementById('fileSize').textContent = formatFileSize(file.size);
-            
-            console.log('📁 Archivo subido:', {
-                name: file.name,
-                size: file.size,
-                type: file.type
-            });
         }
         
         function removeFile() {
             uploadedFile = null;
             document.getElementById('comprobante').value = '';
             document.getElementById('fileInfo').style.display = 'none';
-            console.log('🗑️ Archivo removido');
         }
         
         function formatFileSize(bytes) {
@@ -1174,54 +1452,38 @@
             return (bytes / 1048576).toFixed(2) + ' MB';
         }
         
-        // ================= VALIDACIÓN DE PAGO =================
         function validatePayment() {
             const referencia = document.getElementById('referencia').value.trim();
             const fecha = document.getElementById('fechaPago').value;
             const monto = document.getElementById('monto').value;
             
-            console.log('🔍 Validando pago:', { 
-                referencia, 
-                fecha, 
-                monto, 
-                uploadedFile: !!uploadedFile
-            });
-            
             if (!referencia || referencia.length < 6) {
                 showMessage('paymentMessage', 'La referencia debe tener al menos 6 caracteres', 'error');
                 return;
             }
-            
             if (!fecha) {
                 showMessage('paymentMessage', 'Selecciona una fecha válida', 'error');
                 return;
             }
-            
             const montoNum = parseFloat(monto);
             if (!monto || isNaN(montoNum) || montoNum <= 0) {
                 showMessage('paymentMessage', 'Ingresa un monto válido', 'error');
                 return;
             }
-            
             if (!uploadedFile) {
                 showMessage('paymentMessage', 'Debes subir el comprobante', 'error');
                 return;
             }
-            
             pendingPayment = { referencia, fecha, monto: montoNum };
-            console.log('✅ Pago validado:', pendingPayment);
-            // Solo ocultamos el modal, NO llamamos a closePaymentModal()
             document.getElementById('paymentModal').style.display = 'none';
             showConfirmationModal();
         }
         
-        // ================= FUNCIONES UTILITARIAS =================
         function showMessage(elementId, message, type) {
             const element = document.getElementById(elementId);
             element.textContent = message;
             element.className = `message ${type}`;
             element.style.display = 'block';
-            
             if (type === 'success') {
                 setTimeout(() => {
                     element.style.display = 'none';
@@ -1230,51 +1492,41 @@
         }
         
         function formatCurrency(amount) {
-            // Asegurarse de que amount sea un número
             const numAmount = typeof amount === 'string' ? parseFloat(amount.replace(/,/g, '')) : parseFloat(amount);
-            
             return numAmount.toLocaleString('es-VE', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             });
         }
         
-        // ================= [MEJORA] FUNCIÓN PARA REFRESCAR DATOS DEL USUARIO =================
         async function refreshUserData() {
-            if (!currentUser || !currentUser.usuario_pppoe) {
-                console.log('No hay usuario logueado para refrescar');
-                return false;
-            }
-
-            console.log('🔄 Refrescando datos para:', currentUser.usuario_pppoe);
+            if (!currentUser || !currentUser.usuario_pppoe) return false;
             
             try {
-                // Llamar al mismo endpoint que el login, que ya trae todo: abonado, deudas, pagos y tasa
                 const response = await fetch(`${CONFIG.apiUrl}/verify-abonado`, {
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',
-                        'Accept': 'application/json'
+                        'Accept': 'application/json',
+                        'X-Database': selectedDatabase
                     },
                     body: JSON.stringify({ 
-                        nombre: currentUser.nombre, // Usamos datos guardados como referencia
+                        nombre: currentUser.nombre,
                         codigo: currentUser.usuario_pppoe, 
                         telefono: currentUser.telefono 
                     })
                 });
                 
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                
                 const data = await response.json();
-                console.log('📊 Datos refrescados:', data);
 
                 if (data.success) {
-                    // ACTUALIZAR TASA DE CAMBIO
                     if (data.tasa_cambio) {
                         CONFIG.tasaCambio = parseFloat(data.tasa_cambio);
-                        document.getElementById('exchangeRate').textContent = 
-                            CONFIG.tasaCambio.toFixed(2);
+                        document.getElementById('exchangeRate').textContent = CONFIG.tasaCambio.toFixed(2);
                     }
                     
-                    // Actualizar currentUser con los nuevos datos, preservando la estructura
                     currentUser = {
                         ...data.abonado,
                         tasa_cambio: data.tasa_cambio,
@@ -1282,33 +1534,18 @@
                         deuda_meses: data.deudas ? data.deudas.map(d => d.mes).join(', ') : '',
                         pagos_cache: data.pagos || []
                     };
-                    
-                    // Actualizar localStorage
-                    localStorage.setItem('portal_abonado', JSON.stringify({
-                        ...data.abonado,
-                        tasa_cambio: data.tasa_cambio,
-                        deuda_total_bs: data.abonado.deuda_total_bs || 0
-                    }));
 
-                    // Actualizar TODA la interfaz
-                    loadUserData(); // Esto actualiza nombre, plan, zona, etc.
+                    localStorage.setItem('portal_abonado', JSON.stringify(currentUser));
+                    loadUserData();
                     
-                    // Usar deuda_total_bs para mostrar
                     const deudaBs = data.abonado.deuda_total_bs || 0;
                     const meses = data.deudas ? data.deudas.map(d => d.mes).join(', ') : '';
                     updateDebtDisplay(deudaBs, meses);
                     
-                    if (data.pagos) {
-                        updatePaymentsTable(data.pagos);
-                    }
-
-                    console.log('✅ Datos refrescados correctamente');
+                    if (data.pagos) updatePaymentsTable(data.pagos);
                     return true;
-                    
-                } else {
-                    console.error('❌ Error al refrescar datos:', data.message);
-                    return false;
                 }
+                return false;
                 
             } catch (error) {
                 console.error('❌ Error en refreshUserData:', error);
@@ -1316,93 +1553,40 @@
             }
         }
 
-        // ================= [MEJORA] FUNCIONES PARA REFRESCO AUTOMÁTICO =================
         function startAutoRefresh() {
-            // Limpiar intervalo existente si lo hay
-            if (refreshInterval) {
-                clearInterval(refreshInterval);
-            }
-            
-            // Configurar nuevo intervalo (cada 60 segundos = 60000 ms)
+            if (refreshInterval) clearInterval(refreshInterval);
             refreshInterval = setInterval(async () => {
-                console.log('⏰ Ejecutando refresco automático...');
-                if (currentUser) {
-                    await refreshUserData();
-                } else {
-                    // Si no hay usuario, detener el intervalo
-                    stopAutoRefresh();
-                }
-            }, 60000); // Ajusta este valor a tu gusto (30s = 30000, 60s = 60000)
+                if (currentUser) await refreshUserData();
+                else stopAutoRefresh();
+            }, 60000);
         }
 
         function stopAutoRefresh() {
             if (refreshInterval) {
                 clearInterval(refreshInterval);
                 refreshInterval = null;
-                console.log('⏹️ Refresco automático detenido');
             }
         }
         
-        // ================= ENVÍO A TELEGRAM CORREGIDO =================
         async function sendToTelegram() {
-            console.log('🔍 Verificando datos para Telegram:', {
-                currentUser: !!currentUser,
-                pendingPayment: !!pendingPayment,
-                uploadedFile: !!uploadedFile
-            });
-            
-            if (!currentUser) {
-                console.error('❌ No hay usuario actual');
-                showMessage('paymentMessage', '❌ No hay sesión de usuario activa', 'error');
-                closeModal();
-                return;
-            }
-            
-            if (!pendingPayment) {
-                console.error('❌ No hay datos de pago pendientes');
-                showMessage('paymentMessage', '❌ No hay datos de pago para enviar', 'error');
-                closeModal();
-                return;
-            }
-            
-            if (!uploadedFile) {
-                console.error('❌ No hay archivo subido');
-                showMessage('paymentMessage', '❌ Debes subir un comprobante de pago', 'error');
+            if (!currentUser || !pendingPayment || !uploadedFile) {
+                showMessage('paymentMessage', '❌ Faltan datos para enviar', 'error');
                 closeModal();
                 return;
             }
             
             const btn = document.getElementById('btnConfirmTelegram');
-            if (!btn) {
-                console.error('❌ No se encontró el botón de confirmación');
-                return;
-            }
-            
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
             
             try {
-                console.log('📤 Iniciando envío a Telegram...');
-                
-                // 1. Enviar mensaje a Telegram
                 await sendTelegramMessage();
-                
-                // 2. Enviar archivo a Telegram
                 await sendTelegramFile();
-                
-                // 3. Mostrar mensaje de éxito
                 showMessage('paymentMessage', '✅ Reporte enviado exitosamente a Telegram', 'success');
-                
-                // 4. Cerrar modal y limpiar datos
                 closeModal();
-                
-                // 5. Recargar datos
                 setTimeout(() => {
-                    if (currentUser) {
-                        refreshUserData(); // [MEJORA] Usamos la nueva función
-                    }
+                    if (currentUser) refreshUserData();
                 }, 1500);
-                
             } catch (error) {
                 console.error('❌ Error enviando a Telegram:', error);
                 showMessage('paymentMessage', '❌ Error al enviar a Telegram: ' + error.message, 'error');
@@ -1413,106 +1597,76 @@
         }
         
         async function sendTelegramMessage() {
-            try {
-                const { referencia, fecha, monto } = pendingPayment;
-                const fechaFormateada = new Date(fecha).toLocaleDateString('es-VE');
-                const hora = new Date().toLocaleTimeString('es-VE');
-                
-                const mensaje = `━━━━━━━━━━━━━━━━━━━━\n` +
-                               `💰 *NUEVO PAGO REPORTADO*\n` +
-                               `👤 *Abonado:* ${currentUser.nombre}\n` +
-                               `🆔 *Código:* ${currentUser.codigo}\n` +
-                               `📡 *PPPoE:* ${currentUser.usuario_pppoe}\n` +
-                               `📞 *Teléfono:* ${currentUser.telefono || 'N/D'}\n` +
-                               `💵 *Monto:* Bs. ${formatCurrency(monto)}\n` +
-                               `📅 *Fecha pago:* ${fechaFormateada}\n` +
-                               `🔢 *Referencia:* ${referencia}\n` +
-                               `⏰ *Hora:* ${hora}\n` +
-                               `📊 *Tasa cambio:* ${CONFIG.tasaCambio.toFixed(2)} Bs./USD\n` +
-                               `━━━━━━━━━━━━━━━━━━━━\n`;
-                
-                const url = `https://api.telegram.org/bot${CONFIG.telegram.botToken}/sendMessage`;
-                
-                console.log('📨 Enviando mensaje a Telegram...');
-                
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: CONFIG.telegram.chatId,
-                        text: mensaje,
-                        parse_mode: 'Markdown'
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (!data.ok) {
-                    throw new Error(data.description || 'Error de Telegram');
-                }
-                
-                console.log('✅ Mensaje enviado a Telegram');
-                return true;
-                
-            } catch (error) {
-                console.error('❌ Error en sendTelegramMessage:', error);
-                throw error;
-            }
+            const { referencia, fecha, monto } = pendingPayment;
+            const fechaFormateada = new Date(fecha).toLocaleDateString('es-VE');
+            const hora = new Date().toLocaleTimeString('es-VE');
+            
+            const mensaje = `━━━━━━━━━━━━━━━━━━━━\n` +
+                           `💰 *NUEVO PAGO REPORTADO*\n` +
+                           `👤 *Abonado:* ${currentUser.nombre}\n` +
+                           `🆔 *Código:* ${currentUser.codigo}\n` +
+                           `📡 *PPPoE:* ${currentUser.usuario_pppoe}\n` +
+                           `📞 *Teléfono:* ${currentUser.telefono || 'N/D'}\n` +
+                           `💵 *Monto:* Bs. ${formatCurrency(monto)}\n` +
+                           `📅 *Fecha pago:* ${fechaFormateada}\n` +
+                           `🔢 *Referencia:* ${referencia}\n` +
+                           `⏰ *Hora:* ${hora}\n` +
+                           `📊 *Tasa cambio:* ${CONFIG.tasaCambio.toFixed(2)} Bs./USD\n` +
+                           `━━━━━━━━━━━━━━━━━━━━\n`;
+            
+            const url = `https://api.telegram.org/bot${CONFIG.telegram.botToken}/sendMessage`;
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: CONFIG.telegram.chatId,
+                    text: mensaje,
+                    parse_mode: 'Markdown'
+                })
+            });
+            
+            const data = await response.json();
+            if (!data.ok) throw new Error(data.description || 'Error de Telegram');
+            return true;
         }
         
         async function sendTelegramFile() {
-            try {
-                if (!uploadedFile) {
-                    throw new Error('No hay archivo para enviar');
-                }
-                
-                const url = `https://api.telegram.org/bot${CONFIG.telegram.botToken}/`;
-                const method = uploadedFile.type.startsWith('image/') ? 'sendPhoto' : 'sendDocument';
-                
-                const formData = new FormData();
-                formData.append('chat_id', CONFIG.telegram.chatId);
-                formData.append(method === 'sendPhoto' ? 'photo' : 'document', uploadedFile);
-                formData.append('caption', `📄 Comprobante: ${currentUser.nombre} | PPPoE: ${currentUser.usuario_pppoe} | Ref: ${pendingPayment.referencia}`);
-                formData.append('parse_mode', 'Markdown');
-                
-                console.log('📎 Enviando archivo a Telegram...');
-                
-                const response = await fetch(url + method, {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const data = await response.json();
-                
-                if (!data.ok) {
-                    throw new Error(data.description || 'Error subiendo archivo');
-                }
-                
-                console.log('✅ Archivo enviado a Telegram');
-                return true;
-                
-            } catch (error) {
-                console.error('❌ Error en sendTelegramFile:', error);
-                throw error;
-            }
+            const url = `https://api.telegram.org/bot${CONFIG.telegram.botToken}/`;
+            const method = uploadedFile.type.startsWith('image/') ? 'sendPhoto' : 'sendDocument';
+            const formData = new FormData();
+            formData.append('chat_id', CONFIG.telegram.chatId);
+            formData.append(method === 'sendPhoto' ? 'photo' : 'document', uploadedFile);
+            formData.append('caption', `📄 Comprobante: ${currentUser.nombre} | PPPoE: ${currentUser.usuario_pppoe} | Ref: ${pendingPayment.referencia}`);
+            formData.append('parse_mode', 'Markdown');
+            
+            const response = await fetch(url + method, {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            if (!data.ok) throw new Error(data.description || 'Error subiendo archivo');
+            return true;
         }
-        
-        // ================= FUNCIONES ASINCRONAS =================
         
         async function checkApiConnection() {
             try {
-                const response = await fetch(`${CONFIG.apiUrl}/health`);
+                const response = await fetch(`${CONFIG.apiUrl}/health`, {
+                    headers: {
+                        'X-Database': selectedDatabase
+                    }
+                });
+                
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                
                 const data = await response.json();
                 
                 if (data.h2?.connected) {
                     document.getElementById('statusIcon').style.color = '#10b981';
                     document.getElementById('statusText').textContent = 'Conectado';
-                    
-                    // ACTUALIZAR TASA DE CAMBIO DESDE LA API
                     if (data.tasa_cambio) {
                         CONFIG.tasaCambio = parseFloat(data.tasa_cambio);
-                        document.getElementById('exchangeRate').textContent = 
-                            CONFIG.tasaCambio.toFixed(2);
+                        document.getElementById('exchangeRate').textContent = CONFIG.tasaCambio.toFixed(2);
                     }
                 } else {
                     document.getElementById('statusIcon').style.color = '#f59e0b';
@@ -1521,7 +1675,7 @@
             } catch (error) {
                 console.error('Error en checkApiConnection:', error);
                 document.getElementById('statusIcon').style.color = '#f59e0b';
-                document.getElementById('statusText').textContent = 'Verificando conexión...';
+                document.getElementById('statusText').textContent = 'Verificando...';
             }
         }
         
@@ -1544,23 +1698,20 @@
                     method: 'POST',
                     headers: { 
                         'Content-Type': 'application/json',
-                        'Accept': 'application/json'
+                        'Accept': 'application/json',
+                        'X-Database': selectedDatabase
                     },
                     body: JSON.stringify({ nombre, codigo, telefono })
                 });
                 
                 const data = await response.json();
-                console.log('📊 Respuesta API login:', data);
                 
                 if (data.success) {
-                    // ACTUALIZAR TASA DE CAMBIO
                     if (data.tasa_cambio) {
                         CONFIG.tasaCambio = parseFloat(data.tasa_cambio);
-                        document.getElementById('exchangeRate').textContent = 
-                            CONFIG.tasaCambio.toFixed(2);
+                        document.getElementById('exchangeRate').textContent = CONFIG.tasaCambio.toFixed(2);
                     }
                     
-                    // Guardar datos del usuario
                     currentUser = {
                         ...data.abonado,
                         tasa_cambio: data.tasa_cambio,
@@ -1569,36 +1720,19 @@
                         pagos_cache: data.pagos || []
                     };
                     
-                    localStorage.setItem('portal_abonado', JSON.stringify({
-                        ...data.abonado,
-                        tasa_cambio: data.tasa_cambio,
-                        deuda_total_bs: data.abonado.deuda_total_bs || 0
-                    }));
-                    
-                    // Mostrar dashboard
+                    localStorage.setItem('portal_abonado', JSON.stringify(currentUser));
                     showMessage('loginMessage', '✅ Conexión exitosa', 'success');
                     
                     setTimeout(() => {
                         showDashboard();
                         loadUserData();
-                        
-                        // Usar deuda_total_bs para mostrar
                         const deudaBs = data.abonado.deuda_total_bs || 0;
                         const meses = data.deudas ? data.deudas.map(d => d.mes).join(', ') : '';
-                        
                         updateDebtDisplay(deudaBs, meses);
-                        
-                        if (data.pagos) {
-                            updatePaymentsTable(data.pagos);
-                        }
-                        
-                        // Actualizar estado de conexión
+                        if (data.pagos) updatePaymentsTable(data.pagos);
                         document.getElementById('statusIcon').style.color = '#10b981';
                         document.getElementById('statusText').textContent = 'Conectado';
-                        
-                        // [MEJORA] Programar refresco automático cada 60 segundos
                         startAutoRefresh();
-                        
                     }, 1000);
                     
                 } else {
@@ -1614,59 +1748,39 @@
                 btn.innerHTML = '<i class="fas fa-search"></i> Consultar';
             }
         }
-        
-        // [MEJORA] Función loadDebts simplificada
-        async function loadDebts() {
-            const success = await refreshUserData();
-            if (success) {
-                showMessage('debtMessage', '✅ Deuda actualizada correctamente', 'success');
-            } else {
-                showMessage('debtMessage', '❌ Error al actualizar la deuda', 'error');
-            }
-        }
-        
-        // [MEJORA] Función loadPayments simplificada
-        async function loadPayments() {
-            const success = await refreshUserData();
-            if (!success) {
-                console.log('No se pudieron cargar los pagos.');
-            }
-        }
-        
+
         // ================= INICIALIZACIÓN =================
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Portal de Pagos ISP inicializado');
+        async function inicializarApp() {
+            console.log('🚀 Inicializando aplicación...');
             
-            // Configurar eventos
             document.getElementById('comprobante').addEventListener('change', handleFileUpload);
+            updateDatabaseInfo();
+            await checkApiConnection();
             
-            // Verificar conexión a la API
-            checkApiConnection();
-            
-            // Verificar sesión guardada
             const savedUser = localStorage.getItem('portal_abonado');
             if (savedUser) {
                 try {
                     const userData = JSON.parse(savedUser);
-                    // [MEJORA] Asignación temporal para que refreshUserData funcione
                     currentUser = userData;
                     
-                    // Actualizar tasa si está guardada (será sobreescrita por refresh)
                     if (userData.tasa_cambio) {
                         CONFIG.tasaCambio = parseFloat(userData.tasa_cambio);
-                        document.getElementById('exchangeRate').textContent = 
-                            CONFIG.tasaCambio.toFixed(2);
+                        document.getElementById('exchangeRate').textContent = CONFIG.tasaCambio.toFixed(2);
                     }
                     
-                    // Mostrar dashboard inmediatamente
                     showDashboard();
                     loadUserData();
                     
-                    // Luego refrescar datos en segundo plano
-                    refreshUserData().then(() => {
-                        // Iniciar refresco automático después del primer refresco exitoso
-                        startAutoRefresh();
-                    });
+                    if (userData.deuda_total_bs !== undefined) {
+                        updateDebtDisplay(userData.deuda_total_bs, userData.deuda_meses || '');
+                    }
+                    
+                    if (userData.pagos_cache) {
+                        updatePaymentsTable(userData.pagos_cache);
+                    }
+                    
+                    await refreshUserData();
+                    startAutoRefresh();
                     
                 } catch (e) {
                     console.error('Error cargando sesión:', e);
@@ -1674,26 +1788,24 @@
                 }
             }
             
-            // Verificar tasa cada 30 segundos
             setInterval(async () => {
                 try {
-                    const response = await fetch(`${CONFIG.apiUrl}/tasa-cambio`);
+                    const response = await fetch(`${CONFIG.apiUrl}/tasa-cambio`, {
+                        headers: {
+                            'X-Database': selectedDatabase
+                        }
+                    });
                     const data = await response.json();
                     if (data.success && data.tasa_cambio !== CONFIG.tasaCambio) {
                         CONFIG.tasaCambio = data.tasa_cambio;
-                        document.getElementById('exchangeRate').textContent = 
-                            CONFIG.tasaCambio.toFixed(2);
-                        
-                        // [MEJORA] Si cambia la tasa, actualizar todos los montos en pantalla
-                        if (currentUser) {
-                            refreshUserData();
-                        }
+                        document.getElementById('exchangeRate').textContent = CONFIG.tasaCambio.toFixed(2);
+                        if (currentUser) await refreshUserData();
                     }
-                } catch (error) {
-                    // Silencioso
-                }
+                } catch (error) {}
             }, 30000);
-        });
+        }
+
+        document.addEventListener('DOMContentLoaded', inicializarApp);
     </script>
 </body>
 </html>
