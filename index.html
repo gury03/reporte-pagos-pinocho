@@ -976,7 +976,7 @@
                 password: 'Jrl16318027'
             },
             pagosPorZona: {
-                'Ayacucho': {
+                'los pozos': {
                     banco: '0102 Venezuela',
                     telefono: '04141556654',
                     cedula: '17003079'
@@ -986,10 +986,10 @@
                     telefono: '04147625684',
                     cedula: '18926859'
                 },
-                'los Pozos': {
+                'las canoas': {
                     banco: '0102 Venezuela',
-                    telefono: '00000000000',
-                    cedula: '100000000'
+                    telefono: '04164034490',
+                    cedula: '17114655'
                 }
             }
         };
@@ -1596,7 +1596,7 @@
             try {
                 await sendTelegramMessage();
                 await sendTelegramFile();
-                showMessage('paymentMessage', '✅ Reporte enviado exitosamente', 'success');
+                showMessage('paymentMessage', '✅ Reporte enviado exitosamente a Telegram', 'success');
                 closeModal();
                 setTimeout(() => {
                     if (currentUser) refreshUserData();
