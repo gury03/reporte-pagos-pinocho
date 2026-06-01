@@ -585,6 +585,83 @@
         .close-btn:hover {
             color: var(--dark);
         }
+
+        /* Estilos para el selector de base de datos en login */
+        .database-selector {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .database-selector label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .database-selector select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid var(--gray-light);
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+            cursor: pointer;
+        }
+        
+        .database-selector select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .refresh-db-btn {
+            background: var(--gray);
+            padding: 8px 12px;
+            width: auto;
+            margin-left: 10px;
+            font-size: 14px;
+        }
+        
+        .db-selector-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .db-selector-wrapper select {
+            flex: 1;
+        }
+
+        /* Modal para configurar nombres de bases de datos */
+        .db-config-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border: 2px solid var(--gray-light);
+        }
+        
+        .db-config-item label {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .db-config-item input {
+            padding: 8px 12px;
+            font-size: 14px;
+        }
+        
+        .db-config-name {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+        
+        .save-names-btn {
+            margin-top: 20px;
+            background: var(--success);
+        }
     </style>
 </head>
 <body>
@@ -624,6 +701,22 @@
                 <p class="login-subtitle">Ingresa tus datos para acceder al sistema</p>
                 
                 <div id="loginMessage" class="message"></div>
+                
+                <!-- Selector de Base de Datos -->
+                <div class="database-selector">
+                    <label><i class="fas fa-database"></i> Selecciona tu zona:</label>
+                    <div class="db-selector-wrapper">
+                        <select id="databaseSelect" onchange="onDatabaseSelectChange()">
+                            <option value="">Cargando zonas...</option>
+                        </select>
+                        <button type="button" onclick="loadDatabasesForSelector()" class="refresh-db-btn" title="Recargar zonas">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <p style="font-size: 12px; color: var(--gray); margin-top: 5px;">
+                        <i class="fas fa-info-circle"></i> Selecciona la zona donde resides
+                    </p>
+                </div>
                 
                 <div class="form-group">
                     <label>Nombre Completo *</label>
@@ -918,21 +1011,21 @@
         </div>
     </div>
 
-    <!-- Modal de Selección de Base de Datos -->
+    <!-- Modal de Selección de Base de Datos (Técnico) -->
     <div class="modal" id="techDatabaseModal">
         <div class="modal-content">
             <button class="close-btn" onclick="closeTechDatabaseModal()">
                 <i class="fas fa-times"></i>
             </button>
             
-            <h2><i class="fas fa-database"></i> Seleccionar Base de Datos</h2>
-            <p>Elige la base de datos que deseas consultar</p>
+            <h2><i class="fas fa-database"></i> Gestión de Bases de Datos</h2>
+            <p>Configura los nombres que verán los usuarios</p>
             
             <div id="databaseMessage" class="message"></div>
             
             <div class="database-selector-modal">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <h3 style="color: var(--dark);">Bases de datos disponibles</h3>
+                    <h3 style="color: var(--dark);">Configurar nombres de zonas</h3>
                     <button onclick="loadDatabases()" class="btn-secondary" style="width: auto; padding: 8px 15px;">
                         <i class="fas fa-sync-alt"></i> Recargar
                     </button>
@@ -943,14 +1036,18 @@
                     <p style="margin-top: 15px;">Cargando bases de datos...</p>
                 </div>
                 
-                <div class="database-list" id="databaseList">
-                    <!-- Las bases de datos se cargarán aquí dinámicamente -->
+                <div id="configDatabaseList">
+                    <!-- Lista de bases de datos con inputs para configurar nombres -->
                 </div>
+                
+                <button onclick="saveDatabaseNames()" class="save-names-btn">
+                    <i class="fas fa-save"></i> Guardar nombres
+                </button>
                 
                 <div style="margin-top: 20px;">
                     <p style="font-size: 14px; color: var(--gray);">
                         <i class="fas fa-info-circle"></i> 
-                        La selección se guardará automáticamente y se usará para todas las consultas.
+                        Aquí puedes configurar el nombre que verán los usuarios en el selector de zona.
                     </p>
                 </div>
             </div>
@@ -995,23 +1092,105 @@
             }
         };
 
-        // ================= VARIABLES GLOBALES =================
-        let currentUser = null;
-        let currentCurrency = 'BS';
-        let uploadedFile = null;
-        let pendingFile = null;  // Variable global para el archivo
-        let pendingPayment = null;
-        let refreshInterval = null;
-        let isTechLoggedIn = false;
-        let selectedDatabase = localStorage.getItem('selectedDatabase') || 'isp_control';
+        // ================= MAPEO DE NOMBRES DE BASES DE DATOS =================
+        // Diccionario para almacenar los nombres amigables de las bases de datos
+        let databaseDisplayNames = {};
+
+        // Cargar nombres guardados desde localStorage
+        function loadDisplayNames() {
+            const saved = localStorage.getItem('database_display_names');
+            if (saved) {
+                try {
+                    databaseDisplayNames = JSON.parse(saved);
+                } catch(e) {
+                    console.error('Error cargando nombres:', e);
+                    databaseDisplayNames = {};
+                }
+            }
+        }
+
+        // Guardar nombres en localStorage
+        function saveDisplayNames() {
+            localStorage.setItem('database_display_names', JSON.stringify(databaseDisplayNames));
+        }
+
+        // Obtener nombre para mostrar de una base de datos
+        function getDisplayName(dbName) {
+            if (databaseDisplayNames[dbName] && databaseDisplayNames[dbName].trim() !== '') {
+                return databaseDisplayNames[dbName];
+            }
+            // Si no tiene nombre configurado, mostrar el nombre técnico
+            return dbName;
+        }
 
         // ================= FUNCIONES DE BASE DE DATOS =================
+        async function loadDatabasesForSelector() {
+            const select = document.getElementById('databaseSelect');
+            select.innerHTML = '<option value="">Cargando zonas...</option>';
+            select.disabled = true;
+            
+            try {
+                const response = await fetch(`${CONFIG.apiUrl}/databases`);
+                const data = await response.json();
+                
+                select.innerHTML = '<option value="">Selecciona una zona...</option>';
+                
+                if (data.success && data.databases && data.databases.length > 0) {
+                    data.databases.forEach(db => {
+                        const option = document.createElement('option');
+                        option.value = db;
+                        // Mostrar el nombre amigable si existe, sino el nombre técnico
+                        option.textContent = getDisplayName(db);
+                        // Guardar el nombre técnico como atributo para referencia
+                        option.setAttribute('data-db-name', db);
+                        if (db === selectedDatabase) {
+                            option.selected = true;
+                        }
+                        select.appendChild(option);
+                    });
+                    
+                    if (!selectedDatabase && data.databases.length > 0) {
+                        selectedDatabase = data.databases[0];
+                        select.value = selectedDatabase;
+                        localStorage.setItem('selectedDatabase', selectedDatabase);
+                        updateDatabaseInfo();
+                    }
+                } else {
+                    select.innerHTML = '<option value="">No hay zonas disponibles</option>';
+                }
+            } catch (error) {
+                console.error('Error cargando bases de datos:', error);
+                select.innerHTML = '<option value="">Error al cargar zonas</option>';
+            } finally {
+                select.disabled = false;
+            }
+        }
+        
+        function onDatabaseSelectChange() {
+            const select = document.getElementById('databaseSelect');
+            const selectedOption = select.options[select.selectedIndex];
+            const newDatabase = select.value;
+            
+            if (newDatabase) {
+                selectedDatabase = newDatabase;
+                localStorage.setItem('selectedDatabase', selectedDatabase);
+                updateDatabaseInfo();
+                showMessage('loginMessage', `✅ Zona seleccionada: ${getDisplayName(selectedDatabase)}`, 'success');
+                
+                // Si hay sesión activa, cerrarla para evitar inconsistencias
+                if (currentUser) {
+                    logout();
+                    showMessage('loginMessage', '⚠️ La sesión se ha cerrado debido al cambio de zona. Por favor, inicia sesión nuevamente.', 'warning');
+                }
+            }
+        }
+
         async function loadDatabases() {
             const dbLoading = document.getElementById('databaseLoading');
-            const dbList = document.getElementById('databaseList');
+            const configList = document.getElementById('configDatabaseList');
             
             dbLoading.style.display = 'block';
-            dbList.innerHTML = '';
+            configList.innerHTML = '';
             
             try {
                 const response = await fetch(`${CONFIG.apiUrl}/databases`, {
@@ -1024,9 +1203,9 @@
                 dbLoading.style.display = 'none';
                 
                 if (data.success && data.databases && data.databases.length > 0) {
-                    renderDatabaseList(data.databases);
+                    renderConfigDatabaseList(data.databases);
                 } else {
-                    dbList.innerHTML = `
+                    configList.innerHTML = `
                         <div style="text-align: center; padding: 40px; color: var(--gray);">
                             <i class="fas fa-database" style="font-size: 48px; opacity: 0.5; margin-bottom: 20px;"></i>
                             <h3>No hay bases de datos disponibles</h3>
@@ -1036,7 +1215,7 @@
             } catch (error) {
                 console.error('Error cargando bases de datos:', error);
                 dbLoading.style.display = 'none';
-                dbList.innerHTML = `
+                configList.innerHTML = `
                     <div style="text-align: center; padding: 40px; color: var(--danger);">
                         <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 20px;"></i>
                         <h3>Error al cargar bases de datos</h3>
@@ -1046,34 +1225,74 @@
             }
         }
 
-        function renderDatabaseList(databases) {
-            const dbList = document.getElementById('databaseList');
-            dbList.innerHTML = '';
+        function renderConfigDatabaseList(databases) {
+            const configList = document.getElementById('configDatabaseList');
+            configList.innerHTML = '';
             
             databases.forEach(db => {
-                const isSelected = db === selectedDatabase;
+                const currentDisplayName = databaseDisplayNames[db] || '';
                 const dbItem = document.createElement('div');
-                dbItem.className = `database-item ${isSelected ? 'selected' : ''}`;
-                dbItem.onclick = () => selectDatabase(db);
+                dbItem.className = 'db-config-item';
                 
                 dbItem.innerHTML = `
-                    <i class="fas ${isSelected ? 'fa-check-circle' : 'fa-database'}"></i>
-                    <div class="database-item-info">
-                        <div class="database-item-name">${db}</div>
-                        <div class="database-item-desc">${isSelected ? '✓ Base de datos activa' : 'Haz clic para seleccionar'}</div>
+                    <div class="db-config-name">
+                        <i class="fas fa-database"></i> Nombre técnico: <strong>${db}</strong>
                     </div>
+                    <label>Nombre para mostrar en el selector:</label>
+                    <input type="text" class="db-name-input" data-db="${db}" value="${escapeHtml(currentDisplayName)}" placeholder="Ej: Rio Chiquito, La Vega, Centro...">
+                    <p style="font-size: 12px; color: var(--gray); margin-top: 5px;">
+                        <i class="fas fa-info-circle"></i> Si dejas en blanco, se mostrará el nombre técnico: ${db}
+                    </p>
                 `;
                 
-                dbList.appendChild(dbItem);
+                configList.appendChild(dbItem);
             });
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function saveDatabaseNames() {
+            const inputs = document.querySelectorAll('.db-name-input');
+            inputs.forEach(input => {
+                const dbName = input.getAttribute('data-db');
+                const displayName = input.value.trim();
+                if (displayName) {
+                    databaseDisplayNames[dbName] = displayName;
+                } else {
+                    delete databaseDisplayNames[dbName];
+                }
+            });
+            
+            saveDisplayNames();
+            showMessage('databaseMessage', '✅ Nombres guardados correctamente', 'success');
+            
+            // Actualizar el selector del login
+            loadDatabasesForSelector();
+            
+            // Si hay sesión activa, refrescar
+            if (currentUser) {
+                refreshUserData();
+            }
         }
 
         function selectDatabase(database) {
             selectedDatabase = database;
             localStorage.setItem('selectedDatabase', database);
             updateDatabaseInfo();
+            
+            // Actualizar también el selector del login
+            const loginSelect = document.getElementById('databaseSelect');
+            if (loginSelect) {
+                loginSelect.value = database;
+            }
+            
             loadDatabases();
-            showMessage('databaseMessage', `✅ Base de datos cambiada a: ${database}`, 'success');
+            showMessage('databaseMessage', `✅ Base de datos cambiada a: ${getDisplayName(database)}`, 'success');
             
             if (currentUser) {
                 refreshUserData();
@@ -1086,7 +1305,7 @@
             
             if (selectedDatabase) {
                 dbInfo.style.display = 'flex';
-                currentDbSpan.textContent = selectedDatabase;
+                currentDbSpan.textContent = getDisplayName(selectedDatabase);
             } else {
                 dbInfo.style.display = 'none';
             }
@@ -1129,6 +1348,7 @@
                 showTechLoginModal();
                 return;
             }
+            loadDisplayNames();
             document.getElementById('techDatabaseModal').style.display = 'flex';
             loadDatabases();
         }
@@ -1138,7 +1358,16 @@
             document.getElementById('databaseMessage').style.display = 'none';
         }
 
-        // ================= FUNCIONES DE INTERFAZ =================
+        // ================= RESTO DE FUNCIONES (igual que antes) =================
+        let currentUser = null;
+        let currentCurrency = 'BS';
+        let uploadedFile = null;
+        let pendingFile = null;
+        let pendingPayment = null;
+        let refreshInterval = null;
+        let isTechLoggedIn = false;
+        let selectedDatabase = localStorage.getItem('selectedDatabase') || '';
+
         function showDashboard() {
             document.getElementById('loginSection').style.display = 'none';
             document.getElementById('dashboardSection').style.display = 'block';
@@ -1439,7 +1668,6 @@
                 return;
             }
             
-            // Guardar en ambas variables para respaldo
             uploadedFile = file;
             pendingFile = file;
             
@@ -1464,13 +1692,11 @@
             return (bytes / 1048576).toFixed(2) + ' MB';
         }
         
-        // ================= VALIDAR PAGO =================
         async function validatePayment() {
             const referencia = document.getElementById('referencia').value.trim();
             const fecha = document.getElementById('fechaPago').value;
             const monto = document.getElementById('monto').value;
             
-            // Validaciones
             if (!referencia || referencia.length < 6) {
                 showMessage('paymentMessage', 'La referencia debe tener al menos 6 caracteres', 'error');
                 return;
@@ -1485,13 +1711,11 @@
                 return;
             }
             
-            // Verificar archivo en ambas variables
             if (!uploadedFile && !pendingFile) {
                 showMessage('paymentMessage', 'Debes subir el comprobante', 'error');
                 return;
             }
             
-            // Asegurar que tenemos el archivo en ambas variables
             if (uploadedFile && !pendingFile) {
                 pendingFile = uploadedFile;
             }
@@ -1499,13 +1723,11 @@
                 uploadedFile = pendingFile;
             }
             
-            // Verificar que el usuario está autenticado
             if (!currentUser || !currentUser.id) {
                 showMessage('paymentMessage', '❌ Error de sesión. Por favor, inicia sesión nuevamente.', 'error');
                 return;
             }
             
-            // Verificar deuda
             if (!currentUser.deuda_total_bs || currentUser.deuda_total_bs <= 0) {
                 showMessage('paymentMessage', '✅ Usted no tiene deudas pendientes', 'success');
                 return;
@@ -1517,7 +1739,6 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
             
             try {
-                // VERIFICAR CON EL SERVIDOR
                 const verifyPayload = {
                     id_abonado: currentUser.id,
                     referencia: referencia,
@@ -1539,27 +1760,20 @@
                 const verifyData = await verifyResponse.json();
                 console.log('📊 Respuesta verificación:', verifyData);
                 
-                // SI YA EXISTE, MOSTRAR ALERTA Y NO CONTINUAR
                 if (verifyData.exists) {
-                    // Mostrar alerta emergente
                     alert('⏳ ' + verifyData.message);
-                    
-                    // También mostrar en el modal por si acaso
                     showMessage('paymentMessage', verifyData.message, 'warning');
-                    
                     btn.disabled = false;
                     btn.innerHTML = originalText;
                     return;
                 }
                 
-                // SI NO EXISTE, GUARDAR DATOS
                 window.pendingPaymentData = { 
                     referencia: referencia, 
                     fecha: fecha, 
                     monto: montoNum 
                 };
                 
-                // Asegurar que el archivo está guardado
                 if (!pendingFile && uploadedFile) {
                     pendingFile = uploadedFile;
                 }
@@ -1569,13 +1783,11 @@
                     file: pendingFile ? pendingFile.name : 'No hay archivo'
                 });
                 
-                // Actualizar modal de confirmación
                 document.getElementById('confirmName').textContent = currentUser.nombre;
                 document.getElementById('confirmRef').textContent = referencia;
                 document.getElementById('confirmDate').textContent = new Date(fecha).toLocaleDateString('es-VE');
                 document.getElementById('confirmAmount').textContent = formatCurrency(montoNum) + ' Bs.';
                 
-                // Cerrar modal de pago y abrir modal de confirmación
                 document.getElementById('paymentModal').style.display = 'none';
                 document.getElementById('confirmationModal').style.display = 'flex';
                 
@@ -1588,11 +1800,9 @@
             }
         }
         
-        // ================= FUNCIÓN PRINCIPAL DE ENVÍO =================
         async function sendToTelegram() {
             console.log('🚀 INICIANDO PROCESO DE PAGO');
             
-            // Usar los datos guardados
             const paymentData = window.pendingPaymentData;
             const fileToSend = pendingFile || uploadedFile;
             
@@ -1602,7 +1812,6 @@
                 fileType: fileToSend ? fileToSend.type : 'N/A'
             });
             
-            // Validación inicial
             if (!currentUser) {
                 console.error('❌ No hay usuario autenticado');
                 showMessage('paymentMessage', '❌ Debes iniciar sesión primero', 'error');
@@ -1630,7 +1839,6 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
             
             try {
-                // PASO 1: VERIFICACIÓN NUEVAMENTE (por seguridad)
                 const verifyPayload = {
                     id_abonado: currentUser.id,
                     referencia: paymentData.referencia,
@@ -1653,39 +1861,29 @@
                 console.log('📊 Resultado verificación:', verifyData);
                 
                 if (verifyData.exists) {
-                    // Mostrar alerta emergente
                     alert('⏳ ' + verifyData.message);
-                    
-                    // También mostrar en el modal
                     showMessage('paymentMessage', verifyData.message, 'warning');
-                    
                     closeModal();
                     btn.disabled = false;
                     btn.innerHTML = originalText;
                     return;
                 }
                 
-                // PASO 2: PROCEDER CON EL ENVÍO
                 console.log('✅ VERIFICACIÓN EXITOSA - Enviando a Telegram...');
                 
-                // Cerrar modal de confirmación
                 closeModal();
                 
-                // Mostrar progreso en modal de pago
                 document.getElementById('paymentModal').style.display = 'flex';
                 const paymentMsg = document.getElementById('paymentMessage');
                 paymentMsg.textContent = '⏳ Enviando información...';
                 paymentMsg.className = 'message success';
                 paymentMsg.style.display = 'block';
                 
-                // Enviar mensaje a Telegram
                 await sendTelegramMessage(paymentData);
                 
-                // Subir comprobante
                 paymentMsg.textContent = '⏳ Subiendo comprobante...';
                 await sendTelegramFile(paymentData, fileToSend);
                 
-                // Registrar en base de datos
                 paymentMsg.textContent = '⏳ Registrando en sistema...';
                 
                 const registerPayload = {
@@ -1714,14 +1912,9 @@
                 if (registerData.success) {
                     console.log('✅ Pago registrado exitosamente:', registerData);
                     paymentMsg.textContent = '✅ ' + registerData.message;
-                    
-                    // Mostrar alerta de éxito
                     alert('✅ ¡Pago reportado correctamente! Está siendo verificado.');
-                    
-                    // Limpiar datos
                     window.pendingPaymentData = null;
                     removeFile();
-                    
                     setTimeout(() => {
                         closePaymentModal();
                         if (currentUser) refreshUserData();
@@ -1732,25 +1925,19 @@
                 
             } catch (error) {
                 console.error('❌ ERROR:', error);
-                
-                // Mostrar alerta de error
                 alert('❌ Error: ' + error.message);
-                
                 const paymentMsg = document.getElementById('paymentMessage');
                 paymentMsg.textContent = '❌ Error: ' + error.message;
                 paymentMsg.className = 'message error';
                 paymentMsg.style.display = 'block';
-                
                 document.getElementById('paymentModal').style.display = 'flex';
                 closeModal();
-                
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = originalText;
             }
         }
 
-        // ================= FUNCIÓN sendTelegramMessage =================
         async function sendTelegramMessage(paymentData) {
             if (!paymentData) {
                 throw new Error('No hay datos de pago');
@@ -1789,7 +1976,6 @@
             return true;
         }
 
-        // ================= FUNCIÓN sendTelegramFile =================
         async function sendTelegramFile(paymentData, file) {
             if (!paymentData) {
                 throw new Error('No hay datos de pago');
@@ -1818,13 +2004,15 @@
         
         function showMessage(elementId, message, type) {
             const element = document.getElementById(elementId);
-            element.textContent = message;
-            element.className = `message ${type}`;
-            element.style.display = 'block';
-            if (type === 'success') {
-                setTimeout(() => {
-                    element.style.display = 'none';
-                }, 5000);
+            if (element) {
+                element.textContent = message;
+                element.className = `message ${type}`;
+                element.style.display = 'block';
+                if (type === 'success') {
+                    setTimeout(() => {
+                        element.style.display = 'none';
+                    }, 5000);
+                }
             }
         }
         
@@ -1867,13 +2055,11 @@
                 console.log('📊 Datos refrescados:', data);
 
                 if (data.success) {
-                    // Actualizar tasa de cambio
                     if (data.tasa_cambio) {
                         CONFIG.tasaCambio = parseFloat(data.tasa_cambio);
                         document.getElementById('exchangeRate').textContent = CONFIG.tasaCambio.toFixed(2);
                     }
                     
-                    // Actualizar currentUser con los nuevos datos
                     currentUser = {
                         ...data.abonado,
                         tasa_cambio: data.tasa_cambio || CONFIG.tasaCambio,
@@ -1882,10 +2068,8 @@
                         pagos_cache: data.pagos || []
                     };
 
-                    // Guardar en localStorage
                     localStorage.setItem('portal_abonado', JSON.stringify(currentUser));
                     
-                    // Actualizar UI
                     loadUserData();
                     
                     const deudaBs = data.abonado.deuda_total_bs || 0;
@@ -1905,7 +2089,6 @@
                 
             } catch (error) {
                 console.error('❌ Error en refreshUserData:', error.message);
-                // No mostrar alerta aquí para no molestar al usuario
                 return false;
             }
         }
@@ -1922,7 +2105,7 @@
                 } else {
                     stopAutoRefresh();
                 }
-            }, 60000); // Cada 60 segundos
+            }, 60000);
         }
 
         function stopAutoRefresh() {
@@ -1966,6 +2149,11 @@
             const nombre = document.getElementById('nombre').value.trim();
             const codigo = document.getElementById('codigo').value.trim();
             const telefono = document.getElementById('telefono').value.trim();
+            
+            if (!selectedDatabase) {
+                showMessage('loginMessage', 'Por favor, selecciona una zona', 'error');
+                return;
+            }
             
             if (!nombre || !codigo || !telefono) {
                 showMessage('loginMessage', 'Todos los campos son obligatorios', 'error');
@@ -2033,12 +2221,14 @@
         }
 
         // ================= INICIALIZACIÓN =================
-        // ================= INICIALIZACIÓN =================
         async function inicializarApp() {
             console.log('🚀 Inicializando aplicación...');
             
+            loadDisplayNames(); // Cargar nombres guardados
+            
             document.getElementById('comprobante').addEventListener('change', handleFileUpload);
             updateDatabaseInfo();
+            await loadDatabasesForSelector();
             await checkApiConnection();
             
             const savedUser = localStorage.getItem('portal_abonado');
@@ -2063,7 +2253,6 @@
                         updatePaymentsTable(userData.pagos_cache);
                     }
                     
-                    // Intentar refrescar datos, pero no detener la app si falla
                     setTimeout(async () => {
                         try {
                             await refreshUserData();
@@ -2080,7 +2269,6 @@
                 }
             }
             
-            // Actualizar tasa de cambio cada 30 segundos
             setInterval(async () => {
                 try {
                     const response = await fetch(`${CONFIG.apiUrl}/tasa-cambio`, {
@@ -2093,7 +2281,6 @@
                         CONFIG.tasaCambio = data.tasa_cambio;
                         document.getElementById('exchangeRate').textContent = CONFIG.tasaCambio.toFixed(2);
                         if (currentUser) {
-                            // Actualizar display sin hacer fetch completo
                             updateDebtDisplay(currentUser.deuda_total_bs, currentUser.deuda_meses || '');
                             if (currentUser.plan_precio) {
                                 updateMonthlyFeeDisplay(currentUser.plan_precio);
