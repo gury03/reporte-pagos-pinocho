@@ -944,7 +944,9 @@
                         <option value="">Seleccione un proveedor...</option>
                     </select>
                 </div>
-                <div id="zonasConfigContainer"></div>
+                <div id="zonasConfigContainer">
+                    <p>Seleccione un proveedor para ver sus zonas</p>
+                </div>
             </div>
             
             <!-- Pestaña Telegram Global -->
@@ -986,7 +988,6 @@
         let isTechLoggedIn = false;
         let selectedDatabase = localStorage.getItem('selectedDatabase') || '';
         let pendingPaymentData = null;
-        let currentZonasList = [];
         let availableDatabases = [];
 
         // ================= FUNCIONES DE API =================
@@ -1000,7 +1001,7 @@
                     if (!CONFIG.zonasConfig) CONFIG.zonasConfig = {};
                     if (!CONFIG.telegram) CONFIG.telegram = { botToken: '', chatId: '' };
                     document.getElementById('exchangeRate').textContent = CONFIG.tasaCambio.toFixed(2);
-                    console.log('Configuración global cargada:', CONFIG);
+                    console.log('Configuración global cargada');
                     return true;
                 }
             } catch (error) {
@@ -1024,13 +1025,7 @@
                     body: JSON.stringify(configToSave)
                 });
                 const data = await response.json();
-                if (data.success) {
-                    console.log('Configuración guardada correctamente');
-                    return true;
-                } else {
-                    console.error('Error al guardar:', data);
-                    return false;
-                }
+                return data.success;
             } catch (error) {
                 console.error('Error guardando configuración:', error);
                 return false;
@@ -1049,6 +1044,22 @@
                 return [];
             } catch (error) {
                 console.error('Error cargando bases de datos:', error);
+                return [];
+            }
+        }
+
+        async function loadZonasFromAPI(proveedorId) {
+            try {
+                const response = await fetch(`${API_URL}/zonas`, {
+                    headers: { 'X-Database': proveedorId }
+                });
+                const data = await response.json();
+                if (data.success && data.zonas) {
+                    return data.zonas;
+                }
+                return [];
+            } catch (error) {
+                console.error('Error cargando zonas:', error);
                 return [];
             }
         }
@@ -1072,6 +1083,30 @@
                 telegram_bot_token: '',
                 telegram_chat_id: ''
             };
+        }
+
+        async function saveZonaConfig(proveedorId, zonaId, config) {
+            try {
+                const response = await fetch(`${API_URL}/zonas/${encodeURIComponent(zonaId)}`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'X-Database': proveedorId
+                    },
+                    body: JSON.stringify(config)
+                });
+                const data = await response.json();
+                if (data.success) {
+                    if (!CONFIG.zonasConfig[proveedorId]) CONFIG.zonasConfig[proveedorId] = {};
+                    CONFIG.zonasConfig[proveedorId][zonaId] = config;
+                    await saveGlobalConfig();
+                    return true;
+                }
+                return false;
+            } catch (error) {
+                console.error('Error guardando zona:', error);
+                return false;
+            }
         }
 
         function getTelegramConfig(proveedorId, zonaId) {
@@ -1607,7 +1642,7 @@
             const container = document.getElementById('proveedoresList');
             container.innerHTML = '';
             
-            if (!availableDatabases || availableDatabases.length === 0) {
+            if (availableDatabases.length === 0) {
                 container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner"></i> Cargando bases de datos...</div>';
                 await loadAvailableDatabases();
             }
@@ -1662,7 +1697,7 @@
             const select = document.getElementById('proveedorSelect');
             select.innerHTML = '<option value="">Seleccione un proveedor...</option>';
             
-            if (!availableDatabases || availableDatabases.length === 0) {
+            if (availableDatabases.length === 0) {
                 await loadAvailableDatabases();
             }
             
@@ -1685,32 +1720,22 @@
             document.getElementById('zonasConfigContainer').innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner"></i> Cargando zonas...</div>';
             
             try {
-                // Usar el endpoint /api/zonas con X-Database
-                const response = await fetch(`${API_URL}/zonas`, {
-                    headers: { 'X-Database': proveedorId }
-                });
-                const data = await response.json();
+                const zonas = await loadZonasFromAPI(proveedorId);
                 
-                if (data.success && data.zonas) {
-                    const zonas = data.zonas;
+                if (zonas && zonas.length > 0) {
                     renderZonasConfigList(proveedorId, zonas);
                 } else {
                     document.getElementById('zonasConfigContainer').innerHTML = '<p>No hay zonas disponibles en este proveedor</p>';
                 }
             } catch (error) {
                 console.error('Error cargando zonas:', error);
-                document.getElementById('zonasConfigContainer').innerHTML = '<p class="message error">Error cargando zonas. Asegúrate de que el proveedor tenga zonas configuradas.</p>';
+                document.getElementById('zonasConfigContainer').innerHTML = '<p class="message error">Error cargando zonas</p>';
             }
         }
 
         function renderZonasConfigList(proveedorId, zonas) {
             const container = document.getElementById('zonasConfigContainer');
             container.innerHTML = '';
-            
-            if (!zonas || zonas.length === 0) {
-                container.innerHTML = '<p>No hay zonas disponibles en este proveedor</p>';
-                return;
-            }
             
             zonas.forEach(zona => {
                 const zonaId = zona.id || zona.nombre;
@@ -1762,12 +1787,9 @@
                 telegram_chat_id: document.getElementById(`chat_${safeId}`)?.value || ''
             };
             
-            if (!CONFIG.zonasConfig[proveedorId]) {
-                CONFIG.zonasConfig[proveedorId] = {};
-            }
-            CONFIG.zonasConfig[proveedorId][zonaId] = config;
+            const success = await saveZonaConfig(proveedorId, zonaId, config);
             
-            if (await saveGlobalConfig()) {
+            if (success) {
                 showMessage('zonasMessage', `Configuración de zona guardada correctamente`, 'success');
             } else {
                 showMessage('zonasMessage', 'Error al guardar', 'error');
