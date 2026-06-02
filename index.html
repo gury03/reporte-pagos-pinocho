@@ -160,7 +160,7 @@
             color: var(--dark);
         }
 
-        input, select {
+        input, select, textarea {
             width: 100%;
             padding: 14px;
             border: 2px solid var(--gray-light);
@@ -169,7 +169,7 @@
             transition: all 0.3s;
         }
 
-        input:focus, select:focus {
+        input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
@@ -387,7 +387,7 @@
         .modal-content {
             background: white;
             border-radius: 12px;
-            max-width: 500px;
+            max-width: 600px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
@@ -565,6 +565,16 @@
             background: var(--success);
         }
 
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        .btn-sm {
+            padding: 8px 15px;
+            font-size: 14px;
+            width: auto;
+        }
+
         .btn-tech {
             background: linear-gradient(to right, var(--tech), #9d4edd);
         }
@@ -586,7 +596,6 @@
             color: var(--dark);
         }
 
-        /* Estilos para el selector de base de datos en login */
         .database-selector {
             margin-bottom: 20px;
             text-align: left;
@@ -609,12 +618,6 @@
             cursor: pointer;
         }
         
-        .database-selector select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-        
         .refresh-db-btn {
             background: var(--gray);
             padding: 8px 12px;
@@ -633,34 +636,71 @@
             flex: 1;
         }
 
-        /* Modal para configurar nombres de bases de datos */
-        .db-config-item {
+        .zone-config-item {
             background: white;
-            padding: 15px;
-            margin-bottom: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
             border-radius: 8px;
             border: 2px solid var(--gray-light);
         }
         
-        .db-config-item label {
+        .zone-config-item h4 {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .zone-config-item .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .zone-config-item label {
             font-size: 14px;
             margin-bottom: 5px;
         }
         
-        .db-config-item input {
+        .zone-config-item input {
             padding: 8px 12px;
             font-size: 14px;
         }
         
-        .db-config-name {
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 8px;
+        .zone-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--gray-light);
+            padding-bottom: 10px;
         }
         
-        .save-names-btn {
-            margin-top: 20px;
+        .tab {
+            padding: 10px 20px;
+            background: var(--gray-light);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+
+        .add-zone-btn {
             background: var(--success);
+            margin-bottom: 20px;
         }
     </style>
 </head>
@@ -702,9 +742,8 @@
                 
                 <div id="loginMessage" class="message"></div>
                 
-                <!-- Selector de Base de Datos -->
                 <div class="database-selector">
-                    <label><i class="fas fa-database"></i> Selecciona tu zona:</label>
+                    <label><i class="fas fa-map-marker-alt"></i> Selecciona tu zona:</label>
                     <div class="db-selector-wrapper">
                         <select id="databaseSelect" onchange="onDatabaseSelectChange()">
                             <option value="">Cargando zonas...</option>
@@ -713,9 +752,6 @@
                             <i class="fas fa-sync-alt"></i>
                         </button>
                     </div>
-                    <p style="font-size: 12px; color: var(--gray); margin-top: 5px;">
-                        <i class="fas fa-info-circle"></i> Selecciona la zona donde resides
-                    </p>
                 </div>
                 
                 <div class="form-group">
@@ -746,7 +782,6 @@
 
         <!-- Dashboard Section -->
         <div class="dashboard-section" id="dashboardSection">
-            <!-- User Info -->
             <div class="user-card">
                 <div class="user-info">
                     <h2 id="userName">Nombre del Abonado</h2>
@@ -761,7 +796,6 @@
                 </div>
             </div>
 
-            <!-- Debt Summary -->
             <div class="card">
                 <div class="card-header">
                     <h2><i class="fas fa-file-invoice-dollar"></i> Estado de Cuenta</h2>
@@ -799,7 +833,6 @@
                     </div>
                 </div>
 
-                <!-- Botones de acción -->
                 <div class="action-buttons">
                     <button onclick="showPaymentModal()" class="btn-primary">
                         <i class="fas fa-credit-card"></i> Registrar Pago
@@ -810,7 +843,6 @@
                 </div>
             </div>
 
-            <!-- Payments History -->
             <div class="card">
                 <h2><i class="fas fa-history"></i> Historial de Pagos</h2>
                 
@@ -828,9 +860,7 @@
                                 <th>Método</th>
                             </tr>
                         </thead>
-                        <tbody id="paymentsBody">
-                            <!-- Datos cargados desde la base de datos -->
-                        </tbody>
+                        <tbody id="paymentsBody"></tbody>
                     </table>
                 </div>
                 
@@ -843,309 +873,251 @@
         </div>
     </div>
 
-    <!-- Modal para Registrar Pago -->
+    <!-- Modales -->
     <div class="modal" id="paymentModal">
         <div class="modal-content">
-            <button class="close-btn" onclick="closePaymentModal()">
-                <i class="fas fa-times"></i>
-            </button>
-            
+            <button class="close-btn" onclick="closePaymentModal()"><i class="fas fa-times"></i></button>
             <h2><i class="fas fa-credit-card"></i> Registrar Pago</h2>
-            <p>Completa los datos para reportar tu pago</p>
-            
             <div id="paymentMessage" class="message"></div>
-            
-            <!-- Datos para Pago Móvil -->
             <div class="payment-method-card">
-                <h3 style="margin-bottom: 15px; color: var(--primary);">
-                    <i class="fas fa-mobile-alt"></i> Datos para Pago Móvil
-                </h3>
-                
-                <div style="margin-bottom: 15px; padding: 10px; background: #e0f2fe; border-radius: 6px; border-left: 4px solid #0ea5e9;">
-                    <p style="margin: 0; font-size: 14px; color: #0369a1;">
-                        <i class="fas fa-map-marker-alt"></i> 
-                        Zona actual: <span id="currentZone" style="font-weight: bold;"></span>
-                    </p>
+                <h3><i class="fas fa-mobile-alt"></i> Datos para Pago Móvil</h3>
+                <div style="margin-bottom: 15px; padding: 10px; background: #e0f2fe; border-radius: 6px;">
+                    <p><i class="fas fa-map-marker-alt"></i> Zona: <span id="currentZone" style="font-weight: bold;"></span></p>
                 </div>
-                
-                <div class="payment-detail">
-                    <div>
-                        <strong>Banco:</strong>
-                        <span id="pagoMovilBanco" style="font-weight: bold; color: var(--dark);">0102 Venezuela</span>
-                    </div>
-                </div>
-                
-                <div class="payment-detail">
-                    <div>
-                        <strong>Teléfono:</strong>
-                        <span id="pagoMovilTelefono" style="font-weight: bold; color: var(--dark);">04261308075</span>
-                    </div>
-                </div>
-                
-                <div class="payment-detail">
-                    <div>
-                        <strong>Cédula/RIF:</strong>
-                        <span id="pagoMovilCedula" style="font-weight: bold; color: var(--dark);">16318027</span>
-                    </div>
-                </div>
-                
-                <div class="payment-detail">
-                    <div>
-                        <strong>Monto a pagar:</strong>
-                        <span id="pagoMovilMonto" style="font-weight: bold; color: var(--danger); font-size: 18px;">0,00 Bs.</span>
-                    </div>
-                </div>
-                
-                <button class="copy-all-btn" onclick="copyAllPagoMovil()" id="copyAllBtn">
-                    <i class="fas fa-copy"></i> Copiar Datos de Pago Móvil
-                </button>
-                
-                <div style="margin-top: 15px; padding: 15px; background: #f0f9ff; border-radius: 8px; border-left: 4px solid var(--primary);">
-                    <p style="font-size: 14px; color: var(--gray); margin: 0;">
-                        <i class="fas fa-info-circle"></i> 
-                        Al hacer clic se copiará: "0102 04261308075 16318027 MONTO" (sin decimales)
-                    </p>
-                </div>
+                <div class="payment-detail"><div><strong>Banco:</strong> <span id="pagoMovilBanco"></span></div></div>
+                <div class="payment-detail"><div><strong>Teléfono:</strong> <span id="pagoMovilTelefono"></span></div></div>
+                <div class="payment-detail"><div><strong>Cédula/RIF:</strong> <span id="pagoMovilCedula"></span></div></div>
+                <div class="payment-detail"><div><strong>Monto a pagar:</strong> <span id="pagoMovilMonto" style="color: var(--danger); font-weight: bold;"></span></div></div>
+                <button class="copy-all-btn" onclick="copyAllPagoMovil()"><i class="fas fa-copy"></i> Copiar Datos de Pago Móvil</button>
             </div>
-            
-            <!-- Formulario para reportar pago -->
-            <div style="margin-top: 25px;">
-                <h3 style="margin-bottom: 15px; color: var(--primary);">
-                    <i class="fas fa-file-invoice"></i> Reportar Pago Realizado
-                </h3>
-                
+            <div>
+                <h3><i class="fas fa-file-invoice"></i> Reportar Pago Realizado</h3>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
-                    <div>
-                        <label>Referencia *</label>
-                        <input type="text" id="referencia" placeholder="Ej: TRF-001234">
-                    </div>
-                    <div>
-                        <label>Fecha de pago *</label>
-                        <input type="date" id="fechaPago">
-                    </div>
-                    <div>
-                        <label>Monto pagado (Bs.) *</label>
-                        <input type="number" id="monto" placeholder="50.00" step="0.01">
-                    </div>
+                    <div><label>Referencia *</label><input type="text" id="referencia" placeholder="Ej: TRF-001234"></div>
+                    <div><label>Fecha de pago *</label><input type="date" id="fechaPago"></div>
+                    <div><label>Monto pagado (Bs.) *</label><input type="number" id="monto" step="0.01"></div>
                 </div>
-                
                 <div style="margin: 20px 0;">
                     <label>Comprobante de pago *</label>
                     <div style="border: 2px dashed var(--gray-light); border-radius: 8px; padding: 30px; text-align: center; cursor: pointer;" onclick="document.getElementById('comprobante').click()">
-                        <i class="fas fa-cloud-upload-alt" style="font-size: 48px; color: var(--primary); margin-bottom: 10px;"></i>
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 48px; color: var(--primary);"></i>
                         <div>Haz clic para subir comprobante</div>
-                        <div style="font-size: 14px; color: var(--gray); margin-top: 5px;">Formatos: JPG, PNG, PDF - Máx: 10MB</div>
                     </div>
                     <input type="file" id="comprobante" accept="image/*,.pdf" style="display: none;">
-                    <div id="fileInfo" style="margin-top: 10px; padding: 10px; background: var(--light); border-radius: 8px; display: none;">
-                        <span id="fileName"></span> (<span id="fileSize"></span>)
-                        <button onclick="removeFile()" style="float: right; background: var(--danger); padding: 5px 10px; font-size: 12px; border: none; color: white; border-radius: 4px; cursor: pointer;">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
+                    <div id="fileInfo" style="margin-top: 10px; display: none;"><span id="fileName"></span> <button onclick="removeFile()">✖</button></div>
                 </div>
-                
                 <div class="action-buttons">
-                    <button onclick="closePaymentModal()" class="btn-secondary">
-                        <i class="fas fa-times"></i> Cancelar
-                    </button>
-                    <button onclick="validatePayment()" class="btn-success" id="btnSendPayment">
-                        <i class="fas fa-paper-plane"></i> Enviar
-                    </button>
+                    <button onclick="closePaymentModal()" class="btn-secondary">Cancelar</button>
+                    <button onclick="validatePayment()" class="btn-success">Enviar</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal de Confirmación de Pago -->
     <div class="modal" id="confirmationModal">
         <div class="modal-content">
-            <button class="close-btn" onclick="closeModal()">
-                <i class="fas fa-times"></i>
-            </button>
-            
+            <button class="close-btn" onclick="closeModal()"><i class="fas fa-times"></i></button>
             <h2><i class="fas fa-check-circle"></i> Confirmar Envío</h2>
-            <p>Revisa la información antes de enviar:</p>
-            
             <div style="background: var(--light); padding: 20px; border-radius: 8px; margin: 20px 0;">
                 <p><strong>Abonado:</strong> <span id="confirmName"></span></p>
                 <p><strong>Referencia:</strong> <span id="confirmRef"></span></p>
                 <p><strong>Fecha:</strong> <span id="confirmDate"></span></p>
-                <p><strong>Monto:</strong> <span id="confirmAmount" style="color: var(--success); font-weight: bold;"></span></p>
+                <p><strong>Monto:</strong> <span id="confirmAmount"></span></p>
             </div>
-            
             <div class="action-buttons">
                 <button onclick="closeModal()" class="btn-secondary">Cancelar</button>
-                <button onclick="sendToTelegram()" class="btn-success" id="btnConfirmTelegram">
-                    <i class="fas fa-paper-plane"></i> Enviar
-                </button>
+                <button onclick="sendToTelegram()" class="btn-success">Enviar a Telegram</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal de Login Técnico -->
     <div class="modal" id="techLoginModal">
         <div class="modal-content">
-            <button class="close-btn" onclick="closeTechLoginModal()">
-                <i class="fas fa-times"></i>
-            </button>
-            
+            <button class="close-btn" onclick="closeTechLoginModal()"><i class="fas fa-times"></i></button>
             <h2><i class="fas fa-cog"></i> Acceso Técnico</h2>
-            <p>Ingresa tus credenciales</p>
-            
             <div id="techLoginMessage" class="message"></div>
-            
-            <div class="form-group">
-                <label>Usuario</label>
-                <input type="text" id="techUser" placeholder="Usuario">
-            </div>
-            
-            <div class="form-group">
-                <label>Contraseña</label>
-                <input type="password" id="techPassword" placeholder="Contraseña">
-            </div>
-            
-            <button onclick="validateTechLogin()" class="btn-tech">
-                <i class="fas fa-sign-in-alt"></i> Ingresar
-            </button>
+            <div class="form-group"><label>Usuario</label><input type="text" id="techUser"></div>
+            <div class="form-group"><label>Contraseña</label><input type="password" id="techPassword"></div>
+            <button onclick="validateTechLogin()">Ingresar</button>
         </div>
     </div>
 
-    <!-- Modal de Selección de Base de Datos (Técnico) -->
-    <div class="modal" id="techDatabaseModal">
+    <div class="modal" id="configModal">
         <div class="modal-content">
-            <button class="close-btn" onclick="closeTechDatabaseModal()">
-                <i class="fas fa-times"></i>
-            </button>
-            
-            <h2><i class="fas fa-database"></i> Gestión de Bases de Datos</h2>
-            <p>Configura los nombres que verán los usuarios</p>
-            
-            <div id="databaseMessage" class="message"></div>
-            
-            <div class="database-selector-modal">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <h3 style="color: var(--dark);">Configurar nombres de zonas</h3>
-                    <button onclick="loadDatabases()" class="btn-secondary" style="width: auto; padding: 8px 15px;">
-                        <i class="fas fa-sync-alt"></i> Recargar
-                    </button>
-                </div>
-                
-                <div id="databaseLoading" style="text-align: center; padding: 30px; display: none;">
-                    <i class="fas fa-spinner fa-spin fa-3x" style="color: var(--primary);"></i>
-                    <p style="margin-top: 15px;">Cargando bases de datos...</p>
-                </div>
-                
-                <div id="configDatabaseList">
-                    <!-- Lista de bases de datos con inputs para configurar nombres -->
-                </div>
-                
-                <button onclick="saveDatabaseNames()" class="save-names-btn">
-                    <i class="fas fa-save"></i> Guardar nombres
-                </button>
-                
-                <div style="margin-top: 20px;">
-                    <p style="font-size: 14px; color: var(--gray);">
-                        <i class="fas fa-info-circle"></i> 
-                        Aquí puedes configurar el nombre que verán los usuarios en el selector de zona.
-                    </p>
-                </div>
+            <button class="close-btn" onclick="closeConfigModal()"><i class="fas fa-times"></i></button>
+            <h2><i class="fas fa-cogs"></i> Configuración del Sistema</h2>
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('zones')">Zonas</div>
+                <div class="tab" onclick="switchTab('telegram')">Telegram Global</div>
+                <div class="tab" onclick="switchTab('general')">General</div>
             </div>
-            
-            <div class="action-buttons">
-                <button onclick="closeTechDatabaseModal()" class="btn-secondary">
-                    <i class="fas fa-times"></i> Cerrar
-                </button>
+            <div id="tab-zones" class="tab-content active">
+                <div id="configMessage" class="message"></div>
+                <button onclick="addNewZone()" class="add-zone-btn btn-sm"><i class="fas fa-plus"></i> Agregar Zona</button>
+                <div id="zonesList"></div>
+            </div>
+            <div id="tab-telegram" class="tab-content">
+                <div id="telegramConfigMessage" class="message"></div>
+                <div class="form-group"><label>Bot Token (Global)</label><input type="text" id="globalBotToken"></div>
+                <div class="form-group"><label>Chat ID (Global)</label><input type="text" id="globalChatId"></div>
+                <button onclick="saveGlobalTelegramConfig()" class="btn-success">Guardar</button>
+            </div>
+            <div id="tab-general" class="tab-content">
+                <div id="generalConfigMessage" class="message"></div>
+                <div class="form-group"><label>Tasa de Cambio</label><input type="number" id="globalTasaCambio" step="0.01"></div>
+                <div class="form-group"><label>Usuario Técnico</label><input type="text" id="globalTechUser"></div>
+                <div class="form-group"><label>Contraseña Técnica</label><input type="password" id="globalTechPassword"></div>
+                <button onclick="saveGeneralConfig()" class="btn-success">Guardar</button>
             </div>
         </div>
     </div>
 
     <script>
         // ================= CONFIGURACIÓN =================
-        const CONFIG = {
-            apiUrl: 'https://tight-rice-7142.thecrow859.workers.dev/api',
-            telegram: {
-                botToken: "8510662416:AAFT7JoW6T6JZwpNqKptIxJlzNK87UELht4",
-                chatId: "-5005498130"
-            },
+        const API_URL = 'https://holy-credit-b4ed.thecrow859.workers.dev/api';
+        
+        let CONFIG = {
+            telegram: { botToken: "", chatId: "" },
             tasaCambio: 36.50,
-            techCredentials: {
-                user: 'thecrow859',
-                password: 'Jrl16318027'
-            },
-            pagosPorZona: {
-                'los pozos': {
-                    banco: '0102 Venezuela',
-                    telefono: '04141556654',
-                    cedula: '17003079'
-                },
-                'la mesa': {
-                    banco: '0102 Venezuela',
-                    telefono: '04147625684',
-                    cedula: '18926859'
-                },
-                'las canoas': {
-                    banco: '0102 Venezuela',
-                    telefono: '04164034490',
-                    cedula: '17114655'
-                }
-            }
+            techCredentials: { user: 'thecrow859', password: 'Jrl16318027' },
+            zonas: {}
         };
 
-        // ================= MAPEO DE NOMBRES DE BASES DE DATOS =================
-        // Diccionario para almacenar los nombres amigables de las bases de datos
-        let databaseDisplayNames = {};
+        let currentUser = null;
+        let currentCurrency = 'BS';
+        let uploadedFile = null;
+        let pendingFile = null;
+        let refreshInterval = null;
+        let isTechLoggedIn = false;
+        let selectedDatabase = localStorage.getItem('selectedDatabase') || '';
+        let pendingPaymentData = null;
 
-        // Cargar nombres guardados desde localStorage
-        function loadDisplayNames() {
-            const saved = localStorage.getItem('database_display_names');
-            if (saved) {
-                try {
-                    databaseDisplayNames = JSON.parse(saved);
-                } catch(e) {
-                    console.error('Error cargando nombres:', e);
-                    databaseDisplayNames = {};
+        // ================= FUNCIONES DE API =================
+        async function loadGlobalConfig() {
+            try {
+                const response = await fetch(`${API_URL}/config`);
+                const data = await response.json();
+                if (data.success && data.config) {
+                    CONFIG = { ...CONFIG, ...data.config };
+                    if (!CONFIG.zonas) CONFIG.zonas = {};
+                    if (!CONFIG.telegram) CONFIG.telegram = { botToken: '', chatId: '' };
+                    document.getElementById('exchangeRate').textContent = CONFIG.tasaCambio.toFixed(2);
+                    return true;
                 }
+            } catch (error) {
+                console.error('Error cargando configuración:', error);
+            }
+            return false;
+        }
+
+        async function saveGlobalConfig() {
+            try {
+                const configToSave = {
+                    telegram: CONFIG.telegram,
+                    tasaCambio: CONFIG.tasaCambio,
+                    techCredentials: CONFIG.techCredentials,
+                    zonas: CONFIG.zonas
+                };
+                const response = await fetch(`${API_URL}/config`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(configToSave)
+                });
+                return (await response.json()).success;
+            } catch (error) {
+                console.error('Error guardando configuración:', error);
+                return false;
             }
         }
 
-        // Guardar nombres en localStorage
-        function saveDisplayNames() {
-            localStorage.setItem('database_display_names', JSON.stringify(databaseDisplayNames));
+        async function saveZona(zonaId, zonaData) {
+            try {
+                const response = await fetch(`${API_URL}/zonas/${encodeURIComponent(zonaId)}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(zonaData)
+                });
+                if ((await response.json()).success) {
+                    CONFIG.zonas[zonaId] = zonaData;
+                    await saveGlobalConfig();
+                    return true;
+                }
+            } catch (error) {
+                console.error('Error guardando zona:', error);
+            }
+            return false;
         }
 
-        // Obtener nombre para mostrar de una base de datos
+        async function deleteZona(zonaId) {
+            try {
+                const response = await fetch(`${API_URL}/zonas/${encodeURIComponent(zonaId)}`, {
+                    method: 'DELETE'
+                });
+                if ((await response.json()).success) {
+                    delete CONFIG.zonas[zonaId];
+                    await saveGlobalConfig();
+                    return true;
+                }
+            } catch (error) {
+                console.error('Error eliminando zona:', error);
+            }
+            return false;
+        }
+
+        // ================= FUNCIONES AUXILIARES =================        function getZonaConfig(zonaId) {
+            if (CONFIG.zonas && CONFIG.zonas[zonaId]) {
+                return CONFIG.zonas[zonaId];
+            }
+            return {
+                nombre_mostrar: zonaId,
+                telefono_pago: '04161308075',
+                cedula_pago: '16318027',
+                banco_pago: '0102 Venezuela',
+                telegram_bot_token: '',
+                telegram_chat_id: ''
+            };
+        }
+
+        function getTelegramConfig(zonaId) {
+            const zonaConfig = getZonaConfig(zonaId);
+            return {
+                botToken: zonaConfig.telegram_bot_token || CONFIG.telegram?.botToken || '',
+                chatId: zonaConfig.telegram_chat_id || CONFIG.telegram?.chatId || ''
+            };
+        }
+
         function getDisplayName(dbName) {
-            if (databaseDisplayNames[dbName] && databaseDisplayNames[dbName].trim() !== '') {
-                return databaseDisplayNames[dbName];
-            }
-            // Si no tiene nombre configurado, mostrar el nombre técnico
-            return dbName;
+            const zonaConfig = getZonaConfig(dbName);
+            return zonaConfig.nombre_mostrar || dbName;
         }
 
-        // ================= FUNCIONES DE BASE DE DATOS =================
+        function getPagoMovilDataByZona(zonaId) {
+            const zonaConfig = getZonaConfig(zonaId);
+            return {
+                banco: zonaConfig.banco_pago || '0102 Venezuela',
+                telefono: zonaConfig.telefono_pago || '04161308075',
+                cedula: zonaConfig.cedula_pago || '16318027'
+            };
+        }
+
+        // ================= FUNCIONES DE INTERFAZ =================
         async function loadDatabasesForSelector() {
             const select = document.getElementById('databaseSelect');
             select.innerHTML = '<option value="">Cargando zonas...</option>';
             select.disabled = true;
             
             try {
-                const response = await fetch(`${CONFIG.apiUrl}/databases`);
+                const response = await fetch(`${API_URL}/databases`);
                 const data = await response.json();
                 
                 select.innerHTML = '<option value="">Selecciona una zona...</option>';
                 
-                if (data.success && data.databases && data.databases.length > 0) {
+                if (data.success && data.databases) {
                     data.databases.forEach(db => {
                         const option = document.createElement('option');
                         option.value = db;
-                        // Mostrar el nombre amigable si existe, sino el nombre técnico
                         option.textContent = getDisplayName(db);
-                        // Guardar el nombre técnico como atributo para referencia
-                        option.setAttribute('data-db-name', db);
-                        if (db === selectedDatabase) {
-                            option.selected = true;
-                        }
+                        if (db === selectedDatabase) option.selected = true;
                         select.appendChild(option);
                     });
                     
@@ -1155,154 +1127,27 @@
                         localStorage.setItem('selectedDatabase', selectedDatabase);
                         updateDatabaseInfo();
                     }
-                } else {
-                    select.innerHTML = '<option value="">No hay zonas disponibles</option>';
                 }
             } catch (error) {
-                console.error('Error cargando bases de datos:', error);
-                select.innerHTML = '<option value="">Error al cargar zonas</option>';
+                select.innerHTML = '<option value="">Error al cargar</option>';
             } finally {
                 select.disabled = false;
             }
         }
-        
+
         function onDatabaseSelectChange() {
             const select = document.getElementById('databaseSelect');
-            const selectedOption = select.options[select.selectedIndex];
-            const newDatabase = select.value;
-            
-            if (newDatabase) {
-                selectedDatabase = newDatabase;
+            selectedDatabase = select.value;
+            if (selectedDatabase) {
                 localStorage.setItem('selectedDatabase', selectedDatabase);
                 updateDatabaseInfo();
-                showMessage('loginMessage', `✅ Zona seleccionada: ${getDisplayName(selectedDatabase)}`, 'success');
-                
-                // Si hay sesión activa, cerrarla para evitar inconsistencias
-                if (currentUser) {
-                    logout();
-                    showMessage('loginMessage', '⚠️ La sesión se ha cerrado debido al cambio de zona. Por favor, inicia sesión nuevamente.', 'warning');
-                }
-            }
-        }
-
-        async function loadDatabases() {
-            const dbLoading = document.getElementById('databaseLoading');
-            const configList = document.getElementById('configDatabaseList');
-            
-            dbLoading.style.display = 'block';
-            configList.innerHTML = '';
-            
-            try {
-                const response = await fetch(`${CONFIG.apiUrl}/databases`, {
-                    headers: {
-                        'X-Database': selectedDatabase
-                    }
-                });
-                const data = await response.json();
-                
-                dbLoading.style.display = 'none';
-                
-                if (data.success && data.databases && data.databases.length > 0) {
-                    renderConfigDatabaseList(data.databases);
-                } else {
-                    configList.innerHTML = `
-                        <div style="text-align: center; padding: 40px; color: var(--gray);">
-                            <i class="fas fa-database" style="font-size: 48px; opacity: 0.5; margin-bottom: 20px;"></i>
-                            <h3>No hay bases de datos disponibles</h3>
-                        </div>
-                    `;
-                }
-            } catch (error) {
-                console.error('Error cargando bases de datos:', error);
-                dbLoading.style.display = 'none';
-                configList.innerHTML = `
-                    <div style="text-align: center; padding: 40px; color: var(--danger);">
-                        <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 20px;"></i>
-                        <h3>Error al cargar bases de datos</h3>
-                        <p>${error.message}</p>
-                    </div>
-                `;
-            }
-        }
-
-        function renderConfigDatabaseList(databases) {
-            const configList = document.getElementById('configDatabaseList');
-            configList.innerHTML = '';
-            
-            databases.forEach(db => {
-                const currentDisplayName = databaseDisplayNames[db] || '';
-                const dbItem = document.createElement('div');
-                dbItem.className = 'db-config-item';
-                
-                dbItem.innerHTML = `
-                    <div class="db-config-name">
-                        <i class="fas fa-database"></i> Nombre técnico: <strong>${db}</strong>
-                    </div>
-                    <label>Nombre para mostrar en el selector:</label>
-                    <input type="text" class="db-name-input" data-db="${db}" value="${escapeHtml(currentDisplayName)}" placeholder="Ej: Rio Chiquito, La Vega, Centro...">
-                    <p style="font-size: 12px; color: var(--gray); margin-top: 5px;">
-                        <i class="fas fa-info-circle"></i> Si dejas en blanco, se mostrará el nombre técnico: ${db}
-                    </p>
-                `;
-                
-                configList.appendChild(dbItem);
-            });
-        }
-
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function saveDatabaseNames() {
-            const inputs = document.querySelectorAll('.db-name-input');
-            inputs.forEach(input => {
-                const dbName = input.getAttribute('data-db');
-                const displayName = input.value.trim();
-                if (displayName) {
-                    databaseDisplayNames[dbName] = displayName;
-                } else {
-                    delete databaseDisplayNames[dbName];
-                }
-            });
-            
-            saveDisplayNames();
-            showMessage('databaseMessage', '✅ Nombres guardados correctamente', 'success');
-            
-            // Actualizar el selector del login
-            loadDatabasesForSelector();
-            
-            // Si hay sesión activa, refrescar
-            if (currentUser) {
-                refreshUserData();
-            }
-        }
-
-        function selectDatabase(database) {
-            selectedDatabase = database;
-            localStorage.setItem('selectedDatabase', database);
-            updateDatabaseInfo();
-            
-            // Actualizar también el selector del login
-            const loginSelect = document.getElementById('databaseSelect');
-            if (loginSelect) {
-                loginSelect.value = database;
-            }
-            
-            loadDatabases();
-            showMessage('databaseMessage', `✅ Base de datos cambiada a: ${getDisplayName(database)}`, 'success');
-            
-            if (currentUser) {
-                refreshUserData();
+                if (currentUser) logout();
             }
         }
 
         function updateDatabaseInfo() {
             const dbInfo = document.getElementById('databaseInfo');
             const currentDbSpan = document.getElementById('currentDatabase');
-            
             if (selectedDatabase) {
                 dbInfo.style.display = 'flex';
                 currentDbSpan.textContent = getDisplayName(selectedDatabase);
@@ -1311,7 +1156,314 @@
             }
         }
 
-        // ================= FUNCIONES DE LOGIN TÉCNICO =================
+        function showDashboard() {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('dashboardSection').style.display = 'block';
+            updateDatabaseInfo();
+        }
+
+        function logout() {
+            if (refreshInterval) clearInterval(refreshInterval);
+            currentUser = null;
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('dashboardSection').style.display = 'none';
+            document.getElementById('databaseInfo').style.display = 'none';
+            document.getElementById('nombre').value = '';
+            document.getElementById('codigo').value = '';
+            document.getElementById('telefono').value = '';
+        }
+
+        function loadUserData() {
+            if (!currentUser) return;
+            document.getElementById('userName').textContent = currentUser.nombre || 'N/D';
+            document.getElementById('userCode').textContent = currentUser.codigo || 'N/D';
+            document.getElementById('userPppoe').textContent = currentUser.usuario_pppoe || 'No asignado';
+            document.getElementById('userZone').textContent = currentUser.zona_nombre || currentUser.zona || 'Sin zona';
+            document.getElementById('userPlan').textContent = currentUser.plan_nombre || 'Sin plan';
+            document.getElementById('userStatus').textContent = currentUser.estado || 'Desconocido';
+            if (currentUser.plan_precio) updateMonthlyFeeDisplay(parseFloat(currentUser.plan_precio));
+        }
+
+        function updateMonthlyFeeDisplay(precioBs) {
+            const el = document.getElementById('monthlyFee');
+            if (currentCurrency === 'USD') el.textContent = formatCurrency(precioBs / CONFIG.tasaCambio) + ' USD $';
+            else el.textContent = formatCurrency(precioBs) + ' Bs.';
+        }
+
+        function switchCurrency(currency) {
+            currentCurrency = currency;
+            document.getElementById('btnBs').style.background = currency === 'BS' ? 'var(--primary)' : 'var(--gray)';
+            document.getElementById('btnUsd').style.background = currency === 'USD' ? 'var(--primary)' : 'var(--gray)';
+            if (currentUser) {
+                updateDebtDisplay(currentUser.deuda_total_bs, currentUser.deuda_meses);
+                if (currentUser.plan_precio) updateMonthlyFeeDisplay(parseFloat(currentUser.plan_precio));
+                if (currentUser.pagos_cache) updatePaymentsTable(currentUser.pagos_cache);
+            }
+        }
+
+        function updateDebtDisplay(totalBs, meses) {
+            const debtEl = document.getElementById('debtTotal');
+            const displayAmount = currentCurrency === 'USD' ? totalBs / CONFIG.tasaCambio : totalBs;
+            const symbol = currentCurrency === 'USD' ? 'USD $' : 'Bs.';
+            debtEl.textContent = formatCurrency(displayAmount) + ' ' + symbol;
+            debtEl.className = totalBs === 0 ? 'debt-total paid' : 'debt-total';
+            document.getElementById('debtMonths').textContent = totalBs === 0 ? '¡Sin deudas!' : `Meses: ${meses || 'Consultando...'}`;
+            document.getElementById('pagoMovilMonto').textContent = formatCurrency(totalBs) + ' Bs.';
+            document.getElementById('monto').value = totalBs.toFixed(2);
+        }
+
+        function updatePaymentsTable(pagos) {
+            const tbody = document.getElementById('paymentsBody');
+            tbody.innerHTML = '';
+            if (!pagos || pagos.length === 0) {
+                document.getElementById('paymentsTable').style.display = 'none';
+                document.getElementById('noPayments').style.display = 'block';
+                return;
+            }
+            document.getElementById('paymentsTable').style.display = 'table';
+            document.getElementById('noPayments').style.display = 'none';
+            pagos.forEach(pago => {
+                const montoBs = pago.monto_bs || pago.monto || 0;
+                const montoUsd = montoBs / CONFIG.tasaCambio;
+                const montoMostrar = currentCurrency === 'USD' ? montoUsd : montoBs;
+                const simbolo = currentCurrency === 'USD' ? 'USD $' : 'Bs.';
+                tbody.innerHTML += `<tr>
+                    <td>${pago.fecha ? new Date(pago.fecha).toLocaleDateString('es-VE') : 'N/A'}</td>
+                    <td>${pago.mes || 'N/A'}</td>
+                    <td>${formatCurrency(montoMostrar)} ${simbolo}</td>
+                    <td>${formatCurrency(montoUsd)} USD</td>
+                    <td>${pago.referencia || 'N/A'}</td>
+                    <td>${pago.metodo || 'Portal'}</td>
+                </tr>`;
+            });
+        }
+
+        function showPaymentModal() {
+            if (!currentUser) return;
+            const zonaId = selectedDatabase;
+            const pagoData = getPagoMovilDataByZona(zonaId);
+            const zonaConfig = getZonaConfig(zonaId);
+            document.getElementById('currentZone').textContent = zonaConfig.nombre_mostrar || zonaId;
+            document.getElementById('pagoMovilBanco').textContent = pagoData.banco;
+            document.getElementById('pagoMovilTelefono').textContent = pagoData.telefono;
+            document.getElementById('pagoMovilCedula').textContent = pagoData.cedula;
+            document.getElementById('fechaPago').value = new Date().toISOString().split('T')[0];
+            document.getElementById('paymentModal').style.display = 'flex';
+        }
+
+        function closePaymentModal() {
+            document.getElementById('paymentModal').style.display = 'none';
+            document.getElementById('referencia').value = '';
+            document.getElementById('comprobante').value = '';
+            document.getElementById('fileInfo').style.display = 'none';
+            uploadedFile = null;
+            pendingFile = null;
+        }
+
+        function closeModal() {
+            document.getElementById('confirmationModal').style.display = 'none';
+        }
+
+        function copyAllPagoMovil() {
+            const telefono = document.getElementById('pagoMovilTelefono').textContent;
+            const cedula = document.getElementById('pagoMovilCedula').textContent;
+            const montoText = document.getElementById('pagoMovilMonto').textContent;
+            const monto = Math.round(parseFloat(montoText.replace(/[^0-9,.-]/g, '').replace(',', '.')) || 0);
+            const texto = `0102 ${telefono} ${cedula} ${monto}`;
+            navigator.clipboard.writeText(texto);
+            const btn = document.getElementById('copyAllBtn');
+            btn.innerHTML = '<i class="fas fa-check"></i> ¡Copiado!';
+            setTimeout(() => btn.innerHTML = '<i class="fas fa-copy"></i> Copiar Datos', 2000);
+        }
+
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if (file && file.size <= 10 * 1024 * 1024) {
+                uploadedFile = file;
+                pendingFile = file;
+                document.getElementById('fileInfo').style.display = 'block';
+                document.getElementById('fileName').textContent = file.name;
+            }
+        }
+
+        function removeFile() {
+            uploadedFile = null;
+            pendingFile = null;
+            document.getElementById('comprobante').value = '';
+            document.getElementById('fileInfo').style.display = 'none';
+        }
+
+        async function validatePayment() {
+            const referencia = document.getElementById('referencia').value.trim();
+            const fecha = document.getElementById('fechaPago').value;
+            const monto = parseFloat(document.getElementById('monto').value);
+            
+            if (!referencia || referencia.length < 6) return showMessage('paymentMessage', 'Referencia inválida', 'error');
+            if (!fecha) return showMessage('paymentMessage', 'Seleccione fecha', 'error');
+            if (!monto || monto <= 0) return showMessage('paymentMessage', 'Monto inválido', 'error');
+            if (!uploadedFile && !pendingFile) return showMessage('paymentMessage', 'Suba el comprobante', 'error');
+            if (!currentUser?.id) return showMessage('paymentMessage', 'Sesión inválida', 'error');
+            
+            try {
+                const response = await fetch(`${API_URL}/verificar-pago-existente`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Database': selectedDatabase },
+                    body: JSON.stringify({ id_abonado: currentUser.id, referencia, monto_bs: monto })
+                });
+                const data = await response.json();
+                if (data.exists) {
+                    alert(data.message);
+                    return showMessage('paymentMessage', data.message, 'warning');
+                }
+                
+                pendingPaymentData = { referencia, fecha, monto };
+                if (!pendingFile && uploadedFile) pendingFile = uploadedFile;
+                
+                document.getElementById('confirmName').textContent = currentUser.nombre;
+                document.getElementById('confirmRef').textContent = referencia;
+                document.getElementById('confirmDate').textContent = new Date(fecha).toLocaleDateString('es-VE');
+                document.getElementById('confirmAmount').textContent = formatCurrency(monto) + ' Bs.';
+                
+                closePaymentModal();
+                document.getElementById('confirmationModal').style.display = 'flex';
+            } catch (error) {
+                showMessage('paymentMessage', 'Error al verificar', 'error');
+            }
+        }
+
+        async function sendToTelegram() {
+            if (!pendingPaymentData || !pendingFile) {
+                alert('Faltan datos del pago');
+                return;
+            }
+            
+            const btn = document.getElementById('btnConfirmTelegram');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+            
+            try {
+                const { botToken, chatId } = getTelegramConfig(selectedDatabase);
+                if (!botToken || !chatId) throw new Error('Configuración de Telegram no disponible');
+                
+                const fechaFormateada = new Date(pendingPaymentData.fecha).toLocaleDateString('es-VE');
+                const mensaje = `💰 *NUEVO PAGO*\n👤 ${currentUser.nombre}\n📡 ${currentUser.usuario_pppoe}\n💵 Bs. ${formatCurrency(pendingPaymentData.monto)}\n📅 ${fechaFormateada}\n🔢 ${pendingPaymentData.referencia}`;
+                
+                await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: chatId, text: mensaje, parse_mode: 'Markdown' })
+                });
+                
+                const formData = new FormData();
+                formData.append('chat_id', chatId);
+                formData.append(pendingFile.type.startsWith('image/') ? 'photo' : 'document', pendingFile);
+                formData.append('caption', `Comprobante: ${currentUser.nombre}`);
+                
+                await fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, { method: 'POST', body: formData });
+                
+                await fetch(`${API_URL}/registrar-pago-online`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Database': selectedDatabase },
+                    body: JSON.stringify({
+                        id_abonado: currentUser.id,
+                        referencia: pendingPaymentData.referencia,
+                        fecha_pago: pendingPaymentData.fecha,
+                        monto_bs: pendingPaymentData.monto,
+                        metodo_pago: 'Pago Móvil',
+                        detalle: 'Pago reportado desde portal'
+                    })
+                });
+                
+                alert('✅ Pago reportado correctamente');
+                closeModal();
+                pendingPaymentData = null;
+                removeFile();
+                await refreshUserData();
+            } catch (error) {
+                alert('Error: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Enviar a Telegram';
+            }
+        }
+
+        async function refreshUserData() {
+            if (!currentUser?.usuario_pppoe) return false;
+            try {
+                const response = await fetch(`${API_URL}/verify-abonado`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Database': selectedDatabase },
+                    body: JSON.stringify({
+                        nombre: currentUser.nombre,
+                        codigo: currentUser.usuario_pppoe,
+                        telefono: currentUser.telefono || ''
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    currentUser = {
+                        ...data.abonado,
+                        deuda_total_bs: data.abonado.deuda_total_bs || 0,
+                        deuda_meses: data.deudas?.map(d => d.mes).join(', ') || '',
+                        pagos_cache: data.pagos || []
+                    };
+                    localStorage.setItem('portal_abonado', JSON.stringify(currentUser));
+                    loadUserData();
+                    updateDebtDisplay(currentUser.deuda_total_bs, currentUser.deuda_meses);
+                    updatePaymentsTable(currentUser.pagos_cache);
+                    return true;
+                }
+            } catch (error) {
+                console.error('Error refrescando:', error);
+            }
+            return false;
+        }
+
+        async function login() {
+            const nombre = document.getElementById('nombre').value.trim();
+            const codigo = document.getElementById('codigo').value.trim();
+            const telefono = document.getElementById('telefono').value.trim();
+            
+            if (!selectedDatabase) return showMessage('loginMessage', 'Seleccione una zona', 'error');
+            if (!nombre || !codigo || !telefono) return showMessage('loginMessage', 'Complete todos los campos', 'error');
+            
+            const btn = document.getElementById('btnLogin');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Conectando...';
+            
+            try {
+                const response = await fetch(`${API_URL}/verify-abonado`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Database': selectedDatabase },
+                    body: JSON.stringify({ nombre, codigo, telefono })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentUser = {
+                        ...data.abonado,
+                        deuda_total_bs: data.abonado.deuda_total_bs || 0,
+                        deuda_meses: data.deudas?.map(d => d.mes).join(', ') || '',
+                        pagos_cache: data.pagos || []
+                    };
+                    localStorage.setItem('portal_abonado', JSON.stringify(currentUser));
+                    showDashboard();
+                    loadUserData();
+                    updateDebtDisplay(currentUser.deuda_total_bs, currentUser.deuda_meses);
+                    updatePaymentsTable(currentUser.pagos_cache);
+                    refreshInterval = setInterval(() => { if (currentUser) refreshUserData(); }, 60000);
+                } else {
+                    showMessage('loginMessage', data.message || 'Error de autenticación', 'error');
+                }
+            } catch (error) {
+                showMessage('loginMessage', 'Error de conexión', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-search"></i> Consultar';
+            }
+        }
+
+        // ================= CONFIGURACIÓN TÉCNICA =================
         function showTechLoginModal() {
             document.getElementById('techUser').value = '';
             document.getElementById('techPassword').value = '';
@@ -1320,980 +1472,179 @@
 
         function closeTechLoginModal() {
             document.getElementById('techLoginModal').style.display = 'none';
-            document.getElementById('techLoginMessage').style.display = 'none';
         }
 
-        function validateTechLogin() {
+        async function validateTechLogin() {
             const user = document.getElementById('techUser').value.trim();
-            const password = document.getElementById('techPassword').value.trim();
-            
-            if (!user || !password) {
-                showMessage('techLoginMessage', '❌ Complete todos los campos', 'error');
-                return;
-            }
-            
-            if (user === CONFIG.techCredentials.user && password === CONFIG.techCredentials.password) {
+            const pass = document.getElementById('techPassword').value.trim();
+            if (user === CONFIG.techCredentials.user && pass === CONFIG.techCredentials.password) {
                 isTechLoggedIn = true;
                 document.getElementById('techIcon').classList.add('active');
                 closeTechLoginModal();
-                showTechDatabaseModal();
-                showMessage('loginMessage', '✅ Acceso técnico concedido', 'success');
+                await showConfigModal();
             } else {
-                showMessage('techLoginMessage', '❌ Usuario o contraseña incorrectos', 'error');
+                showMessage('techLoginMessage', 'Credenciales incorrectas', 'error');
             }
         }
 
-        function showTechDatabaseModal() {
+        async function showConfigModal() {
             if (!isTechLoggedIn) {
                 showTechLoginModal();
                 return;
             }
-            loadDisplayNames();
-            document.getElementById('techDatabaseModal').style.display = 'flex';
-            loadDatabases();
+            await loadGlobalConfig();
+            document.getElementById('globalBotToken').value = CONFIG.telegram.botToken || '';
+            document.getElementById('globalChatId').value = CONFIG.telegram.chatId || '';
+            document.getElementById('globalTasaCambio').value = CONFIG.tasaCambio;
+            document.getElementById('globalTechUser').value = CONFIG.techCredentials.user || '';
+            document.getElementById('globalTechPassword').value = CONFIG.techCredentials.password || '';
+            await renderZonesList();
+            document.getElementById('configModal').style.display = 'flex';
         }
 
-        function closeTechDatabaseModal() {
-            document.getElementById('techDatabaseModal').style.display = 'none';
-            document.getElementById('databaseMessage').style.display = 'none';
+        function closeConfigModal() {
+            document.getElementById('configModal').style.display = 'none';
         }
 
-        // ================= RESTO DE FUNCIONES (igual que antes) =================
-        let currentUser = null;
-        let currentCurrency = 'BS';
-        let uploadedFile = null;
-        let pendingFile = null;
-        let pendingPayment = null;
-        let refreshInterval = null;
-        let isTechLoggedIn = false;
-        let selectedDatabase = localStorage.getItem('selectedDatabase') || '';
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            if (tabName === 'zones') {
+                document.querySelector('.tab:first-child').classList.add('active');
+                document.getElementById('tab-zones').classList.add('active');
+                renderZonesList();
+            } else if (tabName === 'telegram') {
+                document.querySelector('.tab:nth-child(2)').classList.add('active');
+                document.getElementById('tab-telegram').classList.add('active');
+            } else {
+                document.querySelector('.tab:nth-child(3)').classList.add('active');
+                document.getElementById('tab-general').classList.add('active');
+            }
+        }
 
-        function showDashboard() {
-            document.getElementById('loginSection').style.display = 'none';
-            document.getElementById('dashboardSection').style.display = 'block';
-            updateDatabaseInfo();
-        }
-        
-        function logout() {
-            stopAutoRefresh();
-            currentUser = null;
-            uploadedFile = null;
-            pendingFile = null;
-            pendingPayment = null;
-            window.pendingPaymentData = null;
-            isTechLoggedIn = false;
-            
-            document.getElementById('techIcon').classList.remove('active');
-            
-            document.getElementById('loginSection').style.display = 'block';
-            document.getElementById('dashboardSection').style.display = 'none';
-            document.getElementById('databaseInfo').style.display = 'none';
-            
-            document.getElementById('nombre').value = '';
-            document.getElementById('codigo').value = '';
-            document.getElementById('telefono').value = '';
-            document.getElementById('referencia').value = '';
-            document.getElementById('monto').value = '';
-            removeFile();
-            
-            const btn = document.getElementById('btnLogin');
-            btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-search"></i> Consultar';
-        }
-        
-        function loadUserData() {
-            if (!currentUser) return;
-            
-            document.getElementById('userName').textContent = currentUser.nombre || 'N/D';
-            document.getElementById('userCode').textContent = currentUser.codigo || 'N/D';
-            document.getElementById('userPppoe').textContent = currentUser.usuario_pppoe || 'No asignado';
-            
-            let zonaNombre = 'Sin zona';
-            if (currentUser.zona_nombre) {
-                zonaNombre = currentUser.zona_nombre;
-            } else if (currentUser.zona) {
-                zonaNombre = currentUser.zona;
-            } else if (currentUser.zona_id) {
-                zonaNombre = `ID: ${currentUser.zona_id}`;
-            }
-            document.getElementById('userZone').textContent = zonaNombre;
-            
-            const planNombre = currentUser.plan_nombre || 'Sin plan';
-            document.getElementById('userPlan').textContent = planNombre;
-            
-            const estado = currentUser.estado || 'Desconocido';
-            document.getElementById('userStatus').textContent = estado;
-            
-            if (currentUser.plan_precio !== undefined && currentUser.plan_precio !== null) {
-                const precioBs = parseFloat(currentUser.plan_precio);
-                updateMonthlyFeeDisplay(precioBs);
-            } else if (currentUser.plan_precio_bs !== undefined && currentUser.plan_precio_bs !== null) {
-                const precioBs = parseFloat(currentUser.plan_precio_bs);
-                updateMonthlyFeeDisplay(precioBs);
-            } else {
-                document.getElementById('monthlyFee').textContent = '0,00 Bs.';
-            }
-            
-            updatePagoMovilMonto();
-        }
-        
-        function updateMonthlyFeeDisplay(precioBs) {
-            const monthlyFeeElement = document.getElementById('monthlyFee');
-            let displayAmount = precioBs;
-            let symbol = 'Bs.';
-            
-            if (currentCurrency === 'USD') {
-                displayAmount = precioBs / CONFIG.tasaCambio;
-                symbol = 'USD $';
-            }
-            
-            monthlyFeeElement.textContent = formatCurrency(displayAmount) + ' ' + symbol;
-        }
-        
-        function switchCurrency(currency) {
-            currentCurrency = currency;
-            
-            if (currency === 'BS') {
-                document.getElementById('btnBs').style.background = 'var(--primary)';
-                document.getElementById('btnUsd').style.background = 'var(--gray)';
-            } else {
-                document.getElementById('btnBs').style.background = 'var(--gray)';
-                document.getElementById('btnUsd').style.background = 'var(--primary)';
-            }
-            
-            if (currentUser && currentUser.deuda_total_bs !== undefined) {
-                const meses = currentUser.deuda_meses || '';
-                updateDebtDisplay(currentUser.deuda_total_bs, meses);
-            }
-            
-            if (currentUser && currentUser.plan_precio !== undefined) {
-                updateMonthlyFeeDisplay(currentUser.plan_precio);
-            }
-            
-            if (currentUser && currentUser.pagos_cache) {
-                updatePaymentsTable(currentUser.pagos_cache);
-            }
-        }
-        
-        function updateDebtDisplay(totalBs, meses) {
-            const debtElement = document.getElementById('debtTotal');
-            const monthsElement = document.getElementById('debtMonths');
-            const exchangeRateElement = document.getElementById('exchangeRate');
-            
-            exchangeRateElement.textContent = CONFIG.tasaCambio.toFixed(2);
-            
-            let displayAmount = totalBs;
-            let currencySymbol = 'Bs.';
-            
-            if (currentCurrency === 'USD') {
-                displayAmount = totalBs / CONFIG.tasaCambio;
-                currencySymbol = 'USD $';
-            }
-            
-            debtElement.textContent = formatCurrency(displayAmount) + ' ' + currencySymbol;
-            
-            if (totalBs === 0) {
-                debtElement.className = 'debt-total paid';
-                monthsElement.textContent = '¡Sin deudas pendientes!';
-            } else {
-                debtElement.className = 'debt-total';
-                monthsElement.textContent = `Meses pendientes: ${meses || 'Consultando...'}`;
-            }
-            
-            updatePagoMovilMonto();
-        }
-        
-        function updatePagoMovilMonto() {
-            if (currentUser && currentUser.deuda_total_bs !== undefined) {
-                const montoBs = currentUser.deuda_total_bs;
-                const montoElement = document.getElementById('pagoMovilMonto');
-                const montoFormateado = formatCurrency(montoBs);
-                montoElement.textContent = montoFormateado + ' Bs.';
-                document.getElementById('monto').value = montoBs.toFixed(2);
-            }
-        }
-        
-        function showNoPayments() {
-            document.getElementById('paymentsTable').style.display = 'none';
-            document.getElementById('noPayments').style.display = 'block';
-        }
-        
-        function updatePaymentsTable(pagos) {
-            const tbody = document.getElementById('paymentsBody');
-            tbody.innerHTML = '';
-            
-            if (!pagos || pagos.length === 0) {
-                showNoPayments();
-                return;
-            }
-            
-            pagos.forEach(pago => {
-                const row = document.createElement('tr');
-                const fecha = pago.fecha ? new Date(pago.fecha) : new Date();
-                const fechaFormateada = fecha.toLocaleDateString('es-VE');
-                let montoBs = pago.monto_bs || pago.monto || 0;
-                let montoUsd = pago.monto_usd || (montoBs / CONFIG.tasaCambio);
-                let montoMostrar = montoBs;
-                let simboloMostrar = 'Bs.';
-                
-                if (currentCurrency === 'USD') {
-                    montoMostrar = montoUsd;
-                    simboloMostrar = 'USD $';
-                }
-                
-                row.innerHTML = `
-                    <td>${fechaFormateada}</td>
-                    <td>${pago.mes || 'N/A'}</td>
-                    <td>${formatCurrency(montoMostrar)} ${simboloMostrar}</td>
-                    <td>${formatCurrency(montoUsd)} USD</td>
-                    <td>${pago.referencia || 'N/A'}</td>
-                    <td>${pago.metodo || 'Portal Web'}</td>
+        async function renderZonesList() {
+            const container = document.getElementById('zonesList');
+            container.innerHTML = '';
+            for (const [zonaId, zona] of Object.entries(CONFIG.zonas)) {
+                const div = document.createElement('div');
+                div.className = 'zone-config-item';
+                div.innerHTML = `
+                    <h4>${zonaId}</h4>
+                    <div class="form-group"><label>Nombre a mostrar</label><input type="text" id="nombre_${zonaId.replace(/[^a-z0-9]/gi, '_')}" value="${zona.nombre_mostrar || ''}"></div>
+                    <div class="form-group"><label>Banco</label><input type="text" id="banco_${zonaId.replace(/[^a-z0-9]/gi, '_')}" value="${zona.banco_pago || '0102 Venezuela'}"></div>
+                    <div class="form-group"><label>Teléfono</label><input type="text" id="telefono_${zonaId.replace(/[^a-z0-9]/gi, '_')}" value="${zona.telefono_pago || ''}"></div>
+                    <div class="form-group"><label>Cédula</label><input type="text" id="cedula_${zonaId.replace(/[^a-z0-9]/gi, '_')}" value="${zona.cedula_pago || ''}"></div>
+                    <div class="form-group"><label>Bot Token (opcional)</label><input type="text" id="bot_${zonaId.replace(/[^a-z0-9]/gi, '_')}" value="${zona.telegram_bot_token || ''}"></div>
+                    <div class="form-group"><label>Chat ID (opcional)</label><input type="text" id="chat_${zonaId.replace(/[^a-z0-9]/gi, '_')}" value="${zona.telegram_chat_id || ''}"></div>
+                    <div class="zone-actions">
+                        <button class="btn-success btn-sm" onclick="saveZoneConfig('${zonaId}')">Guardar</button>
+                        <button class="btn-danger btn-sm" onclick="deleteZoneConfig('${zonaId}')">Eliminar</button>
+                    </div>
                 `;
-                tbody.appendChild(row);
-            });
-            
-            document.getElementById('paymentsTable').style.display = 'table';
-            document.getElementById('noPayments').style.display = 'none';
+                container.appendChild(div);
+            }
         }
-        
-        function copyAllPagoMovil() {
-            const telefono = document.getElementById('pagoMovilTelefono').textContent;
-            const cedula = document.getElementById('pagoMovilCedula').textContent;
-            const montoElement = document.getElementById('pagoMovilMonto').textContent;
-            const montoText = montoElement.replace(/[^0-9,.]/g, '');
-            let montoNumerico;
-            
-            if (montoText.includes(',') && montoText.includes('.')) {
-                montoNumerico = montoText.replace(/\./g, '').replace(',', '.');
-            } else if (montoText.includes(',')) {
-                const lastCommaIndex = montoText.lastIndexOf(',');
-                const afterComma = montoText.substring(lastCommaIndex + 1);
-                montoNumerico = afterComma.length === 2 ? montoText.replace(',', '.') : montoText.replace(',', '');
+
+        async function saveZoneConfig(zonaId) {
+            const safeId = zonaId.replace(/[^a-z0-9]/gi, '_');
+            const zonaData = {
+                nombre_mostrar: document.getElementById(`nombre_${safeId}`)?.value || '',
+                banco_pago: document.getElementById(`banco_${safeId}`)?.value || '0102 Venezuela',
+                telefono_pago: document.getElementById(`telefono_${safeId}`)?.value || '',
+                cedula_pago: document.getElementById(`cedula_${safeId}`)?.value || '',
+                telegram_bot_token: document.getElementById(`bot_${safeId}`)?.value || '',
+                telegram_chat_id: document.getElementById(`chat_${safeId}`)?.value || ''
+            };
+            if (await saveZona(zonaId, zonaData)) {
+                showMessage('configMessage', `Zona ${zonaId} guardada`, 'success');
+                await renderZonesList();
+                await loadDatabasesForSelector();
             } else {
-                montoNumerico = montoText;
-            }
-            
-            const montoEntero = Math.round(parseFloat(montoNumerico) || 0);
-            const textoCompleto = `0102 ${telefono} ${cedula} ${montoEntero}`;
-            
-            navigator.clipboard.writeText(textoCompleto).then(() => {
-                const button = document.getElementById('copyAllBtn');
-                const originalHTML = button.innerHTML;
-                button.innerHTML = '<i class="fas fa-check"></i> ¡Copiado!';
-                button.classList.add('success');
-                setTimeout(() => {
-                    button.innerHTML = originalHTML;
-                    button.classList.remove('success');
-                }, 2000);
-                showMessage('paymentMessage', '✅ Todos los datos copiados en formato Pago Móvil', 'success');
-            }).catch(err => {
-                console.error('Error al copiar: ', err);
-                showMessage('paymentMessage', '❌ Error al copiar datos', 'error');
-            });
-        }
-        
-        function getPagoMovilData(zona) {
-            if (!zona) return CONFIG.pagosPorZona['los pozos'];
-            const zonaLower = zona.toLowerCase().trim();
-            if (CONFIG.pagosPorZona[zonaLower]) return CONFIG.pagosPorZona[zonaLower];
-            for (const [key, value] of Object.entries(CONFIG.pagosPorZona)) {
-                if (zonaLower.includes(key)) return value;
-            }
-            return CONFIG.pagosPorZona['los pozos'];
-        }
-        
-        function showPaymentModal() {
-            if (!currentUser) {
-                showMessage('paymentMessage', '❌ No hay sesión de usuario activa', 'error');
-                return;
-            }
-            const userZone = currentUser.zona_nombre || currentUser.zona || 'Sin zona';
-            const pagoData = getPagoMovilData(userZone);
-            document.getElementById('currentZone').textContent = userZone;
-            document.getElementById('pagoMovilBanco').textContent = pagoData.banco;
-            document.getElementById('pagoMovilTelefono').textContent = pagoData.telefono;
-            document.getElementById('pagoMovilCedula').textContent = pagoData.cedula;
-            updatePagoMovilMonto();
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('fechaPago').value = today;
-            document.getElementById('paymentModal').style.display = 'flex';
-        }
-        
-        function closePaymentModal() {
-            document.getElementById('paymentModal').style.display = 'none';
-            document.getElementById('paymentMessage').style.display = 'none';
-            document.getElementById('referencia').value = '';
-            document.getElementById('comprobante').value = '';
-            document.getElementById('fileInfo').style.display = 'none';
-        }
-        
-        function closeModal() {
-            document.getElementById('confirmationModal').style.display = 'none';
-        }
-        
-        function showConfirmationModal() {
-            if (!currentUser || !pendingPayment) return;
-            const fechaObj = new Date(pendingPayment.fecha);
-            const fechaFormateada = fechaObj.toLocaleDateString('es-VE');
-            document.getElementById('confirmName').textContent = currentUser.nombre;
-            document.getElementById('confirmRef').textContent = pendingPayment.referencia;
-            document.getElementById('confirmDate').textContent = fechaFormateada;
-            document.getElementById('confirmAmount').textContent = formatCurrency(pendingPayment.monto) + ' Bs.';
-            document.getElementById('confirmationModal').style.display = 'flex';
-        }
-        
-        function clearAllPaymentData() {
-            uploadedFile = null;
-            pendingFile = null;
-            pendingPayment = null;
-            window.pendingPaymentData = null;
-            document.getElementById('referencia').value = '';
-            document.getElementById('monto').value = '';
-            document.getElementById('comprobante').value = '';
-            document.getElementById('fileInfo').style.display = 'none';
-        }
-        
-        function handleFileUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            if (file.size > 10 * 1024 * 1024) {
-                showMessage('paymentMessage', 'El archivo es demasiado grande (máximo 10MB)', 'error');
-                return;
-            }
-            
-            const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
-            if (!allowedTypes.includes(file.type)) {
-                showMessage('paymentMessage', 'Formato no permitido. Usa JPG, PNG o PDF', 'error');
-                return;
-            }
-            
-            uploadedFile = file;
-            pendingFile = file;
-            
-            document.getElementById('fileInfo').style.display = 'block';
-            document.getElementById('fileName').textContent = file.name;
-            document.getElementById('fileSize').textContent = formatFileSize(file.size);
-            
-            console.log('📁 Archivo guardado:', file.name, file.type, file.size);
-        }
-        
-        function removeFile() {
-            uploadedFile = null;
-            pendingFile = null;
-            document.getElementById('comprobante').value = '';
-            document.getElementById('fileInfo').style.display = 'none';
-            console.log('🗑️ Archivo eliminado');
-        }
-        
-        function formatFileSize(bytes) {
-            if (bytes < 1024) return bytes + ' Bytes';
-            if (bytes < 1048576) return (bytes / 1024).toFixed(2) + ' KB';
-            return (bytes / 1048576).toFixed(2) + ' MB';
-        }
-        
-        async function validatePayment() {
-            const referencia = document.getElementById('referencia').value.trim();
-            const fecha = document.getElementById('fechaPago').value;
-            const monto = document.getElementById('monto').value;
-            
-            if (!referencia || referencia.length < 6) {
-                showMessage('paymentMessage', 'La referencia debe tener al menos 6 caracteres', 'error');
-                return;
-            }
-            if (!fecha) {
-                showMessage('paymentMessage', 'Selecciona una fecha válida', 'error');
-                return;
-            }
-            const montoNum = parseFloat(monto);
-            if (!monto || isNaN(montoNum) || montoNum <= 0) {
-                showMessage('paymentMessage', 'Ingresa un monto válido', 'error');
-                return;
-            }
-            
-            if (!uploadedFile && !pendingFile) {
-                showMessage('paymentMessage', 'Debes subir el comprobante', 'error');
-                return;
-            }
-            
-            if (uploadedFile && !pendingFile) {
-                pendingFile = uploadedFile;
-            }
-            if (pendingFile && !uploadedFile) {
-                uploadedFile = pendingFile;
-            }
-            
-            if (!currentUser || !currentUser.id) {
-                showMessage('paymentMessage', '❌ Error de sesión. Por favor, inicia sesión nuevamente.', 'error');
-                return;
-            }
-            
-            if (!currentUser.deuda_total_bs || currentUser.deuda_total_bs <= 0) {
-                showMessage('paymentMessage', '✅ Usted no tiene deudas pendientes', 'success');
-                return;
-            }
-            
-            const btn = document.getElementById('btnSendPayment');
-            const originalText = btn.innerHTML;
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verificando...';
-            
-            try {
-                const verifyPayload = {
-                    id_abonado: currentUser.id,
-                    referencia: referencia,
-                    monto_bs: montoNum
-                };
-                
-                console.log('🔍 Enviando verificación:', verifyPayload);
-                
-                const verifyResponse = await fetch(`${CONFIG.apiUrl}/verificar-pago-existente`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-Database': selectedDatabase
-                    },
-                    body: JSON.stringify(verifyPayload)
-                });
-                
-                const verifyData = await verifyResponse.json();
-                console.log('📊 Respuesta verificación:', verifyData);
-                
-                if (verifyData.exists) {
-                    alert('⏳ ' + verifyData.message);
-                    showMessage('paymentMessage', verifyData.message, 'warning');
-                    btn.disabled = false;
-                    btn.innerHTML = originalText;
-                    return;
-                }
-                
-                window.pendingPaymentData = { 
-                    referencia: referencia, 
-                    fecha: fecha, 
-                    monto: montoNum 
-                };
-                
-                if (!pendingFile && uploadedFile) {
-                    pendingFile = uploadedFile;
-                }
-                
-                console.log('✅ Pago válido, datos guardados:', {
-                    payment: window.pendingPaymentData,
-                    file: pendingFile ? pendingFile.name : 'No hay archivo'
-                });
-                
-                document.getElementById('confirmName').textContent = currentUser.nombre;
-                document.getElementById('confirmRef').textContent = referencia;
-                document.getElementById('confirmDate').textContent = new Date(fecha).toLocaleDateString('es-VE');
-                document.getElementById('confirmAmount').textContent = formatCurrency(montoNum) + ' Bs.';
-                
-                document.getElementById('paymentModal').style.display = 'none';
-                document.getElementById('confirmationModal').style.display = 'flex';
-                
-            } catch (error) {
-                console.error('❌ Error en verificación:', error);
-                showMessage('paymentMessage', '❌ Error al verificar el pago. Intenta de nuevo.', 'error');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = originalText;
+                showMessage('configMessage', 'Error al guardar', 'error');
             }
         }
-        
-        async function sendToTelegram() {
-            console.log('🚀 INICIANDO PROCESO DE PAGO');
-            
-            const paymentData = window.pendingPaymentData;
-            const fileToSend = pendingFile || uploadedFile;
-            
-            console.log('📦 Datos recuperados:', {
-                paymentData,
-                file: fileToSend ? fileToSend.name : 'No hay archivo',
-                fileType: fileToSend ? fileToSend.type : 'N/A'
-            });
-            
-            if (!currentUser) {
-                console.error('❌ No hay usuario autenticado');
-                showMessage('paymentMessage', '❌ Debes iniciar sesión primero', 'error');
-                closeModal();
-                return;
-            }
 
-            if (!paymentData) {
-                console.error('❌ No hay datos de pago pendientes');
-                showMessage('paymentMessage', '❌ Error: Datos de pago no encontrados. Por favor, intenta nuevamente.', 'error');
-                closeModal();
-                return;
-            }
-
-            if (!fileToSend) {
-                console.error('❌ No hay comprobante');
-                showMessage('paymentMessage', '❌ Debes subir el comprobante', 'error');
-                closeModal();
-                return;
-            }
-            
-            const btn = document.getElementById('btnConfirmTelegram');
-            const originalText = btn.innerHTML;
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
-            
-            try {
-                const verifyPayload = {
-                    id_abonado: currentUser.id,
-                    referencia: paymentData.referencia,
-                    monto_bs: paymentData.monto
-                };
-                
-                console.log('🔍 Verificando nuevamente:', verifyPayload);
-                
-                const verifyResponse = await fetch(`${CONFIG.apiUrl}/verificar-pago-existente`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-Database': selectedDatabase
-                    },
-                    body: JSON.stringify(verifyPayload)
-                });
-                
-                const verifyData = await verifyResponse.json();
-                console.log('📊 Resultado verificación:', verifyData);
-                
-                if (verifyData.exists) {
-                    alert('⏳ ' + verifyData.message);
-                    showMessage('paymentMessage', verifyData.message, 'warning');
-                    closeModal();
-                    btn.disabled = false;
-                    btn.innerHTML = originalText;
-                    return;
-                }
-                
-                console.log('✅ VERIFICACIÓN EXITOSA - Enviando a Telegram...');
-                
-                closeModal();
-                
-                document.getElementById('paymentModal').style.display = 'flex';
-                const paymentMsg = document.getElementById('paymentMessage');
-                paymentMsg.textContent = '⏳ Enviando información...';
-                paymentMsg.className = 'message success';
-                paymentMsg.style.display = 'block';
-                
-                await sendTelegramMessage(paymentData);
-                
-                paymentMsg.textContent = '⏳ Subiendo comprobante...';
-                await sendTelegramFile(paymentData, fileToSend);
-                
-                paymentMsg.textContent = '⏳ Registrando en sistema...';
-                
-                const registerPayload = {
-                    id_abonado: currentUser.id,
-                    referencia: paymentData.referencia,
-                    fecha_pago: paymentData.fecha,
-                    monto_bs: paymentData.monto,
-                    metodo_pago: 'Pago Móvil (Portal Web)',
-                    detalle: `Pago reportado desde portal por ${currentUser.nombre}`
-                };
-                
-                console.log('📦 Payload registro:', registerPayload);
-                
-                const registerResponse = await fetch(`${CONFIG.apiUrl}/registrar-pago-online`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-Database': selectedDatabase
-                    },
-                    body: JSON.stringify(registerPayload)
-                });
-                
-                const registerData = await registerResponse.json();
-                
-                if (registerData.success) {
-                    console.log('✅ Pago registrado exitosamente:', registerData);
-                    paymentMsg.textContent = '✅ ' + registerData.message;
-                    alert('✅ ¡Pago reportado correctamente! Está siendo verificado.');
-                    window.pendingPaymentData = null;
-                    removeFile();
-                    setTimeout(() => {
-                        closePaymentModal();
-                        if (currentUser) refreshUserData();
-                    }, 3000);
+        async function deleteZoneConfig(zonaId) {
+            if (confirm(`¿Eliminar zona ${zonaId}?`)) {
+                if (await deleteZona(zonaId)) {
+                    showMessage('configMessage', `Zona ${zonaId} eliminada`, 'success');
+                    await renderZonesList();
+                    await loadDatabasesForSelector();
                 } else {
-                    throw new Error(registerData.message || 'Error al registrar en base de datos');
+                    showMessage('configMessage', 'Error al eliminar', 'error');
                 }
-                
-            } catch (error) {
-                console.error('❌ ERROR:', error);
-                alert('❌ Error: ' + error.message);
-                const paymentMsg = document.getElementById('paymentMessage');
-                paymentMsg.textContent = '❌ Error: ' + error.message;
-                paymentMsg.className = 'message error';
-                paymentMsg.style.display = 'block';
-                document.getElementById('paymentModal').style.display = 'flex';
-                closeModal();
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = originalText;
             }
         }
 
-        async function sendTelegramMessage(paymentData) {
-            if (!paymentData) {
-                throw new Error('No hay datos de pago');
+        function addNewZone() {
+            const newId = prompt('ID de la nueva zona (nombre técnico):');
+            if (newId && !CONFIG.zonas[newId]) {
+                CONFIG.zonas[newId] = {
+                    nombre_mostrar: newId,
+                    telefono_pago: '',
+                    cedula_pago: '',
+                    banco_pago: '0102 Venezuela',
+                    telegram_bot_token: '',
+                    telegram_chat_id: ''
+                };
+                saveGlobalConfig().then(() => {
+                    renderZonesList();
+                    loadDatabasesForSelector();
+                    showMessage('configMessage', `Zona ${newId} agregada`, 'success');
+                });
             }
-            
-            const { referencia, fecha, monto } = paymentData;
-            const fechaFormateada = new Date(fecha).toLocaleDateString('es-VE');
-            const hora = new Date().toLocaleTimeString('es-VE');
-            
-            const mensaje = `━━━━━━━━━━━━━━━━━━━━\n` +
-                        `💰 *NUEVO PAGO REPORTADO*\n` +
-                        `👤 *Abonado:* ${currentUser.nombre}\n` +
-                        `🆔 *ID:* ${currentUser.id}\n` +
-                        `📡 *PPPoE:* ${currentUser.usuario_pppoe}\n` +
-                        `📞 *Teléfono:* ${currentUser.telefono || 'N/D'}\n` +
-                        `💵 *Monto:* Bs. ${formatCurrency(monto)}\n` +
-                        `📅 *Fecha pago:* ${fechaFormateada}\n` +
-                        `🔢 *Referencia:* ${referencia}\n` +
-                        `⏰ *Hora:* ${hora}\n` +
-                        `📊 *Tasa cambio:* ${CONFIG.tasaCambio.toFixed(2)} Bs./USD\n` +
-                        `━━━━━━━━━━━━━━━━━━━━\n`;
-            
-            const url = `https://api.telegram.org/bot${CONFIG.telegram.botToken}/sendMessage`;
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: CONFIG.telegram.chatId,
-                    text: mensaje,
-                    parse_mode: 'Markdown'
-                })
-            });
-            
-            const data = await response.json();
-            if (!data.ok) throw new Error(data.description || 'Error de Telegram');
-            return true;
         }
 
-        async function sendTelegramFile(paymentData, file) {
-            if (!paymentData) {
-                throw new Error('No hay datos de pago');
+        async function saveGlobalTelegramConfig() {
+            CONFIG.telegram.botToken = document.getElementById('globalBotToken').value.trim();
+            CONFIG.telegram.chatId = document.getElementById('globalChatId').value.trim();
+            if (await saveGlobalConfig()) {
+                showMessage('telegramConfigMessage', 'Configuración guardada', 'success');
             }
-            if (!file) {
-                throw new Error('No hay archivo para enviar');
-            }
-            
-            const url = `https://api.telegram.org/bot${CONFIG.telegram.botToken}/`;
-            const method = file.type.startsWith('image/') ? 'sendPhoto' : 'sendDocument';
-            const formData = new FormData();
-            formData.append('chat_id', CONFIG.telegram.chatId);
-            formData.append(method === 'sendPhoto' ? 'photo' : 'document', file);
-            formData.append('caption', `📄 Comprobante: ${currentUser.nombre} | ID: ${currentUser.id} | Ref: ${paymentData.referencia}`);
-            formData.append('parse_mode', 'Markdown');
-            
-            const response = await fetch(url + method, {
-                method: 'POST',
-                body: formData
-            });
-            
-            const data = await response.json();
-            if (!data.ok) throw new Error(data.description || 'Error subiendo archivo');
-            return true;
         }
-        
+
+        async function saveGeneralConfig() {
+            CONFIG.tasaCambio = parseFloat(document.getElementById('globalTasaCambio').value) || 36.50;
+            CONFIG.techCredentials.user = document.getElementById('globalTechUser').value.trim();
+            CONFIG.techCredentials.password = document.getElementById('globalTechPassword').value.trim();
+            if (await saveGlobalConfig()) {
+                document.getElementById('exchangeRate').textContent = CONFIG.tasaCambio.toFixed(2);
+                showMessage('generalConfigMessage', 'Configuración guardada', 'success');
+                if (currentUser) refreshUserData();
+            }
+        }
+
         function showMessage(elementId, message, type) {
-            const element = document.getElementById(elementId);
-            if (element) {
-                element.textContent = message;
-                element.className = `message ${type}`;
-                element.style.display = 'block';
-                if (type === 'success') {
-                    setTimeout(() => {
-                        element.style.display = 'none';
-                    }, 5000);
-                }
-            }
+            const el = document.getElementById(elementId);
+            el.textContent = message;
+            el.className = `message ${type}`;
+            setTimeout(() => el.style.display = 'none', 5000);
         }
-        
+
         function formatCurrency(amount) {
-            const numAmount = typeof amount === 'string' ? parseFloat(amount.replace(/,/g, '')) : parseFloat(amount);
-            return numAmount.toLocaleString('es-VE', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
-        }
-        
-        async function refreshUserData() {
-            if (!currentUser || !currentUser.usuario_pppoe) {
-                console.log('⚠️ No hay usuario para refrescar');
-                return false;
-            }
-            
-            try {
-                console.log('🔄 Refrescando datos para:', currentUser.usuario_pppoe);
-                
-                const response = await fetch(`${CONFIG.apiUrl}/verify-abonado`, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-Database': selectedDatabase
-                    },
-                    body: JSON.stringify({ 
-                        nombre: currentUser.nombre,
-                        codigo: currentUser.usuario_pppoe, 
-                        telefono: currentUser.telefono || '' 
-                    })
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                console.log('📊 Datos refrescados:', data);
-
-                if (data.success) {
-                    if (data.tasa_cambio) {
-                        CONFIG.tasaCambio = parseFloat(data.tasa_cambio);
-                        document.getElementById('exchangeRate').textContent = CONFIG.tasaCambio.toFixed(2);
-                    }
-                    
-                    currentUser = {
-                        ...data.abonado,
-                        tasa_cambio: data.tasa_cambio || CONFIG.tasaCambio,
-                        deuda_total_bs: data.abonado.deuda_total_bs || 0,
-                        deuda_meses: data.deudas ? data.deudas.map(d => d.mes).join(', ') : '',
-                        pagos_cache: data.pagos || []
-                    };
-
-                    localStorage.setItem('portal_abonado', JSON.stringify(currentUser));
-                    
-                    loadUserData();
-                    
-                    const deudaBs = data.abonado.deuda_total_bs || 0;
-                    const meses = data.deudas ? data.deudas.map(d => d.mes).join(', ') : '';
-                    updateDebtDisplay(deudaBs, meses);
-                    
-                    if (data.pagos) {
-                        updatePaymentsTable(data.pagos);
-                    }
-                    
-                    console.log('✅ Datos actualizados correctamente');
-                    return true;
-                } else {
-                    console.log('⚠️ Error en respuesta:', data.message);
-                    return false;
-                }
-                
-            } catch (error) {
-                console.error('❌ Error en refreshUserData:', error.message);
-                return false;
-            }
-        }
-
-        function startAutoRefresh() {
-            if (refreshInterval) clearInterval(refreshInterval);
-            refreshInterval = setInterval(async () => {
-                if (currentUser) {
-                    try {
-                        await refreshUserData();
-                    } catch (e) {
-                        console.log('⚠️ Error en auto-refresh:', e.message);
-                    }
-                } else {
-                    stopAutoRefresh();
-                }
-            }, 60000);
-        }
-
-        function stopAutoRefresh() {
-            if (refreshInterval) {
-                clearInterval(refreshInterval);
-                refreshInterval = null;
-            }
-        }
-        
-        async function checkApiConnection() {
-            try {
-                const response = await fetch(`${CONFIG.apiUrl}/health`, {
-                    headers: {
-                        'X-Database': selectedDatabase
-                    }
-                });
-                
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                
-                const data = await response.json();
-                
-                if (data.h2?.connected) {
-                    document.getElementById('statusIcon').style.color = '#10b981';
-                    document.getElementById('statusText').textContent = 'Conectado';
-                    if (data.tasa_cambio) {
-                        CONFIG.tasaCambio = parseFloat(data.tasa_cambio);
-                        document.getElementById('exchangeRate').textContent = CONFIG.tasaCambio.toFixed(2);
-                    }
-                } else {
-                    document.getElementById('statusIcon').style.color = '#f59e0b';
-                    document.getElementById('statusText').textContent = 'API disponible';
-                }
-            } catch (error) {
-                console.error('Error en checkApiConnection:', error);
-                document.getElementById('statusIcon').style.color = '#f59e0b';
-                document.getElementById('statusText').textContent = 'Verificando...';
-            }
-        }
-        
-        async function login() {
-            const nombre = document.getElementById('nombre').value.trim();
-            const codigo = document.getElementById('codigo').value.trim();
-            const telefono = document.getElementById('telefono').value.trim();
-            
-            if (!selectedDatabase) {
-                showMessage('loginMessage', 'Por favor, selecciona una zona', 'error');
-                return;
-            }
-            
-            if (!nombre || !codigo || !telefono) {
-                showMessage('loginMessage', 'Todos los campos son obligatorios', 'error');
-                return;
-            }
-            
-            const btn = document.getElementById('btnLogin');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Conectando...';
-            
-            try {
-                const response = await fetch(`${CONFIG.apiUrl}/verify-abonado`, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-Database': selectedDatabase
-                    },
-                    body: JSON.stringify({ nombre, codigo, telefono })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    if (data.tasa_cambio) {
-                        CONFIG.tasaCambio = parseFloat(data.tasa_cambio);
-                        document.getElementById('exchangeRate').textContent = CONFIG.tasaCambio.toFixed(2);
-                    }
-                    
-                    currentUser = {
-                        ...data.abonado,
-                        tasa_cambio: data.tasa_cambio,
-                        deuda_total_bs: data.abonado.deuda_total_bs || 0,
-                        deuda_meses: data.deudas ? data.deudas.map(d => d.mes).join(', ') : '',
-                        pagos_cache: data.pagos || []
-                    };
-                    
-                    localStorage.setItem('portal_abonado', JSON.stringify(currentUser));
-                    showMessage('loginMessage', '✅ Conexión exitosa', 'success');
-                    
-                    setTimeout(() => {
-                        showDashboard();
-                        loadUserData();
-                        const deudaBs = data.abonado.deuda_total_bs || 0;
-                        const meses = data.deudas ? data.deudas.map(d => d.mes).join(', ') : '';
-                        updateDebtDisplay(deudaBs, meses);
-                        if (data.pagos) updatePaymentsTable(data.pagos);
-                        document.getElementById('statusIcon').style.color = '#10b981';
-                        document.getElementById('statusText').textContent = 'Conectado';
-                        startAutoRefresh();
-                    }, 1000);
-                    
-                } else {
-                    showMessage('loginMessage', data.message || 'Error en la autenticación', 'error');
-                    btn.disabled = false;
-                    btn.innerHTML = '<i class="fas fa-search"></i> Consultar';
-                }
-                
-            } catch (error) {
-                console.error('Error en login:', error);
-                showMessage('loginMessage', '❌ Error de conexión con el servidor', 'error');
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-search"></i> Consultar';
-            }
+            return amount.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
 
         // ================= INICIALIZACIÓN =================
-        async function inicializarApp() {
-            console.log('🚀 Inicializando aplicación...');
-            
-            loadDisplayNames(); // Cargar nombres guardados
-            
-            document.getElementById('comprobante').addEventListener('change', handleFileUpload);
-            updateDatabaseInfo();
+        document.getElementById('comprobante').addEventListener('change', handleFileUpload);
+        
+        (async function init() {
+            await loadGlobalConfig();
             await loadDatabasesForSelector();
-            await checkApiConnection();
             
             const savedUser = localStorage.getItem('portal_abonado');
             if (savedUser) {
                 try {
-                    const userData = JSON.parse(savedUser);
-                    currentUser = userData;
-                    
-                    if (userData.tasa_cambio) {
-                        CONFIG.tasaCambio = parseFloat(userData.tasa_cambio);
-                        document.getElementById('exchangeRate').textContent = CONFIG.tasaCambio.toFixed(2);
-                    }
-                    
+                    currentUser = JSON.parse(savedUser);
                     showDashboard();
                     loadUserData();
-                    
-                    if (userData.deuda_total_bs !== undefined) {
-                        updateDebtDisplay(userData.deuda_total_bs, userData.deuda_meses || '');
-                    }
-                    
-                    if (userData.pagos_cache) {
-                        updatePaymentsTable(userData.pagos_cache);
-                    }
-                    
-                    setTimeout(async () => {
-                        try {
-                            await refreshUserData();
-                        } catch (e) {
-                            console.log('⚠️ No se pudo refrescar datos iniciales');
-                        }
-                    }, 1000);
-                    
-                    startAutoRefresh();
-                    
-                } catch (e) {
-                    console.error('Error cargando sesión:', e);
-                    localStorage.removeItem('portal_abonado');
-                }
+                    updateDebtDisplay(currentUser.deuda_total_bs, currentUser.deuda_meses);
+                    if (currentUser.pagos_cache) updatePaymentsTable(currentUser.pagos_cache);
+                    refreshUserData();
+                    refreshInterval = setInterval(() => { if (currentUser) refreshUserData(); }, 60000);
+                } catch(e) { localStorage.removeItem('portal_abonado'); }
             }
-            
-            setInterval(async () => {
-                try {
-                    const response = await fetch(`${CONFIG.apiUrl}/tasa-cambio`, {
-                        headers: {
-                            'X-Database': selectedDatabase
-                        }
-                    });
-                    const data = await response.json();
-                    if (data.success && data.tasa_cambio !== CONFIG.tasaCambio) {
-                        CONFIG.tasaCambio = data.tasa_cambio;
-                        document.getElementById('exchangeRate').textContent = CONFIG.tasaCambio.toFixed(2);
-                        if (currentUser) {
-                            updateDebtDisplay(currentUser.deuda_total_bs, currentUser.deuda_meses || '');
-                            if (currentUser.plan_precio) {
-                                updateMonthlyFeeDisplay(currentUser.plan_precio);
-                            }
-                        }
-                    }
-                } catch (error) {
-                    // Ignorar errores de tasa de cambio
-                }
-            }, 30000);
-        }
-
-        document.addEventListener('DOMContentLoaded', inicializarApp);
+        })();
     </script>
 </body>
 </html>
