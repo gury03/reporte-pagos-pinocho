@@ -387,7 +387,7 @@
         .modal-content {
             background: white;
             border-radius: 12px;
-            max-width: 600px;
+            max-width: 700px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
@@ -433,13 +433,6 @@
             padding: 10px;
             background: white;
             border-radius: 6px;
-        }
-
-        .database-selector-modal {
-            background: var(--light);
-            padding: 20px;
-            border-radius: 12px;
-            margin: 20px 0;
         }
 
         .tech-footer {
@@ -583,34 +576,39 @@
             flex: 1;
         }
 
-        .zone-config-item {
+        .config-card {
             background: white;
             padding: 20px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             border-radius: 8px;
             border: 2px solid var(--gray-light);
         }
         
-        .zone-config-item h4 {
+        .config-card h4 {
             color: var(--primary);
             margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         
-        .zone-config-item .form-group {
+        .config-card .form-group {
             margin-bottom: 15px;
         }
         
-        .zone-config-item label {
+        .config-card label {
             font-size: 14px;
             margin-bottom: 5px;
         }
         
-        .zone-config-item input {
+        .config-card input {
             padding: 8px 12px;
             font-size: 14px;
         }
         
-        .zone-actions {
+        .config-actions {
             display: flex;
             gap: 10px;
             margin-top: 15px;
@@ -645,9 +643,38 @@
             display: block;
         }
 
-        .add-zone-btn {
+        .add-btn {
             background: var(--success);
             margin-bottom: 20px;
+        }
+
+        .loading-spinner {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loading-spinner i {
+            font-size: 32px;
+            color: var(--primary);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
         }
     </style>
 </head>
@@ -655,7 +682,7 @@
     <div class="container">
         <div class="header">
             <div class="logo">
-                <i class="fas fa-database"></i>
+                <i class="fas fa-globe"></i>
                 <div>
                     <h1>Portal de Pagos ISP</h1>
                     <p>Conectando con el mundo</p>
@@ -690,12 +717,12 @@
                 <div id="loginMessage" class="message"></div>
                 
                 <div class="database-selector">
-                    <label><i class="fas fa-map-marker-alt"></i> Selecciona tu zona:</label>
+                    <label><i class="fas fa-building"></i> Selecciona tu proveedor:</label>
                     <div class="db-selector-wrapper">
                         <select id="databaseSelect" onchange="onDatabaseSelectChange()">
-                            <option value="">Cargando zonas...</option>
+                            <option value="">Cargando proveedores...</option>
                         </select>
-                        <button type="button" onclick="loadDatabasesForSelector()" class="refresh-db-btn" title="Recargar zonas">
+                        <button type="button" onclick="loadDatabasesForSelector()" class="refresh-db-btn" title="Recargar proveedores">
                             <i class="fas fa-sync-alt"></i>
                         </button>
                     </div>
@@ -835,7 +862,7 @@
                 <div class="payment-detail"><div><strong>Teléfono:</strong> <span id="pagoMovilTelefono"></span></div></div>
                 <div class="payment-detail"><div><strong>Cédula/RIF:</strong> <span id="pagoMovilCedula"></span></div></div>
                 <div class="payment-detail"><div><strong>Monto a pagar:</strong> <span id="pagoMovilMonto" style="color: var(--danger); font-weight: bold;"></span></div></div>
-                <button class="copy-all-btn" onclick="copyAllPagoMovil()"><i class="fas fa-copy"></i> Copiar Datos de Pago Móvil</button>
+                <button class="copy-all-btn" onclick="copyAllPagoMovil()" id="copyAllBtn"><i class="fas fa-copy"></i> Copiar Datos de Pago Móvil</button>
             </div>
             <div>
                 <h3><i class="fas fa-file-invoice"></i> Reportar Pago Realizado</h3>
@@ -893,25 +920,45 @@
         <div class="modal-content">
             <button class="close-btn" onclick="closeConfigModal()"><i class="fas fa-times"></i></button>
             <h2><i class="fas fa-cogs"></i> Configuración del Sistema</h2>
+            
             <div class="tabs">
-                <div class="tab active" onclick="switchTab('zones')">Zonas</div>
+                <div class="tab active" onclick="switchTab('proveedores')">Proveedores</div>
+                <div class="tab" onclick="switchTab('zonas')">Zonas</div>
                 <div class="tab" onclick="switchTab('telegram')">Telegram Global</div>
                 <div class="tab" onclick="switchTab('general')">General</div>
             </div>
-            <div id="tab-zones" class="tab-content active">
-                <div id="configMessage" class="message"></div>
-                <button onclick="addNewZone()" class="add-zone-btn btn-sm"><i class="fas fa-plus"></i> Agregar Zona</button>
-                <div id="zonesList"></div>
+            
+            <!-- Pestaña Proveedores -->
+            <div id="tab-proveedores" class="tab-content active">
+                <div id="proveedoresMessage" class="message"></div>
+                <button onclick="addNewProveedor()" class="add-btn btn-sm"><i class="fas fa-plus"></i> Agregar Proveedor</button>
+                <div id="proveedoresList"></div>
             </div>
+            
+            <!-- Pestaña Zonas -->
+            <div id="tab-zonas" class="tab-content">
+                <div id="zonasMessage" class="message"></div>
+                <div class="form-group">
+                    <label><i class="fas fa-building"></i> Seleccionar Proveedor:</label>
+                    <select id="proveedorSelect" onchange="loadZonasFromProveedor()">
+                        <option value="">Seleccione un proveedor...</option>
+                    </select>
+                </div>
+                <div id="zonasConfigContainer"></div>
+            </div>
+            
+            <!-- Pestaña Telegram Global -->
             <div id="tab-telegram" class="tab-content">
                 <div id="telegramConfigMessage" class="message"></div>
-                <div class="form-group"><label>Bot Token (Global)</label><input type="text" id="globalBotToken"></div>
-                <div class="form-group"><label>Chat ID (Global)</label><input type="text" id="globalChatId"></div>
+                <div class="form-group"><label>Bot Token (Global)</label><input type="text" id="globalBotToken" placeholder="Token del bot de Telegram"></div>
+                <div class="form-group"><label>Chat ID (Global)</label><input type="text" id="globalChatId" placeholder="ID del chat de Telegram"></div>
                 <button onclick="saveGlobalTelegramConfig()" class="btn-success">Guardar</button>
             </div>
+            
+            <!-- Pestaña General -->
             <div id="tab-general" class="tab-content">
                 <div id="generalConfigMessage" class="message"></div>
-                <div class="form-group"><label>Tasa de Cambio</label><input type="number" id="globalTasaCambio" step="0.01"></div>
+                <div class="form-group"><label>Tasa de Cambio (USD a Bs.)</label><input type="number" id="globalTasaCambio" step="0.01"></div>
                 <div class="form-group"><label>Usuario Técnico</label><input type="text" id="globalTechUser"></div>
                 <div class="form-group"><label>Contraseña Técnica</label><input type="password" id="globalTechPassword"></div>
                 <button onclick="saveGeneralConfig()" class="btn-success">Guardar</button>
@@ -927,7 +974,8 @@
             telegram: { botToken: "", chatId: "" },
             tasaCambio: 36.50,
             techCredentials: { user: 'thecrow859', password: 'Jrl16318027' },
-            zonas: {}
+            proveedores: {},
+            zonasConfig: {}
         };
 
         let currentUser = null;
@@ -938,6 +986,7 @@
         let isTechLoggedIn = false;
         let selectedDatabase = localStorage.getItem('selectedDatabase') || '';
         let pendingPaymentData = null;
+        let currentZonasList = [];
 
         // ================= FUNCIONES DE API =================
         async function loadGlobalConfig() {
@@ -946,7 +995,8 @@
                 const data = await response.json();
                 if (data.success && data.config) {
                     CONFIG = { ...CONFIG, ...data.config };
-                    if (!CONFIG.zonas) CONFIG.zonas = {};
+                    if (!CONFIG.proveedores) CONFIG.proveedores = {};
+                    if (!CONFIG.zonasConfig) CONFIG.zonasConfig = {};
                     if (!CONFIG.telegram) CONFIG.telegram = { botToken: '', chatId: '' };
                     document.getElementById('exchangeRate').textContent = CONFIG.tasaCambio.toFixed(2);
                     return true;
@@ -963,7 +1013,8 @@
                     telegram: CONFIG.telegram,
                     tasaCambio: CONFIG.tasaCambio,
                     techCredentials: CONFIG.techCredentials,
-                    zonas: CONFIG.zonas
+                    proveedores: CONFIG.proveedores,
+                    zonasConfig: CONFIG.zonasConfig
                 };
                 const response = await fetch(`${API_URL}/config`, {
                     method: 'POST',
@@ -978,49 +1029,35 @@
             }
         }
 
-        async function saveZona(zonaId, zonaData) {
+        async function loadZonasFromDatabase(database) {
             try {
-                const response = await fetch(`${API_URL}/zonas/${encodeURIComponent(zonaId)}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(zonaData)
+                const response = await fetch(`${API_URL}/zonas`, {
+                    headers: { 'X-Database': database }
                 });
                 const data = await response.json();
-                if (data.success) {
-                    CONFIG.zonas[zonaId] = zonaData;
-                    await saveGlobalConfig();
-                    return true;
+                if (data.success && data.zonas) {
+                    return data.zonas;
                 }
+                return [];
             } catch (error) {
-                console.error('Error guardando zona:', error);
+                console.error('Error cargando zonas:', error);
+                return [];
             }
-            return false;
-        }
-
-        async function deleteZona(zonaId) {
-            try {
-                const response = await fetch(`${API_URL}/zonas/${encodeURIComponent(zonaId)}`, {
-                    method: 'DELETE'
-                });
-                const data = await response.json();
-                if (data.success) {
-                    delete CONFIG.zonas[zonaId];
-                    await saveGlobalConfig();
-                    return true;
-                }
-            } catch (error) {
-                console.error('Error eliminando zona:', error);
-            }
-            return false;
         }
 
         // ================= FUNCIONES AUXILIARES =================
-        function getZonaConfig(zonaId) {
-            if (CONFIG.zonas && CONFIG.zonas[zonaId]) {
-                return CONFIG.zonas[zonaId];
+        function getProveedorNombre(dbName) {
+            if (CONFIG.proveedores && CONFIG.proveedores[dbName]) {
+                return CONFIG.proveedores[dbName].nombre || dbName;
+            }
+            return dbName;
+        }
+
+        function getZonaConfig(proveedorId, zonaId) {
+            if (CONFIG.zonasConfig && CONFIG.zonasConfig[proveedorId] && CONFIG.zonasConfig[proveedorId][zonaId]) {
+                return CONFIG.zonasConfig[proveedorId][zonaId];
             }
             return {
-                nombre_mostrar: zonaId,
                 telefono_pago: '04161308075',
                 cedula_pago: '16318027',
                 banco_pago: '0102 Venezuela',
@@ -1029,21 +1066,24 @@
             };
         }
 
-        function getTelegramConfig(zonaId) {
-            const zonaConfig = getZonaConfig(zonaId);
+        function saveZonaConfig(proveedorId, zonaId, config) {
+            if (!CONFIG.zonasConfig[proveedorId]) {
+                CONFIG.zonasConfig[proveedorId] = {};
+            }
+            CONFIG.zonasConfig[proveedorId][zonaId] = config;
+            saveGlobalConfig();
+        }
+
+        function getTelegramConfig(proveedorId, zonaId) {
+            const zonaConfig = getZonaConfig(proveedorId, zonaId);
             return {
                 botToken: zonaConfig.telegram_bot_token || CONFIG.telegram?.botToken || '',
                 chatId: zonaConfig.telegram_chat_id || CONFIG.telegram?.chatId || ''
             };
         }
 
-        function getDisplayName(dbName) {
-            const zonaConfig = getZonaConfig(dbName);
-            return zonaConfig.nombre_mostrar || dbName;
-        }
-
-        function getPagoMovilDataByZona(zonaId) {
-            const zonaConfig = getZonaConfig(zonaId);
+        function getPagoMovilData(proveedorId, zonaId) {
+            const zonaConfig = getZonaConfig(proveedorId, zonaId);
             return {
                 banco: zonaConfig.banco_pago || '0102 Venezuela',
                 telefono: zonaConfig.telefono_pago || '04161308075',
@@ -1054,20 +1094,20 @@
         // ================= FUNCIONES DE INTERFAZ =================
         async function loadDatabasesForSelector() {
             const select = document.getElementById('databaseSelect');
-            select.innerHTML = '<option value="">Cargando zonas...</option>';
+            select.innerHTML = '<option value="">Cargando proveedores...</option>';
             select.disabled = true;
             
             try {
                 const response = await fetch(`${API_URL}/databases`);
                 const data = await response.json();
                 
-                select.innerHTML = '<option value="">Selecciona una zona...</option>';
+                select.innerHTML = '<option value="">Selecciona un proveedor...</option>';
                 
                 if (data.success && data.databases) {
                     data.databases.forEach(db => {
                         const option = document.createElement('option');
                         option.value = db;
-                        option.textContent = getDisplayName(db);
+                        option.textContent = getProveedorNombre(db);
                         if (db === selectedDatabase) option.selected = true;
                         select.appendChild(option);
                     });
@@ -1101,7 +1141,7 @@
             const currentDbSpan = document.getElementById('currentDatabase');
             if (selectedDatabase) {
                 dbInfo.style.display = 'flex';
-                currentDbSpan.textContent = getDisplayName(selectedDatabase);
+                currentDbSpan.textContent = getProveedorNombre(selectedDatabase);
             } else {
                 dbInfo.style.display = 'none';
             }
@@ -1200,10 +1240,9 @@
 
         function showPaymentModal() {
             if (!currentUser) return;
-            const zonaId = selectedDatabase;
-            const pagoData = getPagoMovilDataByZona(zonaId);
-            const zonaConfig = getZonaConfig(zonaId);
-            document.getElementById('currentZone').textContent = zonaConfig.nombre_mostrar || zonaId;
+            const zonaNombre = currentUser.zona_nombre || currentUser.zona || 'Sin zona';
+            const pagoData = getPagoMovilData(selectedDatabase, zonaNombre);
+            document.getElementById('currentZone').textContent = zonaNombre;
             document.getElementById('pagoMovilBanco').textContent = pagoData.banco;
             document.getElementById('pagoMovilTelefono').textContent = pagoData.telefono;
             document.getElementById('pagoMovilCedula').textContent = pagoData.cedula;
@@ -1319,19 +1358,23 @@
                 return;
             }
             
+            const zonaNombre = currentUser.zona_nombre || currentUser.zona || 'Sin zona';
+            const { botToken, chatId } = getTelegramConfig(selectedDatabase, zonaNombre);
+            
+            if (!botToken || !chatId) {
+                alert('No hay configuración de Telegram para esta zona. Contacte al administrador.');
+                closeModal();
+                return;
+            }
+            
             const btn = document.getElementById('btnConfirmTelegram');
             const originalText = btn.innerHTML;
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
             
             try {
-                const { botToken, chatId } = getTelegramConfig(selectedDatabase);
-                if (!botToken || !chatId) {
-                    throw new Error('Configuración de Telegram no disponible para esta zona');
-                }
-                
                 const fechaFormateada = new Date(pendingPaymentData.fecha).toLocaleDateString('es-VE');
-                const mensaje = `━━━━━━━━━━━━━━━━━━━━\n💰 *NUEVO PAGO REPORTADO*\n━━━━━━━━━━━━━━━━━━━━\n👤 *Abonado:* ${currentUser.nombre}\n🆔 *ID:* ${currentUser.id}\n📡 *PPPoE:* ${currentUser.usuario_pppoe}\n📞 *Teléfono:* ${currentUser.telefono || 'N/D'}\n💵 *Monto:* Bs. ${formatCurrency(pendingPaymentData.monto)}\n📅 *Fecha pago:* ${fechaFormateada}\n🔢 *Referencia:* ${pendingPaymentData.referencia}\n⏰ *Hora:* ${new Date().toLocaleTimeString('es-VE')}\n📊 *Tasa cambio:* ${CONFIG.tasaCambio.toFixed(2)} Bs./USD\n━━━━━━━━━━━━━━━━━━━━`;
+                const mensaje = `━━━━━━━━━━━━━━━━━━━━\n💰 *NUEVO PAGO REPORTADO*\n━━━━━━━━━━━━━━━━━━━━\n🏢 *Proveedor:* ${getProveedorNombre(selectedDatabase)}\n📍 *Zona:* ${zonaNombre}\n👤 *Abonado:* ${currentUser.nombre}\n🆔 *ID:* ${currentUser.id}\n📡 *PPPoE:* ${currentUser.usuario_pppoe}\n📞 *Teléfono:* ${currentUser.telefono || 'N/D'}\n💵 *Monto:* Bs. ${formatCurrency(pendingPaymentData.monto)}\n📅 *Fecha pago:* ${fechaFormateada}\n🔢 *Referencia:* ${pendingPaymentData.referencia}\n⏰ *Hora:* ${new Date().toLocaleTimeString('es-VE')}\n📊 *Tasa cambio:* ${CONFIG.tasaCambio.toFixed(2)} Bs./USD\n━━━━━━━━━━━━━━━━━━━━`;
                 
                 const msgResponse = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                     method: 'POST',
@@ -1345,7 +1388,7 @@
                 formData.append('chat_id', chatId);
                 const method = pendingFile.type.startsWith('image/') ? 'photo' : 'document';
                 formData.append(method === 'photo' ? 'photo' : 'document', pendingFile);
-                formData.append('caption', `📄 Comprobante: ${currentUser.nombre} | Ref: ${pendingPaymentData.referencia}`);
+                formData.append('caption', `📄 Comprobante: ${currentUser.nombre} (${zonaNombre}) | Ref: ${pendingPaymentData.referencia}`);
                 
                 const fileResponse = await fetch(`https://api.telegram.org/bot${botToken}/${method === 'photo' ? 'sendPhoto' : 'sendDocument'}`, {
                     method: 'POST',
@@ -1363,7 +1406,7 @@
                         fecha_pago: pendingPaymentData.fecha,
                         monto_bs: pendingPaymentData.monto,
                         metodo_pago: 'Pago Móvil (Portal Web)',
-                        detalle: `Pago reportado desde portal por ${currentUser.nombre}`
+                        detalle: `Pago reportado desde portal por ${currentUser.nombre} (Zona: ${zonaNombre})`
                     })
                 });
                 
@@ -1432,7 +1475,7 @@
             const telefono = document.getElementById('telefono').value.trim();
             
             if (!selectedDatabase) {
-                showMessage('loginMessage', 'Seleccione una zona', 'error');
+                showMessage('loginMessage', 'Seleccione un proveedor', 'error');
                 return;
             }
             if (!nombre || !codigo || !telefono) {
@@ -1505,6 +1548,9 @@
                 isTechLoggedIn = true;
                 document.getElementById('techIcon').classList.add('active');
                 closeTechLoginModal();
+                await loadGlobalConfig();
+                await loadProveedoresForConfig();
+                await loadProveedorSelect();
                 await showConfigModal();
             } else {
                 showMessage('techLoginMessage', 'Credenciales incorrectas', 'error');
@@ -1522,7 +1568,9 @@
             document.getElementById('globalTasaCambio').value = CONFIG.tasaCambio;
             document.getElementById('globalTechUser').value = CONFIG.techCredentials.user || '';
             document.getElementById('globalTechPassword').value = CONFIG.techCredentials.password || '';
-            await renderZonesList();
+            
+            await renderProveedoresList();
+            await loadProveedorSelect();
             document.getElementById('configModal').style.display = 'flex';
         }
 
@@ -1533,110 +1581,199 @@
         function switchTab(tabName) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            if (tabName === 'zones') {
-                document.querySelector('.tab:first-child').classList.add('active');
-                document.getElementById('tab-zones').classList.add('active');
-                renderZonesList();
+            
+            if (tabName === 'proveedores') {
+                document.querySelectorAll('.tab')[0].classList.add('active');
+                document.getElementById('tab-proveedores').classList.add('active');
+                renderProveedoresList();
+            } else if (tabName === 'zonas') {
+                document.querySelectorAll('.tab')[1].classList.add('active');
+                document.getElementById('tab-zonas').classList.add('active');
             } else if (tabName === 'telegram') {
-                document.querySelector('.tab:nth-child(2)').classList.add('active');
+                document.querySelectorAll('.tab')[2].classList.add('active');
                 document.getElementById('tab-telegram').classList.add('active');
-            } else {
-                document.querySelector('.tab:nth-child(3)').classList.add('active');
+            } else if (tabName === 'general') {
+                document.querySelectorAll('.tab')[3].classList.add('active');
                 document.getElementById('tab-general').classList.add('active');
             }
         }
 
-        async function renderZonesList() {
-            const container = document.getElementById('zonesList');
+        // ================= PROVEEDORES =================
+        async function renderProveedoresList() {
+            const container = document.getElementById('proveedoresList');
             container.innerHTML = '';
-            const zonas = CONFIG.zonas || {};
-            for (const [zonaId, zona] of Object.entries(zonas)) {
-                const div = document.createElement('div');
-                div.className = 'zone-config-item';
-                const safeId = zonaId.replace(/[^a-z0-9]/gi, '_');
-                div.innerHTML = `
-                    <h4>${zonaId}</h4>
-                    <div class="form-group"><label>Nombre a mostrar</label><input type="text" id="nombre_${safeId}" value="${escapeHtml(zona.nombre_mostrar || '')}" placeholder="Ej: Los Pozos"></div>
-                    <div class="form-group"><label>Banco</label><input type="text" id="banco_${safeId}" value="${escapeHtml(zona.banco_pago || '0102 Venezuela')}"></div>
-                    <div class="form-group"><label>Teléfono</label><input type="text" id="telefono_${safeId}" value="${escapeHtml(zona.telefono_pago || '')}"></div>
-                    <div class="form-group"><label>Cédula</label><input type="text" id="cedula_${safeId}" value="${escapeHtml(zona.cedula_pago || '')}"></div>
-                    <div class="form-group"><label>Bot Token (opcional)</label><input type="text" id="bot_${safeId}" value="${escapeHtml(zona.telegram_bot_token || '')}"></div>
-                    <div class="form-group"><label>Chat ID (opcional)</label><input type="text" id="chat_${safeId}" value="${escapeHtml(zona.telegram_chat_id || '')}"></div>
-                    <div class="zone-actions">
-                        <button class="btn-success btn-sm" onclick="saveZoneConfig('${zonaId}')">Guardar</button>
-                        <button class="btn-danger btn-sm" onclick="deleteZoneConfig('${zonaId}')">Eliminar</button>
-                    </div>
-                `;
-                container.appendChild(div);
+            const proveedores = CONFIG.proveedores || {};
+            
+            // Obtener bases de datos reales
+            try {
+                const response = await fetch(`${API_URL}/databases`);
+                const data = await response.json();
+                const databases = data.success && data.databases ? data.databases : [];
+                
+                for (const db of databases) {
+                    const proveedor = proveedores[db] || { nombre: db };
+                    const div = document.createElement('div');
+                    div.className = 'config-card';
+                    const safeId = db.replace(/[^a-z0-9]/gi, '_');
+                    div.innerHTML = `
+                        <h4>
+                            ${db}
+                            <span class="badge badge-success">Base de Datos</span>
+                        </h4>
+                        <div class="form-group">
+                            <label>Nombre para mostrar</label>
+                            <input type="text" id="nombre_prov_${safeId}" value="${escapeHtml(proveedor.nombre || db)}" placeholder="Ej: ISP Centro">
+                        </div>
+                        <div class="config-actions">
+                            <button class="btn-success btn-sm" onclick="saveProveedorConfig('${db}')">Guardar</button>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                }
+            } catch (error) {
+                container.innerHTML = '<p class="error">Error cargando proveedores</p>';
             }
         }
 
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
+        async function saveProveedorConfig(dbName) {
+            const safeId = dbName.replace(/[^a-z0-9]/gi, '_');
+            const nombre = document.getElementById(`nombre_prov_${safeId}`)?.value || dbName;
+            
+            if (!CONFIG.proveedores) CONFIG.proveedores = {};
+            CONFIG.proveedores[dbName] = { nombre: nombre };
+            
+            if (await saveGlobalConfig()) {
+                showMessage('proveedoresMessage', `Proveedor ${dbName} guardado`, 'success');
+                await renderProveedoresList();
+                await loadDatabasesForSelector();
+            } else {
+                showMessage('proveedoresMessage', 'Error al guardar', 'error');
+            }
         }
 
-        async function saveZoneConfig(zonaId) {
-            const safeId = zonaId.replace(/[^a-z0-9]/gi, '_');
-            const zonaData = {
-                nombre_mostrar: document.getElementById(`nombre_${safeId}`)?.value || '',
+        function addNewProveedor() {
+            const newDbName = prompt('Ingrese el nombre de la base de datos del nuevo proveedor:');
+            if (newDbName && !CONFIG.proveedores[newDbName]) {
+                CONFIG.proveedores[newDbName] = { nombre: newDbName };
+                saveGlobalConfig().then(() => {
+                    renderProveedoresList();
+                    loadDatabasesForSelector();
+                    showMessage('proveedoresMessage', `Proveedor ${newDbName} agregado`, 'success');
+                });
+            } else if (newDbName) {
+                showMessage('proveedoresMessage', 'El proveedor ya existe', 'warning');
+            }
+        }
+
+        // ================= ZONAS =================
+        async function loadProveedorSelect() {
+            const select = document.getElementById('proveedorSelect');
+            select.innerHTML = '<option value="">Seleccione un proveedor...</option>';
+            
+            const proveedores = CONFIG.proveedores || {};
+            for (const [dbName, proveedor] of Object.entries(proveedores)) {
+                const option = document.createElement('option');
+                option.value = dbName;
+                option.textContent = proveedor.nombre || dbName;
+                select.appendChild(option);
+            }
+        }
+
+        async function loadZonasFromProveedor() {
+            const proveedorId = document.getElementById('proveedorSelect').value;
+            if (!proveedorId) {
+                document.getElementById('zonasConfigContainer').innerHTML = '<p>Seleccione un proveedor</p>';
+                return;
+            }
+            
+            document.getElementById('zonasConfigContainer').innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner"></i> Cargando zonas...</div>';
+            
+            try {
+                const zonas = await loadZonasFromDatabase(proveedorId);
+                currentZonasList = zonas;
+                renderZonasConfigList(proveedorId, zonas);
+            } catch (error) {
+                document.getElementById('zonasConfigContainer').innerHTML = '<p class="error">Error cargando zonas</p>';
+            }
+        }
+
+        function renderZonasConfigList(proveedorId, zonas) {
+            const container = document.getElementById('zonasConfigContainer');
+            container.innerHTML = '';
+            
+            if (!zonas || zonas.length === 0) {
+                container.innerHTML = '<p>No hay zonas disponibles en este proveedor</p>';
+                return;
+            }
+            
+            zonas.forEach(zona => {
+                const zonaId = zona.id || zona.nombre;
+                const zonaNombre = zona.nombre || zonaId;
+                const config = getZonaConfig(proveedorId, zonaId);
+                const safeId = `${proveedorId}_${zonaId}`.replace(/[^a-z0-9]/gi, '_');
+                
+                const div = document.createElement('div');
+                div.className = 'config-card';
+                div.innerHTML = `
+                    <h4><i class="fas fa-map-marker-alt"></i> ${zonaNombre}</h4>
+                    <div class="form-group">
+                        <label>Banco para Pago Móvil</label>
+                        <input type="text" id="banco_${safeId}" value="${escapeHtml(config.banco_pago || '0102 Venezuela')}" placeholder="0102 Venezuela">
+                    </div>
+                    <div class="form-group">
+                        <label>Teléfono para Pago Móvil</label>
+                        <input type="text" id="telefono_${safeId}" value="${escapeHtml(config.telefono_pago || '')}" placeholder="0412-1234567">
+                    </div>
+                    <div class="form-group">
+                        <label>Cédula/RIF para Pago Móvil</label>
+                        <input type="text" id="cedula_${safeId}" value="${escapeHtml(config.cedula_pago || '')}" placeholder="12345678">
+                    </div>
+                    <div class="form-group">
+                        <label>Bot Token de Telegram (Opcional)</label>
+                        <input type="text" id="bot_${safeId}" value="${escapeHtml(config.telegram_bot_token || '')}" placeholder="Token específico para esta zona">
+                    </div>
+                    <div class="form-group">
+                        <label>Chat ID de Telegram (Opcional)</label>
+                        <input type="text" id="chat_${safeId}" value="${escapeHtml(config.telegram_chat_id || '')}" placeholder="Chat ID específico para esta zona">
+                    </div>
+                    <div class="config-actions">
+                        <button class="btn-success btn-sm" onclick="saveZonaConfigFromUI('${proveedorId}', '${zonaId}')">Guardar Configuración</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        async function saveZonaConfigFromUI(proveedorId, zonaId) {
+            const safeId = `${proveedorId}_${zonaId}`.replace(/[^a-z0-9]/gi, '_');
+            const config = {
                 banco_pago: document.getElementById(`banco_${safeId}`)?.value || '0102 Venezuela',
                 telefono_pago: document.getElementById(`telefono_${safeId}`)?.value || '',
                 cedula_pago: document.getElementById(`cedula_${safeId}`)?.value || '',
                 telegram_bot_token: document.getElementById(`bot_${safeId}`)?.value || '',
                 telegram_chat_id: document.getElementById(`chat_${safeId}`)?.value || ''
             };
-            if (await saveZona(zonaId, zonaData)) {
-                showMessage('configMessage', `Zona ${zonaId} guardada correctamente`, 'success');
-                await renderZonesList();
-                await loadDatabasesForSelector();
+            
+            if (!CONFIG.zonasConfig[proveedorId]) {
+                CONFIG.zonasConfig[proveedorId] = {};
+            }
+            CONFIG.zonasConfig[proveedorId][zonaId] = config;
+            
+            if (await saveGlobalConfig()) {
+                showMessage('zonasMessage', `Configuración de zona guardada`, 'success');
             } else {
-                showMessage('configMessage', 'Error al guardar la zona', 'error');
+                showMessage('zonasMessage', 'Error al guardar', 'error');
             }
         }
 
-        async function deleteZoneConfig(zonaId) {
-            if (confirm(`¿Estás seguro de eliminar la zona ${zonaId}?`)) {
-                if (await deleteZona(zonaId)) {
-                    showMessage('configMessage', `Zona ${zonaId} eliminada`, 'success');
-                    await renderZonesList();
-                    await loadDatabasesForSelector();
-                } else {
-                    showMessage('configMessage', 'Error al eliminar la zona', 'error');
-                }
-            }
-        }
-
-        function addNewZone() {
-            const newId = prompt('ID de la nueva zona (nombre técnico de la base de datos):');
-            if (newId && !CONFIG.zonas[newId]) {
-                CONFIG.zonas[newId] = {
-                    nombre_mostrar: newId,
-                    telefono_pago: '',
-                    cedula_pago: '',
-                    banco_pago: '0102 Venezuela',
-                    telegram_bot_token: '',
-                    telegram_chat_id: ''
-                };
-                saveGlobalConfig().then(() => {
-                    renderZonesList();
-                    loadDatabasesForSelector();
-                    showMessage('configMessage', `Zona ${newId} agregada`, 'success');
-                });
-            } else if (newId) {
-                showMessage('configMessage', 'La zona ya existe', 'warning');
-            }
-        }
-
+        // ================= CONFIGURACIÓN GLOBAL =================
         async function saveGlobalTelegramConfig() {
             CONFIG.telegram.botToken = document.getElementById('globalBotToken').value.trim();
             CONFIG.telegram.chatId = document.getElementById('globalChatId').value.trim();
             if (await saveGlobalConfig()) {
                 showMessage('telegramConfigMessage', 'Configuración global de Telegram guardada', 'success');
             } else {
-                showMessage('telegramConfigMessage', 'Error al guardar configuración', 'error');
+                showMessage('telegramConfigMessage', 'Error al guardar', 'error');
             }
         }
 
@@ -1649,8 +1786,16 @@
                 showMessage('generalConfigMessage', 'Configuración general guardada', 'success');
                 if (currentUser) refreshUserData();
             } else {
-                showMessage('generalConfigMessage', 'Error al guardar configuración', 'error');
+                showMessage('generalConfigMessage', 'Error al guardar', 'error');
             }
+        }
+
+        // ================= FUNCIONES UTILITARIAS =================
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
         function showMessage(elementId, message, type) {
