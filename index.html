@@ -442,59 +442,6 @@
             margin: 20px 0;
         }
 
-        .database-list {
-            max-height: 300px;
-            overflow-y: auto;
-            margin: 15px 0;
-        }
-
-        .database-item {
-            background: white;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            border: 2px solid var(--gray-light);
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .database-item:hover {
-            border-color: var(--primary);
-            transform: translateX(5px);
-        }
-
-        .database-item.selected {
-            border-color: var(--success);
-            background: #f0fdf4;
-        }
-
-        .database-item i {
-            font-size: 24px;
-            color: var(--primary);
-        }
-
-        .database-item.selected i {
-            color: var(--success);
-        }
-
-        .database-item-info {
-            flex: 1;
-        }
-
-        .database-item-name {
-            font-weight: 600;
-            color: var(--dark);
-            margin-bottom: 5px;
-        }
-
-        .database-item-desc {
-            font-size: 12px;
-            color: var(--gray);
-        }
-
         .tech-footer {
             margin-top: 30px;
             padding: 20px;
@@ -1023,7 +970,8 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(configToSave)
                 });
-                return (await response.json()).success;
+                const data = await response.json();
+                return data.success;
             } catch (error) {
                 console.error('Error guardando configuración:', error);
                 return false;
@@ -1037,7 +985,8 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(zonaData)
                 });
-                if ((await response.json()).success) {
+                const data = await response.json();
+                if (data.success) {
                     CONFIG.zonas[zonaId] = zonaData;
                     await saveGlobalConfig();
                     return true;
@@ -1053,7 +1002,8 @@
                 const response = await fetch(`${API_URL}/zonas/${encodeURIComponent(zonaId)}`, {
                     method: 'DELETE'
                 });
-                if ((await response.json()).success) {
+                const data = await response.json();
+                if (data.success) {
                     delete CONFIG.zonas[zonaId];
                     await saveGlobalConfig();
                     return true;
@@ -1064,7 +1014,8 @@
             return false;
         }
 
-        // ================= FUNCIONES AUXILIARES =================        function getZonaConfig(zonaId) {
+        // ================= FUNCIONES AUXILIARES =================
+        function getZonaConfig(zonaId) {
             if (CONFIG.zonas && CONFIG.zonas[zonaId]) {
                 return CONFIG.zonas[zonaId];
             }
@@ -1186,8 +1137,11 @@
 
         function updateMonthlyFeeDisplay(precioBs) {
             const el = document.getElementById('monthlyFee');
-            if (currentCurrency === 'USD') el.textContent = formatCurrency(precioBs / CONFIG.tasaCambio) + ' USD $';
-            else el.textContent = formatCurrency(precioBs) + ' Bs.';
+            if (currentCurrency === 'USD') {
+                el.textContent = formatCurrency(precioBs / CONFIG.tasaCambio) + ' USD $';
+            } else {
+                el.textContent = formatCurrency(precioBs) + ' Bs.';
+            }
         }
 
         function switchCurrency(currency) {
@@ -1203,11 +1157,15 @@
 
         function updateDebtDisplay(totalBs, meses) {
             const debtEl = document.getElementById('debtTotal');
-            const displayAmount = currentCurrency === 'USD' ? totalBs / CONFIG.tasaCambio : totalBs;
-            const symbol = currentCurrency === 'USD' ? 'USD $' : 'Bs.';
+            let displayAmount = totalBs;
+            let symbol = 'Bs.';
+            if (currentCurrency === 'USD') {
+                displayAmount = totalBs / CONFIG.tasaCambio;
+                symbol = 'USD $';
+            }
             debtEl.textContent = formatCurrency(displayAmount) + ' ' + symbol;
             debtEl.className = totalBs === 0 ? 'debt-total paid' : 'debt-total';
-            document.getElementById('debtMonths').textContent = totalBs === 0 ? '¡Sin deudas!' : `Meses: ${meses || 'Consultando...'}`;
+            document.getElementById('debtMonths').textContent = totalBs === 0 ? '¡Sin deudas pendientes!' : `Meses pendientes: ${meses || 'Consultando...'}`;
             document.getElementById('pagoMovilMonto').textContent = formatCurrency(totalBs) + ' Bs.';
             document.getElementById('monto').value = totalBs.toFixed(2);
         }
@@ -1227,14 +1185,16 @@
                 const montoUsd = montoBs / CONFIG.tasaCambio;
                 const montoMostrar = currentCurrency === 'USD' ? montoUsd : montoBs;
                 const simbolo = currentCurrency === 'USD' ? 'USD $' : 'Bs.';
-                tbody.innerHTML += `<tr>
+                const row = document.createElement('tr');
+                row.innerHTML = `
                     <td>${pago.fecha ? new Date(pago.fecha).toLocaleDateString('es-VE') : 'N/A'}</td>
                     <td>${pago.mes || 'N/A'}</td>
                     <td>${formatCurrency(montoMostrar)} ${simbolo}</td>
                     <td>${formatCurrency(montoUsd)} USD</td>
                     <td>${pago.referencia || 'N/A'}</td>
-                    <td>${pago.metodo || 'Portal'}</td>
-                </tr>`;
+                    <td>${pago.metodo || 'Portal Web'}</td>
+                `;
+                tbody.appendChild(row);
             });
         }
 
@@ -1253,6 +1213,7 @@
 
         function closePaymentModal() {
             document.getElementById('paymentModal').style.display = 'none';
+            document.getElementById('paymentMessage').style.display = 'none';
             document.getElementById('referencia').value = '';
             document.getElementById('comprobante').value = '';
             document.getElementById('fileInfo').style.display = 'none';
@@ -1272,8 +1233,9 @@
             const texto = `0102 ${telefono} ${cedula} ${monto}`;
             navigator.clipboard.writeText(texto);
             const btn = document.getElementById('copyAllBtn');
+            const originalText = btn.innerHTML;
             btn.innerHTML = '<i class="fas fa-check"></i> ¡Copiado!';
-            setTimeout(() => btn.innerHTML = '<i class="fas fa-copy"></i> Copiar Datos', 2000);
+            setTimeout(() => btn.innerHTML = originalText, 2000);
         }
 
         function handleFileUpload(e) {
@@ -1283,6 +1245,8 @@
                 pendingFile = file;
                 document.getElementById('fileInfo').style.display = 'block';
                 document.getElementById('fileName').textContent = file.name;
+            } else if (file) {
+                alert('El archivo es demasiado grande (máximo 10MB)');
             }
         }
 
@@ -1298,11 +1262,26 @@
             const fecha = document.getElementById('fechaPago').value;
             const monto = parseFloat(document.getElementById('monto').value);
             
-            if (!referencia || referencia.length < 6) return showMessage('paymentMessage', 'Referencia inválida', 'error');
-            if (!fecha) return showMessage('paymentMessage', 'Seleccione fecha', 'error');
-            if (!monto || monto <= 0) return showMessage('paymentMessage', 'Monto inválido', 'error');
-            if (!uploadedFile && !pendingFile) return showMessage('paymentMessage', 'Suba el comprobante', 'error');
-            if (!currentUser?.id) return showMessage('paymentMessage', 'Sesión inválida', 'error');
+            if (!referencia || referencia.length < 6) {
+                showMessage('paymentMessage', 'La referencia debe tener al menos 6 caracteres', 'error');
+                return;
+            }
+            if (!fecha) {
+                showMessage('paymentMessage', 'Seleccione una fecha', 'error');
+                return;
+            }
+            if (!monto || monto <= 0) {
+                showMessage('paymentMessage', 'Ingrese un monto válido', 'error');
+                return;
+            }
+            if (!uploadedFile && !pendingFile) {
+                showMessage('paymentMessage', 'Debe subir el comprobante', 'error');
+                return;
+            }
+            if (!currentUser?.id) {
+                showMessage('paymentMessage', 'Sesión inválida', 'error');
+                return;
+            }
             
             try {
                 const response = await fetch(`${API_URL}/verificar-pago-existente`, {
@@ -1313,7 +1292,8 @@
                 const data = await response.json();
                 if (data.exists) {
                     alert(data.message);
-                    return showMessage('paymentMessage', data.message, 'warning');
+                    showMessage('paymentMessage', data.message, 'warning');
+                    return;
                 }
                 
                 pendingPaymentData = { referencia, fecha, monto };
@@ -1327,41 +1307,54 @@
                 closePaymentModal();
                 document.getElementById('confirmationModal').style.display = 'flex';
             } catch (error) {
-                showMessage('paymentMessage', 'Error al verificar', 'error');
+                console.error('Error:', error);
+                showMessage('paymentMessage', 'Error al verificar el pago', 'error');
             }
         }
 
         async function sendToTelegram() {
             if (!pendingPaymentData || !pendingFile) {
                 alert('Faltan datos del pago');
+                closeModal();
                 return;
             }
             
             const btn = document.getElementById('btnConfirmTelegram');
+            const originalText = btn.innerHTML;
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
             
             try {
                 const { botToken, chatId } = getTelegramConfig(selectedDatabase);
-                if (!botToken || !chatId) throw new Error('Configuración de Telegram no disponible');
+                if (!botToken || !chatId) {
+                    throw new Error('Configuración de Telegram no disponible para esta zona');
+                }
                 
                 const fechaFormateada = new Date(pendingPaymentData.fecha).toLocaleDateString('es-VE');
-                const mensaje = `💰 *NUEVO PAGO*\n👤 ${currentUser.nombre}\n📡 ${currentUser.usuario_pppoe}\n💵 Bs. ${formatCurrency(pendingPaymentData.monto)}\n📅 ${fechaFormateada}\n🔢 ${pendingPaymentData.referencia}`;
+                const mensaje = `━━━━━━━━━━━━━━━━━━━━\n💰 *NUEVO PAGO REPORTADO*\n━━━━━━━━━━━━━━━━━━━━\n👤 *Abonado:* ${currentUser.nombre}\n🆔 *ID:* ${currentUser.id}\n📡 *PPPoE:* ${currentUser.usuario_pppoe}\n📞 *Teléfono:* ${currentUser.telefono || 'N/D'}\n💵 *Monto:* Bs. ${formatCurrency(pendingPaymentData.monto)}\n📅 *Fecha pago:* ${fechaFormateada}\n🔢 *Referencia:* ${pendingPaymentData.referencia}\n⏰ *Hora:* ${new Date().toLocaleTimeString('es-VE')}\n📊 *Tasa cambio:* ${CONFIG.tasaCambio.toFixed(2)} Bs./USD\n━━━━━━━━━━━━━━━━━━━━`;
                 
-                await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                const msgResponse = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ chat_id: chatId, text: mensaje, parse_mode: 'Markdown' })
                 });
                 
+                if (!msgResponse.ok) throw new Error('Error enviando mensaje');
+                
                 const formData = new FormData();
                 formData.append('chat_id', chatId);
-                formData.append(pendingFile.type.startsWith('image/') ? 'photo' : 'document', pendingFile);
-                formData.append('caption', `Comprobante: ${currentUser.nombre}`);
+                const method = pendingFile.type.startsWith('image/') ? 'photo' : 'document';
+                formData.append(method === 'photo' ? 'photo' : 'document', pendingFile);
+                formData.append('caption', `📄 Comprobante: ${currentUser.nombre} | Ref: ${pendingPaymentData.referencia}`);
                 
-                await fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, { method: 'POST', body: formData });
+                const fileResponse = await fetch(`https://api.telegram.org/bot${botToken}/${method === 'photo' ? 'sendPhoto' : 'sendDocument'}`, {
+                    method: 'POST',
+                    body: formData
+                });
                 
-                await fetch(`${API_URL}/registrar-pago-online`, {
+                if (!fileResponse.ok) throw new Error('Error subiendo comprobante');
+                
+                const registerResponse = await fetch(`${API_URL}/registrar-pago-online`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'X-Database': selectedDatabase },
                     body: JSON.stringify({
@@ -1369,21 +1362,30 @@
                         referencia: pendingPaymentData.referencia,
                         fecha_pago: pendingPaymentData.fecha,
                         monto_bs: pendingPaymentData.monto,
-                        metodo_pago: 'Pago Móvil',
-                        detalle: 'Pago reportado desde portal'
+                        metodo_pago: 'Pago Móvil (Portal Web)',
+                        detalle: `Pago reportado desde portal por ${currentUser.nombre}`
                     })
                 });
                 
-                alert('✅ Pago reportado correctamente');
-                closeModal();
-                pendingPaymentData = null;
-                removeFile();
-                await refreshUserData();
+                const registerData = await registerResponse.json();
+                
+                if (registerData.success) {
+                    alert('✅ ¡Pago reportado correctamente! Está siendo verificado.');
+                    closeModal();
+                    pendingPaymentData = null;
+                    removeFile();
+                    setTimeout(() => {
+                        if (currentUser) refreshUserData();
+                    }, 2000);
+                } else {
+                    throw new Error(registerData.message || 'Error al registrar');
+                }
             } catch (error) {
-                alert('Error: ' + error.message);
+                console.error('Error:', error);
+                alert('❌ Error: ' + error.message);
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = 'Enviar a Telegram';
+                btn.innerHTML = originalText;
             }
         }
 
@@ -1401,10 +1403,15 @@
                 });
                 const data = await response.json();
                 if (data.success) {
+                    if (data.tasa_cambio) {
+                        CONFIG.tasaCambio = parseFloat(data.tasa_cambio);
+                        document.getElementById('exchangeRate').textContent = CONFIG.tasaCambio.toFixed(2);
+                    }
                     currentUser = {
                         ...data.abonado,
+                        tasa_cambio: data.tasa_cambio || CONFIG.tasaCambio,
                         deuda_total_bs: data.abonado.deuda_total_bs || 0,
-                        deuda_meses: data.deudas?.map(d => d.mes).join(', ') || '',
+                        deuda_meses: data.deudas ? data.deudas.map(d => d.mes).join(', ') : '',
                         pagos_cache: data.pagos || []
                     };
                     localStorage.setItem('portal_abonado', JSON.stringify(currentUser));
@@ -1424,8 +1431,14 @@
             const codigo = document.getElementById('codigo').value.trim();
             const telefono = document.getElementById('telefono').value.trim();
             
-            if (!selectedDatabase) return showMessage('loginMessage', 'Seleccione una zona', 'error');
-            if (!nombre || !codigo || !telefono) return showMessage('loginMessage', 'Complete todos los campos', 'error');
+            if (!selectedDatabase) {
+                showMessage('loginMessage', 'Seleccione una zona', 'error');
+                return;
+            }
+            if (!nombre || !codigo || !telefono) {
+                showMessage('loginMessage', 'Complete todos los campos', 'error');
+                return;
+            }
             
             const btn = document.getElementById('btnLogin');
             btn.disabled = true;
@@ -1440,23 +1453,33 @@
                 const data = await response.json();
                 
                 if (data.success) {
+                    if (data.tasa_cambio) {
+                        CONFIG.tasaCambio = parseFloat(data.tasa_cambio);
+                        document.getElementById('exchangeRate').textContent = CONFIG.tasaCambio.toFixed(2);
+                    }
                     currentUser = {
                         ...data.abonado,
+                        tasa_cambio: data.tasa_cambio || CONFIG.tasaCambio,
                         deuda_total_bs: data.abonado.deuda_total_bs || 0,
-                        deuda_meses: data.deudas?.map(d => d.mes).join(', ') || '',
+                        deuda_meses: data.deudas ? data.deudas.map(d => d.mes).join(', ') : '',
                         pagos_cache: data.pagos || []
                     };
                     localStorage.setItem('portal_abonado', JSON.stringify(currentUser));
-                    showDashboard();
-                    loadUserData();
-                    updateDebtDisplay(currentUser.deuda_total_bs, currentUser.deuda_meses);
-                    updatePaymentsTable(currentUser.pagos_cache);
-                    refreshInterval = setInterval(() => { if (currentUser) refreshUserData(); }, 60000);
+                    showMessage('loginMessage', '✅ Conexión exitosa', 'success');
+                    setTimeout(() => {
+                        showDashboard();
+                        loadUserData();
+                        updateDebtDisplay(currentUser.deuda_total_bs, currentUser.deuda_meses);
+                        updatePaymentsTable(currentUser.pagos_cache);
+                        if (refreshInterval) clearInterval(refreshInterval);
+                        refreshInterval = setInterval(() => { if (currentUser) refreshUserData(); }, 60000);
+                    }, 1000);
                 } else {
                     showMessage('loginMessage', data.message || 'Error de autenticación', 'error');
                 }
             } catch (error) {
-                showMessage('loginMessage', 'Error de conexión', 'error');
+                console.error('Error:', error);
+                showMessage('loginMessage', 'Error de conexión con el servidor', 'error');
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fas fa-search"></i> Consultar';
@@ -1467,6 +1490,7 @@
         function showTechLoginModal() {
             document.getElementById('techUser').value = '';
             document.getElementById('techPassword').value = '';
+            document.getElementById('techLoginMessage').style.display = 'none';
             document.getElementById('techLoginModal').style.display = 'flex';
         }
 
@@ -1525,17 +1549,19 @@
         async function renderZonesList() {
             const container = document.getElementById('zonesList');
             container.innerHTML = '';
-            for (const [zonaId, zona] of Object.entries(CONFIG.zonas)) {
+            const zonas = CONFIG.zonas || {};
+            for (const [zonaId, zona] of Object.entries(zonas)) {
                 const div = document.createElement('div');
                 div.className = 'zone-config-item';
+                const safeId = zonaId.replace(/[^a-z0-9]/gi, '_');
                 div.innerHTML = `
                     <h4>${zonaId}</h4>
-                    <div class="form-group"><label>Nombre a mostrar</label><input type="text" id="nombre_${zonaId.replace(/[^a-z0-9]/gi, '_')}" value="${zona.nombre_mostrar || ''}"></div>
-                    <div class="form-group"><label>Banco</label><input type="text" id="banco_${zonaId.replace(/[^a-z0-9]/gi, '_')}" value="${zona.banco_pago || '0102 Venezuela'}"></div>
-                    <div class="form-group"><label>Teléfono</label><input type="text" id="telefono_${zonaId.replace(/[^a-z0-9]/gi, '_')}" value="${zona.telefono_pago || ''}"></div>
-                    <div class="form-group"><label>Cédula</label><input type="text" id="cedula_${zonaId.replace(/[^a-z0-9]/gi, '_')}" value="${zona.cedula_pago || ''}"></div>
-                    <div class="form-group"><label>Bot Token (opcional)</label><input type="text" id="bot_${zonaId.replace(/[^a-z0-9]/gi, '_')}" value="${zona.telegram_bot_token || ''}"></div>
-                    <div class="form-group"><label>Chat ID (opcional)</label><input type="text" id="chat_${zonaId.replace(/[^a-z0-9]/gi, '_')}" value="${zona.telegram_chat_id || ''}"></div>
+                    <div class="form-group"><label>Nombre a mostrar</label><input type="text" id="nombre_${safeId}" value="${escapeHtml(zona.nombre_mostrar || '')}" placeholder="Ej: Los Pozos"></div>
+                    <div class="form-group"><label>Banco</label><input type="text" id="banco_${safeId}" value="${escapeHtml(zona.banco_pago || '0102 Venezuela')}"></div>
+                    <div class="form-group"><label>Teléfono</label><input type="text" id="telefono_${safeId}" value="${escapeHtml(zona.telefono_pago || '')}"></div>
+                    <div class="form-group"><label>Cédula</label><input type="text" id="cedula_${safeId}" value="${escapeHtml(zona.cedula_pago || '')}"></div>
+                    <div class="form-group"><label>Bot Token (opcional)</label><input type="text" id="bot_${safeId}" value="${escapeHtml(zona.telegram_bot_token || '')}"></div>
+                    <div class="form-group"><label>Chat ID (opcional)</label><input type="text" id="chat_${safeId}" value="${escapeHtml(zona.telegram_chat_id || '')}"></div>
                     <div class="zone-actions">
                         <button class="btn-success btn-sm" onclick="saveZoneConfig('${zonaId}')">Guardar</button>
                         <button class="btn-danger btn-sm" onclick="deleteZoneConfig('${zonaId}')">Eliminar</button>
@@ -1543,6 +1569,13 @@
                 `;
                 container.appendChild(div);
             }
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
         async function saveZoneConfig(zonaId) {
@@ -1556,28 +1589,28 @@
                 telegram_chat_id: document.getElementById(`chat_${safeId}`)?.value || ''
             };
             if (await saveZona(zonaId, zonaData)) {
-                showMessage('configMessage', `Zona ${zonaId} guardada`, 'success');
+                showMessage('configMessage', `Zona ${zonaId} guardada correctamente`, 'success');
                 await renderZonesList();
                 await loadDatabasesForSelector();
             } else {
-                showMessage('configMessage', 'Error al guardar', 'error');
+                showMessage('configMessage', 'Error al guardar la zona', 'error');
             }
         }
 
         async function deleteZoneConfig(zonaId) {
-            if (confirm(`¿Eliminar zona ${zonaId}?`)) {
+            if (confirm(`¿Estás seguro de eliminar la zona ${zonaId}?`)) {
                 if (await deleteZona(zonaId)) {
                     showMessage('configMessage', `Zona ${zonaId} eliminada`, 'success');
                     await renderZonesList();
                     await loadDatabasesForSelector();
                 } else {
-                    showMessage('configMessage', 'Error al eliminar', 'error');
+                    showMessage('configMessage', 'Error al eliminar la zona', 'error');
                 }
             }
         }
 
         function addNewZone() {
-            const newId = prompt('ID de la nueva zona (nombre técnico):');
+            const newId = prompt('ID de la nueva zona (nombre técnico de la base de datos):');
             if (newId && !CONFIG.zonas[newId]) {
                 CONFIG.zonas[newId] = {
                     nombre_mostrar: newId,
@@ -1592,6 +1625,8 @@
                     loadDatabasesForSelector();
                     showMessage('configMessage', `Zona ${newId} agregada`, 'success');
                 });
+            } else if (newId) {
+                showMessage('configMessage', 'La zona ya existe', 'warning');
             }
         }
 
@@ -1599,7 +1634,9 @@
             CONFIG.telegram.botToken = document.getElementById('globalBotToken').value.trim();
             CONFIG.telegram.chatId = document.getElementById('globalChatId').value.trim();
             if (await saveGlobalConfig()) {
-                showMessage('telegramConfigMessage', 'Configuración guardada', 'success');
+                showMessage('telegramConfigMessage', 'Configuración global de Telegram guardada', 'success');
+            } else {
+                showMessage('telegramConfigMessage', 'Error al guardar configuración', 'error');
             }
         }
 
@@ -1609,28 +1646,52 @@
             CONFIG.techCredentials.password = document.getElementById('globalTechPassword').value.trim();
             if (await saveGlobalConfig()) {
                 document.getElementById('exchangeRate').textContent = CONFIG.tasaCambio.toFixed(2);
-                showMessage('generalConfigMessage', 'Configuración guardada', 'success');
+                showMessage('generalConfigMessage', 'Configuración general guardada', 'success');
                 if (currentUser) refreshUserData();
+            } else {
+                showMessage('generalConfigMessage', 'Error al guardar configuración', 'error');
             }
         }
 
         function showMessage(elementId, message, type) {
             const el = document.getElementById(elementId);
-            el.textContent = message;
-            el.className = `message ${type}`;
-            setTimeout(() => el.style.display = 'none', 5000);
+            if (el) {
+                el.textContent = message;
+                el.className = `message ${type}`;
+                el.style.display = 'block';
+                setTimeout(() => {
+                    if (el.style.display === 'block') el.style.display = 'none';
+                }, 5000);
+            }
         }
 
         function formatCurrency(amount) {
             return amount.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
 
+        async function checkApiConnection() {
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                if (response.ok) {
+                    document.getElementById('statusIcon').style.color = '#10b981';
+                    document.getElementById('statusText').textContent = 'Conectado';
+                } else {
+                    document.getElementById('statusIcon').style.color = '#f59e0b';
+                    document.getElementById('statusText').textContent = 'API disponible';
+                }
+            } catch (error) {
+                document.getElementById('statusIcon').style.color = '#ef4444';
+                document.getElementById('statusText').textContent = 'Sin conexión';
+            }
+        }
+
         // ================= INICIALIZACIÓN =================
         document.getElementById('comprobante').addEventListener('change', handleFileUpload);
         
-        (async function init() {
+        async function init() {
             await loadGlobalConfig();
             await loadDatabasesForSelector();
+            await checkApiConnection();
             
             const savedUser = localStorage.getItem('portal_abonado');
             if (savedUser) {
@@ -1638,13 +1699,17 @@
                     currentUser = JSON.parse(savedUser);
                     showDashboard();
                     loadUserData();
-                    updateDebtDisplay(currentUser.deuda_total_bs, currentUser.deuda_meses);
+                    updateDebtDisplay(currentUser.deuda_total_bs, currentUser.deuda_meses || '');
                     if (currentUser.pagos_cache) updatePaymentsTable(currentUser.pagos_cache);
-                    refreshUserData();
+                    setTimeout(() => refreshUserData(), 1000);
                     refreshInterval = setInterval(() => { if (currentUser) refreshUserData(); }, 60000);
-                } catch(e) { localStorage.removeItem('portal_abonado'); }
+                } catch(e) {
+                    localStorage.removeItem('portal_abonado');
+                }
             }
-        })();
+        }
+        
+        init();
     </script>
 </body>
 </html>
