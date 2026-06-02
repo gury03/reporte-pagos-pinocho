@@ -644,11 +644,6 @@
             display: block;
         }
 
-        .add-btn {
-            background: var(--success);
-            margin-bottom: 20px;
-        }
-
         .loading-spinner {
             text-align: center;
             padding: 20px;
@@ -1005,6 +1000,7 @@
                     if (!CONFIG.zonasConfig) CONFIG.zonasConfig = {};
                     if (!CONFIG.telegram) CONFIG.telegram = { botToken: '', chatId: '' };
                     document.getElementById('exchangeRate').textContent = CONFIG.tasaCambio.toFixed(2);
+                    console.log('Configuración global cargada:', CONFIG);
                     return true;
                 }
             } catch (error) {
@@ -1028,7 +1024,13 @@
                     body: JSON.stringify(configToSave)
                 });
                 const data = await response.json();
-                return data.success;
+                if (data.success) {
+                    console.log('Configuración guardada correctamente');
+                    return true;
+                } else {
+                    console.error('Error al guardar:', data);
+                    return false;
+                }
             } catch (error) {
                 console.error('Error guardando configuración:', error);
                 return false;
@@ -1041,27 +1043,12 @@
                 const data = await response.json();
                 if (data.success && data.databases) {
                     availableDatabases = data.databases;
+                    console.log('Bases de datos disponibles:', availableDatabases);
                     return availableDatabases;
                 }
                 return [];
             } catch (error) {
                 console.error('Error cargando bases de datos:', error);
-                return [];
-            }
-        }
-
-        async function loadZonasFromDatabase(database) {
-            try {
-                const response = await fetch(`${API_URL}/zonas`, {
-                    headers: { 'X-Database': database }
-                });
-                const data = await response.json();
-                if (data.success && data.zonas) {
-                    return data.zonas;
-                }
-                return [];
-            } catch (error) {
-                console.error('Error cargando zonas:', error);
                 return [];
             }
         }
@@ -1134,6 +1121,7 @@
                     select.innerHTML = '<option value="">No hay proveedores disponibles</option>';
                 }
             } catch (error) {
+                console.error('Error:', error);
                 select.innerHTML = '<option value="">Error al cargar</option>';
             } finally {
                 select.disabled = false;
@@ -1642,7 +1630,7 @@
                     <div class="form-group">
                         <label>Nombre para mostrar</label>
                         <input type="text" id="nombre_prov_${safeId}" value="${escapeHtml(proveedor.nombre || db)}" placeholder="Ej: ISP Centro">
-                        <small style="font-size: 12px; color: var(--gray);">Este es el nombre que verán los usuarios al seleccionar el proveedor</small>
+                        <small style="font-size: 12px; color: var(--gray);">Este es el nombre que verán los usuarios</small>
                     </div>
                     <div class="config-actions">
                         <button class="btn-success btn-sm" onclick="saveProveedorConfig('${db}')">Guardar</button>
@@ -1663,6 +1651,7 @@
                 showMessage('proveedoresMessage', `Proveedor ${dbName} guardado como "${nombre}"`, 'success');
                 await renderProveedoresList();
                 await loadDatabasesForSelector();
+                await loadProveedorSelect();
             } else {
                 showMessage('proveedoresMessage', 'Error al guardar', 'error');
             }
@@ -1696,11 +1685,21 @@
             document.getElementById('zonasConfigContainer').innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner"></i> Cargando zonas...</div>';
             
             try {
-                const zonas = await loadZonasFromDatabase(proveedorId);
-                currentZonasList = zonas;
-                renderZonasConfigList(proveedorId, zonas);
+                // Usar el endpoint /api/zonas con X-Database
+                const response = await fetch(`${API_URL}/zonas`, {
+                    headers: { 'X-Database': proveedorId }
+                });
+                const data = await response.json();
+                
+                if (data.success && data.zonas) {
+                    const zonas = data.zonas;
+                    renderZonasConfigList(proveedorId, zonas);
+                } else {
+                    document.getElementById('zonasConfigContainer').innerHTML = '<p>No hay zonas disponibles en este proveedor</p>';
+                }
             } catch (error) {
-                document.getElementById('zonasConfigContainer').innerHTML = '<p class="message error">Error cargando zonas</p>';
+                console.error('Error cargando zonas:', error);
+                document.getElementById('zonasConfigContainer').innerHTML = '<p class="message error">Error cargando zonas. Asegúrate de que el proveedor tenga zonas configuradas.</p>';
             }
         }
 
