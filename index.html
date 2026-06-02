@@ -620,6 +620,7 @@
             margin-bottom: 20px;
             border-bottom: 2px solid var(--gray-light);
             padding-bottom: 10px;
+            flex-wrap: wrap;
         }
         
         .tab {
@@ -675,6 +676,11 @@
         .badge-success {
             background: #d1fae5;
             color: #065f46;
+        }
+        
+        .badge-info {
+            background: #e0f2fe;
+            color: #0369a1;
         }
     </style>
 </head>
@@ -931,7 +937,6 @@
             <!-- Pestaña Proveedores -->
             <div id="tab-proveedores" class="tab-content active">
                 <div id="proveedoresMessage" class="message"></div>
-                <button onclick="addNewProveedor()" class="add-btn btn-sm"><i class="fas fa-plus"></i> Agregar Proveedor</button>
                 <div id="proveedoresList"></div>
             </div>
             
@@ -987,6 +992,7 @@
         let selectedDatabase = localStorage.getItem('selectedDatabase') || '';
         let pendingPaymentData = null;
         let currentZonasList = [];
+        let availableDatabases = [];
 
         // ================= FUNCIONES DE API =================
         async function loadGlobalConfig() {
@@ -1029,6 +1035,21 @@
             }
         }
 
+        async function loadAvailableDatabases() {
+            try {
+                const response = await fetch(`${API_URL}/databases`);
+                const data = await response.json();
+                if (data.success && data.databases) {
+                    availableDatabases = data.databases;
+                    return availableDatabases;
+                }
+                return [];
+            } catch (error) {
+                console.error('Error cargando bases de datos:', error);
+                return [];
+            }
+        }
+
         async function loadZonasFromDatabase(database) {
             try {
                 const response = await fetch(`${API_URL}/zonas`, {
@@ -1066,14 +1087,6 @@
             };
         }
 
-        function saveZonaConfig(proveedorId, zonaId, config) {
-            if (!CONFIG.zonasConfig[proveedorId]) {
-                CONFIG.zonasConfig[proveedorId] = {};
-            }
-            CONFIG.zonasConfig[proveedorId][zonaId] = config;
-            saveGlobalConfig();
-        }
-
         function getTelegramConfig(proveedorId, zonaId) {
             const zonaConfig = getZonaConfig(proveedorId, zonaId);
             return {
@@ -1098,13 +1111,12 @@
             select.disabled = true;
             
             try {
-                const response = await fetch(`${API_URL}/databases`);
-                const data = await response.json();
+                const databases = await loadAvailableDatabases();
                 
                 select.innerHTML = '<option value="">Selecciona un proveedor...</option>';
                 
-                if (data.success && data.databases) {
-                    data.databases.forEach(db => {
+                if (databases && databases.length > 0) {
+                    databases.forEach(db => {
                         const option = document.createElement('option');
                         option.value = db;
                         option.textContent = getProveedorNombre(db);
@@ -1112,12 +1124,14 @@
                         select.appendChild(option);
                     });
                     
-                    if (!selectedDatabase && data.databases.length > 0) {
-                        selectedDatabase = data.databases[0];
+                    if (!selectedDatabase && databases.length > 0) {
+                        selectedDatabase = databases[0];
                         select.value = selectedDatabase;
                         localStorage.setItem('selectedDatabase', selectedDatabase);
                         updateDatabaseInfo();
                     }
+                } else {
+                    select.innerHTML = '<option value="">No hay proveedores disponibles</option>';
                 }
             } catch (error) {
                 select.innerHTML = '<option value="">Error al cargar</option>';
@@ -1549,6 +1563,8 @@
                 document.getElementById('techIcon').classList.add('active');
                 closeTechLoginModal();
                 await loadGlobalConfig();
+                await loadAvailableDatabases();
+                await renderProveedoresList();
                 await loadProveedorSelect();
                 await showConfigModal();
             } else {
@@ -1562,6 +1578,7 @@
                 return;
             }
             await loadGlobalConfig();
+            await loadAvailableDatabases();
             document.getElementById('globalBotToken').value = CONFIG.telegram.botToken || '';
             document.getElementById('globalChatId').value = CONFIG.telegram.chatId || '';
             document.getElementById('globalTasaCambio').value = CONFIG.tasaCambio;
@@ -1601,35 +1618,37 @@
         async function renderProveedoresList() {
             const container = document.getElementById('proveedoresList');
             container.innerHTML = '';
-            const proveedores = CONFIG.proveedores || {};
             
-            try {
-                const response = await fetch(`${API_URL}/databases`);
-                const data = await response.json();
-                const databases = data.success && data.databases ? data.databases : [];
-                
-                for (const db of databases) {
-                    const proveedor = proveedores[db] || { nombre: db };
-                    const div = document.createElement('div');
-                    div.className = 'config-card';
-                    const safeId = db.replace(/[^a-z0-9]/gi, '_');
-                    div.innerHTML = `
-                        <h4>
-                            ${db}
-                            <span class="badge badge-success">Base de Datos</span>
-                        </h4>
-                        <div class="form-group">
-                            <label>Nombre para mostrar</label>
-                            <input type="text" id="nombre_prov_${safeId}" value="${escapeHtml(proveedor.nombre || db)}" placeholder="Ej: ISP Centro">
-                        </div>
-                        <div class="config-actions">
-                            <button class="btn-success btn-sm" onclick="saveProveedorConfig('${db}')">Guardar</button>
-                        </div>
-                    `;
-                    container.appendChild(div);
-                }
-            } catch (error) {
-                container.innerHTML = '<p class="error">Error cargando proveedores</p>';
+            if (!availableDatabases || availableDatabases.length === 0) {
+                container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner"></i> Cargando bases de datos...</div>';
+                await loadAvailableDatabases();
+            }
+            
+            if (availableDatabases.length === 0) {
+                container.innerHTML = '<p class="message error">No hay bases de datos disponibles. Verifica la conexión con el servidor.</p>';
+                return;
+            }
+            
+            for (const db of availableDatabases) {
+                const proveedor = CONFIG.proveedores[db] || { nombre: db };
+                const div = document.createElement('div');
+                div.className = 'config-card';
+                const safeId = db.replace(/[^a-z0-9]/gi, '_');
+                div.innerHTML = `
+                    <h4>
+                        <i class="fas fa-database"></i> ${db}
+                        <span class="badge badge-info">Base de Datos</span>
+                    </h4>
+                    <div class="form-group">
+                        <label>Nombre para mostrar</label>
+                        <input type="text" id="nombre_prov_${safeId}" value="${escapeHtml(proveedor.nombre || db)}" placeholder="Ej: ISP Centro">
+                        <small style="font-size: 12px; color: var(--gray);">Este es el nombre que verán los usuarios al seleccionar el proveedor</small>
+                    </div>
+                    <div class="config-actions">
+                        <button class="btn-success btn-sm" onclick="saveProveedorConfig('${db}')">Guardar</button>
+                    </div>
+                `;
+                container.appendChild(div);
             }
         }
 
@@ -1641,25 +1660,11 @@
             CONFIG.proveedores[dbName] = { nombre: nombre };
             
             if (await saveGlobalConfig()) {
-                showMessage('proveedoresMessage', `Proveedor ${dbName} guardado`, 'success');
+                showMessage('proveedoresMessage', `Proveedor ${dbName} guardado como "${nombre}"`, 'success');
                 await renderProveedoresList();
                 await loadDatabasesForSelector();
             } else {
                 showMessage('proveedoresMessage', 'Error al guardar', 'error');
-            }
-        }
-
-        function addNewProveedor() {
-            const newDbName = prompt('Ingrese el nombre de la base de datos del nuevo proveedor:');
-            if (newDbName && !CONFIG.proveedores[newDbName]) {
-                CONFIG.proveedores[newDbName] = { nombre: newDbName };
-                saveGlobalConfig().then(() => {
-                    renderProveedoresList();
-                    loadDatabasesForSelector();
-                    showMessage('proveedoresMessage', `Proveedor ${newDbName} agregado`, 'success');
-                });
-            } else if (newDbName) {
-                showMessage('proveedoresMessage', 'El proveedor ya existe', 'warning');
             }
         }
 
@@ -1668,8 +1673,12 @@
             const select = document.getElementById('proveedorSelect');
             select.innerHTML = '<option value="">Seleccione un proveedor...</option>';
             
-            const proveedores = CONFIG.proveedores || {};
-            for (const [dbName, proveedor] of Object.entries(proveedores)) {
+            if (!availableDatabases || availableDatabases.length === 0) {
+                await loadAvailableDatabases();
+            }
+            
+            for (const dbName of availableDatabases) {
+                const proveedor = CONFIG.proveedores[dbName] || { nombre: dbName };
                 const option = document.createElement('option');
                 option.value = dbName;
                 option.textContent = proveedor.nombre || dbName;
@@ -1691,7 +1700,7 @@
                 currentZonasList = zonas;
                 renderZonasConfigList(proveedorId, zonas);
             } catch (error) {
-                document.getElementById('zonasConfigContainer').innerHTML = '<p class="error">Error cargando zonas</p>';
+                document.getElementById('zonasConfigContainer').innerHTML = '<p class="message error">Error cargando zonas</p>';
             }
         }
 
@@ -1729,10 +1738,12 @@
                     <div class="form-group">
                         <label>Bot Token de Telegram (Opcional)</label>
                         <input type="text" id="bot_${safeId}" value="${escapeHtml(config.telegram_bot_token || '')}" placeholder="Token específico para esta zona">
+                        <small style="font-size: 12px; color: var(--gray);">Si se deja vacío, se usará el Token Global</small>
                     </div>
                     <div class="form-group">
                         <label>Chat ID de Telegram (Opcional)</label>
                         <input type="text" id="chat_${safeId}" value="${escapeHtml(config.telegram_chat_id || '')}" placeholder="Chat ID específico para esta zona">
+                        <small style="font-size: 12px; color: var(--gray);">Si se deja vacío, se usará el Chat ID Global</small>
                     </div>
                     <div class="config-actions">
                         <button class="btn-success btn-sm" onclick="saveZonaConfigFromUI('${proveedorId}', '${zonaId}')">Guardar Configuración</button>
@@ -1758,7 +1769,7 @@
             CONFIG.zonasConfig[proveedorId][zonaId] = config;
             
             if (await saveGlobalConfig()) {
-                showMessage('zonasMessage', `Configuración de zona guardada`, 'success');
+                showMessage('zonasMessage', `Configuración de zona guardada correctamente`, 'success');
             } else {
                 showMessage('zonasMessage', 'Error al guardar', 'error');
             }
@@ -1833,6 +1844,7 @@
         
         async function init() {
             await loadGlobalConfig();
+            await loadAvailableDatabases();
             await loadDatabasesForSelector();
             await checkApiConnection();
             
