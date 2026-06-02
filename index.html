@@ -1549,7 +1549,6 @@
                 document.getElementById('techIcon').classList.add('active');
                 closeTechLoginModal();
                 await loadGlobalConfig();
-                await loadProveedoresForConfig();
                 await loadProveedorSelect();
                 await showConfigModal();
             } else {
@@ -1604,7 +1603,6 @@
             container.innerHTML = '';
             const proveedores = CONFIG.proveedores || {};
             
-            // Obtener bases de datos reales
             try {
                 const response = await fetch(`${API_URL}/databases`);
                 const data = await response.json();
@@ -1715,7 +1713,7 @@
                 const div = document.createElement('div');
                 div.className = 'config-card';
                 div.innerHTML = `
-                    <h4><i class="fas fa-map-marker-alt"></i> ${zonaNombre}</h4>
+                    <h4><i class="fas fa-map-marker-alt"></i> ${escapeHtml(zonaNombre)}</h4>
                     <div class="form-group">
                         <label>Banco para Pago Móvil</label>
                         <input type="text" id="banco_${safeId}" value="${escapeHtml(config.banco_pago || '0102 Venezuela')}" placeholder="0102 Venezuela">
