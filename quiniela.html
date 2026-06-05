@@ -50,6 +50,9 @@
         .partidos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); gap: 20px; }
         .partido-card { background: white; border-radius: 12px; padding: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: transform 0.2s; }
         .partido-card:hover { transform: translateY(-3px); }
+        .partido-card.disabled { opacity: 0.7; background: #f5f5f5; }
+        .partido-card.disabled:hover { transform: none; }
+        
         .equipos { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: bold; padding-bottom: 10px; border-bottom: 1px solid #eee; }
         .equipo { flex: 1; text-align: center; font-size: 1.1em; }
         .vs { margin: 0 10px; color: #999; }
@@ -60,6 +63,11 @@
         .apuesta-fields { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
         .apuesta-fields input { width: 70px; padding: 8px; text-align: center; font-size: 16px; font-weight: bold; border: 2px solid #ddd; border-radius: 8px; }
         .apuesta-fields select { padding: 8px; border: 2px solid #ddd; border-radius: 8px; }
+        .apuesta-fields input:disabled, .apuesta-fields select:disabled { background: #e9ecef; color: #6c757d; cursor: not-allowed; }
+        
+        .mi-apuesta { background: #d4edda; padding: 8px; border-radius: 6px; margin-top: 10px; text-align: center; font-size: 12px; color: #155724; }
+        .partido-bloqueado { background: #f8d7da; color: #721c24; padding: 8px; border-radius: 6px; margin-top: 10px; text-align: center; font-size: 12px; }
+        .tiempo-restante { font-size: 11px; color: #e94560; margin-top: 5px; text-align: center; }
         
         .fecha { text-align: center; font-size: 12px; color: #999; margin-top: 10px; }
         .resultado-real { text-align: center; font-size: 13px; margin-top: 10px; padding: 8px; border-radius: 5px; background: #d4edda; color: #155724; }
@@ -135,9 +143,73 @@
     <div id="toast" class="toast"></div>
     
     <script>
+        // ============================================
+        // CONFIGURACIÓN
+        // ============================================
         const API_URL = 'https://quiniela-mundial.thecrow859.workers.dev';
         let partidos = [];
         let usuarioData = { nombre: '', cedula: '' };
+        let apuestasGuardadasLocal = {}; // Guardar apuestas localmente
+        
+        // Clave para localStorage
+        const STORAGE_KEY = 'quiniela_apuestas';
+        
+        // ============================================
+        // FUNCIONES DE ALMACENAMIENTO LOCAL
+        // ============================================
+        
+        function cargarApuestasLocales() {
+            const guardadas = localStorage.getItem(`${STORAGE_KEY}_${usuarioData.cedula}`);
+            if (guardadas) {
+                try {
+                    apuestasGuardadasLocal = JSON.parse(guardadas);
+                    console.log('📦 Apuestas locales cargadas:', apuestasGuardadasLocal);
+                } catch(e) { console.error('Error cargando apuestas locales:', e); }
+            }
+        }
+        
+        function guardarApuestaLocal(partidoId, apuesta) {
+            apuestasGuardadasLocal[partidoId] = apuesta;
+            localStorage.setItem(`${STORAGE_KEY}_${usuarioData.cedula}`, JSON.stringify(apuestasGuardadasLocal));
+            console.log('💾 Apuesta guardada localmente:', partidoId, apuesta);
+        }
+        
+        function limpiarApuestasLocales() {
+            apuestasGuardadasLocal = {};
+            localStorage.removeItem(`${STORAGE_KEY}_${usuarioData.cedula}`);
+        }
+        
+        // ============================================
+        // VERIFICAR TIEMPO LÍMITE PARA APOSTAR
+        // ============================================
+        
+        function puedeApostar(fechaPartido) {
+            if (!fechaPartido) return true;
+            const fecha = new Date(fechaPartido);
+            const ahora = new Date();
+            const limite = new Date(fecha.getTime() - 30 * 60 * 1000); // 30 minutos antes
+            return ahora < limite;
+        }
+        
+        function obtenerTiempoRestante(fechaPartido) {
+            if (!fechaPartido) return '';
+            const fecha = new Date(fechaPartido);
+            const ahora = new Date();
+            const limite = new Date(fecha.getTime() - 30 * 60 * 1000);
+            
+            if (ahora >= limite) return '⏰ Plazo cerrado';
+            
+            const diff = limite - ahora;
+            const horas = Math.floor(diff / (1000 * 60 * 60));
+            const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            
+            if (horas > 0) return `⏳ Cierra en ${horas}h ${minutos}m`;
+            return `⏳ Cierra en ${minutos} minutos`;
+        }
+        
+        // ============================================
+        // CARGAR DATOS DEL USUARIO
+        // ============================================
         
         function cargarDatosUsuario() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -153,6 +225,7 @@
                 document.getElementById('display-cedula').textContent = cedula;
                 document.getElementById('nombre').value = nombre;
                 document.getElementById('cedula').value = cedula;
+                cargarApuestasLocales();
                 return true;
             } else {
                 document.getElementById('display-nombre').innerHTML = '<span style="color: red;">❌ No se pudo cargar</span>';
@@ -171,15 +244,25 @@
             }
         };
         
+        // ============================================
+        // CARGAR PARTIDOS DESDE API
+        // ============================================
+        
         async function cargarPartidos() {
             try {
                 const response = await fetch(`${API_URL}/api/partidos`);
                 partidos = await response.json();
+                console.log('📊 Partidos cargados:', partidos.length);
                 mostrarPartidos();
             } catch (error) {
+                console.error('Error:', error);
                 document.getElementById('partidos-container').innerHTML = '<div class="loading">Error al cargar partidos</div>';
             }
         }
+        
+        // ============================================
+        // MOSTRAR PARTIDOS CON ESTADOS
+        // ============================================
         
         function mostrarPartidos() {
             const container = document.getElementById('partidos-container');
@@ -195,44 +278,70 @@
                 
                 partidosGrupo.forEach(partido => {
                     const finalizado = partido.finalizado === 1 || partido.finalizado === true;
-                    const card = document.createElement('div'); card.className = 'partido-card';
+                    const yaAposto = apuestasGuardadasLocal[partido.id] !== undefined;
+                    const puede = puedeApostar(partido.fecha_partido) && !finalizado && !yaAposto;
+                    const tiempoRestante = obtenerTiempoRestante(partido.fecha_partido);
+                    const apuestaGuardada = apuestasGuardadasLocal[partido.id];
+                    
+                    const card = document.createElement('div'); 
+                    card.className = `partido-card ${(!puede && !finalizado && !yaAposto) ? 'disabled' : ''}`;
+                    
+                    let apuestaHtml = '';
+                    if (yaAposto && apuestaGuardada) {
+                        apuestaHtml = `
+                            <div class="mi-apuesta">
+                                <strong>✅ Tu pronóstico:</strong> ${apuestaGuardada.golesLocal} - ${apuestaGuardada.golesVisitante} |
+                                🟨 ${apuestaGuardada.tarjetasAmarillas} | 🟥 ${apuestaGuardada.tarjetasRojas} |
+                                ⚽ ${apuestaGuardada.huboPenales ? (apuestaGuardada.golesPenalesLocal + '-' + apuestaGuardada.golesPenalesVisitante) : 'No'}
+                            </div>
+                        `;
+                    } else if (!puede && !finalizado && !yaAposto) {
+                        apuestaHtml = `<div class="partido-bloqueado">🔒 Plazo de apuesta cerrado (30 min antes del partido)</div>`;
+                    } else if (finalizado) {
+                        apuestaHtml = `<div class="partido-bloqueado">📌 Partido ya finalizado</div>`;
+                    }
+                    
                     card.innerHTML = `
                         <div class="equipos"><div class="equipo">${partido.equipo_local_nombre}</div><div class="vs">VS</div><div class="equipo">${partido.equipo_visitante_nombre}</div></div>
                         
                         <div class="apuesta-inputs">
                             <div class="apuesta-row"><div class="apuesta-label">📊 Resultado:</div><div class="apuesta-fields">
-                                <input type="number" id="local_${partido.id}" placeholder="0" min="0" step="1" ${finalizado ? 'disabled' : ''}> -
-                                <input type="number" id="visit_${partido.id}" placeholder="0" min="0" step="1" ${finalizado ? 'disabled' : ''}>
+                                <input type="number" id="local_${partido.id}" placeholder="0" min="0" step="1" ${!puede || finalizado || yaAposto ? 'disabled' : ''} value="${apuestaGuardada?.golesLocal || ''}">
+                                -
+                                <input type="number" id="visit_${partido.id}" placeholder="0" min="0" step="1" ${!puede || finalizado || yaAposto ? 'disabled' : ''} value="${apuestaGuardada?.golesVisitante || ''}">
                             </div></div>
                             
                             <div class="apuesta-row"><div class="apuesta-label">🟨 Tarjetas Amarillas:</div><div class="apuesta-fields">
-                                <input type="number" id="amarillas_${partido.id}" placeholder="0" min="0" step="1" ${finalizado ? 'disabled' : ''}>
+                                <input type="number" id="amarillas_${partido.id}" placeholder="0" min="0" step="1" ${!puede || finalizado || yaAposto ? 'disabled' : ''} value="${apuestaGuardada?.tarjetasAmarillas || ''}">
                             </div></div>
                             
                             <div class="apuesta-row"><div class="apuesta-label">🟥 Tarjetas Rojas:</div><div class="apuesta-fields">
-                                <input type="number" id="rojas_${partido.id}" placeholder="0" min="0" step="1" ${finalizado ? 'disabled' : ''}>
+                                <input type="number" id="rojas_${partido.id}" placeholder="0" min="0" step="1" ${!puede || finalizado || yaAposto ? 'disabled' : ''} value="${apuestaGuardada?.tarjetasRojas || ''}">
                             </div></div>
                             
                             <div class="apuesta-row"><div class="apuesta-label">⚽ ¿Habrá penales?</div><div class="apuesta-fields">
-                                <select id="penales_${partido.id}" ${finalizado ? 'disabled' : ''}>
-                                    <option value="false">No</option>
-                                    <option value="true">Sí</option>
+                                <select id="penales_${partido.id}" ${!puede || finalizado || yaAposto ? 'disabled' : ''}>
+                                    <option value="false" ${apuestaGuardada?.huboPenales === false ? 'selected' : ''}>No</option>
+                                    <option value="true" ${apuestaGuardada?.huboPenales === true ? 'selected' : ''}>Sí</option>
                                 </select>
                             </div></div>
                             
-                            <div class="apuesta-row" id="penales_goles_${partido.id}" style="display: none;"><div class="apuesta-label">🎯 Goles en penales:</div><div class="apuesta-fields">
-                                <input type="number" id="penales_local_${partido.id}" placeholder="0" min="0" step="1" ${finalizado ? 'disabled' : ''}> -
-                                <input type="number" id="penales_visit_${partido.id}" placeholder="0" min="0" step="1" ${finalizado ? 'disabled' : ''}>
+                            <div class="apuesta-row" id="penales_goles_${partido.id}" style="display: ${apuestaGuardada?.huboPenales ? 'flex' : 'none'};"><div class="apuesta-label">🎯 Goles en penales:</div><div class="apuesta-fields">
+                                <input type="number" id="penales_local_${partido.id}" placeholder="0" min="0" step="1" ${!puede || finalizado || yaAposto ? 'disabled' : ''} value="${apuestaGuardada?.golesPenalesLocal || ''}">
+                                -
+                                <input type="number" id="penales_visit_${partido.id}" placeholder="0" min="0" step="1" ${!puede || finalizado || yaAposto ? 'disabled' : ''} value="${apuestaGuardada?.golesPenalesVisitante || ''}">
                             </div></div>
                         </div>
                         <div class="fecha">📅 ${new Date(partido.fecha_partido).toLocaleString()}</div>
+                        ${tiempoRestante && !finalizado && !yaAposto && puede ? `<div class="tiempo-restante">${tiempoRestante}</div>` : ''}
+                        ${apuestaHtml}
                         ${finalizado ? `<div class="resultado-real">✅ Final: ${partido.resultado_local || 0} - ${partido.resultado_visitante || 0}</div>` : ''}
                     `;
                     
                     // Mostrar/ocultar campos de penales según selección
                     const selectPenales = card.querySelector(`#penales_${partido.id}`);
                     const divPenales = card.querySelector(`#penales_goles_${partido.id}`);
-                    if (selectPenales && divPenales) {
+                    if (selectPenales && divPenales && !yaAposto) {
                         selectPenales.addEventListener('change', () => {
                             divPenales.style.display = selectPenales.value === 'true' ? 'flex' : 'none';
                         });
@@ -246,14 +355,20 @@
             }
         }
         
+        // ============================================
+        // ENVIAR APUESTAS
+        // ============================================
+        
         async function enviarApuestas() {
             const nombre = document.getElementById('nombre').value;
             const cedula = document.getElementById('cedula').value;
             if (!nombre || !cedula) { mostrarToast('No se encontraron tus datos', 'error'); return; }
             
             const apuestas = [];
+            const nuevasApuestasLocales = {};
+            
             for (const partido of partidos) {
-                if (!partido.finalizado) {
+                if (!partido.finalizado && !apuestasGuardadasLocal[partido.id] && puedeApostar(partido.fecha_partido)) {
                     const golesLocal = document.getElementById(`local_${partido.id}`)?.value;
                     const golesVisitante = document.getElementById(`visit_${partido.id}`)?.value;
                     const tarjetasAmarillas = document.getElementById(`amarillas_${partido.id}`)?.value;
@@ -264,7 +379,8 @@
                     
                     if (golesLocal !== '' && golesLocal !== null && golesLocal !== undefined &&
                         golesVisitante !== '' && golesVisitante !== null && golesVisitante !== undefined) {
-                        apuestas.push({
+                        
+                        const apuesta = {
                             partidoId: partido.id,
                             golesLocal: parseInt(golesLocal),
                             golesVisitante: parseInt(golesVisitante),
@@ -273,12 +389,17 @@
                             huboPenales: huboPenales,
                             golesPenalesLocal: huboPenales ? (parseInt(golesPenalesLocal) || 0) : 0,
                             golesPenalesVisitante: huboPenales ? (parseInt(golesPenalesVisitante) || 0) : 0
-                        });
+                        };
+                        apuestas.push(apuesta);
+                        nuevasApuestasLocales[partido.id] = apuesta;
                     }
                 }
             }
             
-            if (apuestas.length === 0) { mostrarToast('Ingresa al menos un pronóstico', 'error'); return; }
+            if (apuestas.length === 0) { 
+                mostrarToast('No hay pronósticos nuevos para enviar', 'warning'); 
+                return; 
+            }
             
             const btn = document.getElementById('btnEnviar');
             const btnText = btn.innerHTML;
@@ -298,21 +419,18 @@
                 });
                 const data = await response.json();
                 if (response.ok) {
-                    mostrarToast('✅ Pronósticos guardados', 'success');
-                    apuestas.forEach(a => {
-                        document.getElementById(`local_${a.partidoId}`).value = '';
-                        document.getElementById(`visit_${a.partidoId}`).value = '';
-                        document.getElementById(`amarillas_${a.partidoId}`).value = '';
-                        document.getElementById(`rojas_${a.partidoId}`).value = '';
-                        document.getElementById(`penales_${a.partidoId}`).value = 'false';
-                        if (document.getElementById(`penales_local_${a.partidoId}`)) {
-                            document.getElementById(`penales_local_${a.partidoId}`).value = '';
-                            document.getElementById(`penales_visit_${a.partidoId}`).value = '';
-                        }
-                    });
+                    mostrarToast('✅ Pronósticos guardados correctamente', 'success');
+                    
+                    // Guardar localmente las nuevas apuestas
+                    for (const [id, apuesta] of Object.entries(nuevasApuestasLocales)) {
+                        guardarApuestaLocal(parseInt(id), apuesta);
+                    }
+                    
+                    // Recargar la vista de partidos
+                    mostrarPartidos();
                     cargarRanking();
                 } else {
-                    mostrarToast(data.error || 'Error', 'error');
+                    mostrarToast(data.error || 'Error al guardar', 'error');
                 }
             } catch (error) {
                 mostrarToast('Error de conexión', 'error');
@@ -321,6 +439,10 @@
                 btn.disabled = false;
             }
         }
+        
+        // ============================================
+        // RANKING
+        // ============================================
         
         async function cargarRanking() {
             try {
@@ -337,6 +459,10 @@
             } catch (error) { console.error(error); }
         }
         
+        // ============================================
+        // RESULTADOS
+        // ============================================
+        
         async function cargarResultados() {
             try {
                 const response = await fetch(`${API_URL}/api/resultados`);
@@ -346,11 +472,15 @@
                 
                 container.innerHTML = `
                     <table><thead><tr><th>Partido</th><th>Resultado</th><th>Amarillas</th><th>Rojas</th><th>Penales</th></tr></thead><tbody>
-                    ${resultados.map(r => `<tr><td>${r.local} vs ${r.visitante}</td><td><strong>${r.resultado_local || 0} - ${r.resultado_visitante || 0}</strong></td><td>${r.tarjetas_amarillas_real || 0}</td><td>${r.tarjetas_rojas_real || 0}</td><td>${r.hubo_penales_real ? `${r.goles_penales_local_real || 0} - ${r.goles_penales_visitante_real || 0}` : 'No'}</td></tr>`).join('')}
+                    ${resultados.map(r => `<tr><td>${r.local} vs ${r.visitante}</td><td><strong>${r.resultado_local || 0} - ${r.resultado_visitante || 0}</strong></td><td>${r.tarjetas_amarillas_real || 0}</td><td>${r.tarjetas_rojas_real || 0}</td><td>${r.hubo_penales_real ? (r.goles_penales_local_real || 0) + '-' + (r.goles_penales_visitante_real || 0) : 'No'}</td></tr>`).join('')}
                     </tbody></table>
                 `;
             } catch (error) { console.error(error); }
         }
+        
+        // ============================================
+        // UTILIDADES
+        // ============================================
         
         function showTab(tab) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
