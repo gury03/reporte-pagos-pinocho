@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiniela Mundial 2026 - Fico</title>
+    <style>
+        /* Mismo estilo que quiniela.html */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        .header { text-align: center; color: white; padding: 40px 20px; background: linear-gradient(135deg, #e94560 0%, #533483 100%); border-radius: 20px; margin-bottom: 30px; }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .header p { font-size: 1.1em; opacity: 0.9; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; justify-content: center; }
+        .tab { background: rgba(255,255,255,0.1); color: white; padding: 12px 24px; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; transition: all 0.3s; }
+        .tab.active { background: #e94560; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        .user-form { background: white; padding: 25px; border-radius: 15px; margin-bottom: 30px; }
+        .user-info-card { background: linear-gradient(135deg, #e8f4f8 0%, #d1e7f0 100%); border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 4px solid #e94560; }
+        .user-info-row { display: flex; margin-bottom: 10px; padding: 8px; background: white; border-radius: 8px; }
+        .user-info-label { font-weight: bold; width: 120px; color: #533483; }
+        .user-info-value { color: #333; flex: 1; }
+        .user-info-note { font-size: 12px; color: #666; margin-top: 10px; text-align: center; font-style: italic; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { margin-bottom: 5px; font-weight: bold; color: #333; }
+        .form-group input { padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; }
+        
+        .grupo { margin-bottom: 40px; }
+        .grupo h3 { background: #533483; color: white; padding: 10px 15px; border-radius: 10px; margin-bottom: 15px; }
+        .partidos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); gap: 20px; }
+        .partido-card { background: white; border-radius: 12px; padding: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: transform 0.2s; }
+        .partido-card:hover { transform: translateY(-3px); }
+        .partido-card.disabled { opacity: 0.8; background: #f5f5f5; }
+        
+        .equipos { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: bold; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+        .equipo { flex: 1; text-align: center; font-size: 1.1em; }
+        .vs { margin: 0 10px; color: #999; }
+        
+        .apuesta-inputs { background: #f8f9fa; padding: 10px; border-radius: 8px; margin: 10px 0; }
+        .apuesta-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 10px; }
+        .apuesta-label { font-size: 13px; font-weight: bold; color: #533483; min-width: 100px; }
+        .apuesta-fields { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .apuesta-fields input { width: 70px; padding: 8px; text-align: center; font-size: 16px; font-weight: bold; border: 2px solid #ddd; border-radius: 8px; }
+        .apuesta-fields select { padding: 8px; border: 2px solid #ddd; border-radius: 8px; }
+        .apuesta-fields input:disabled, .apuesta-fields select:disabled { background: #e9ecef; color: #6c757d; cursor: not-allowed; }
+        
+        .mi-apuesta { background: #d4edda; padding: 8px; border-radius: 6px; margin-top: 10px; text-align: center; font-size: 12px; color: #155724; }
+        .partido-bloqueado { background: #f8d7da; color: #721c24; padding: 8px; border-radius: 6px; margin-top: 10px; text-align: center; font-size: 12px; }
+        .tiempo-restante { font-size: 11px; color: #e94560; margin-top: 5px; text-align: center; }
+        
+        .fecha { text-align: center; font-size: 12px; color: #999; margin-top: 10px; }
+        .resultado-real { text-align: center; font-size: 13px; margin-top: 10px; padding: 8px; border-radius: 5px; background: #d4edda; color: #155724; }
+        
+        .btn-apostar { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border: none; padding: 15px 30px; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 30px; transition: all 0.3s; }
+        .btn-apostar:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(40, 167, 69, 0.3); }
+        
+        .ranking-table, .resultados-table { background: white; border-radius: 15px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #533483; color: white; }
+        
+        .toast { position: fixed; bottom: 20px; right: 20px; padding: 15px 25px; border-radius: 10px; display: none; z-index: 1000; animation: slideIn 0.3s ease; }
+        .toast.success { background: #28a745; color: white; display: block; }
+        .toast.error { background: #dc3545; color: white; display: block; }
+        .toast.warning { background: #ffc107; color: #333; display: block; }
+        
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .loading { text-align: center; padding: 40px; color: white; font-size: 1.2em; }
+        .spinner { border: 3px solid rgba(255,255,255,0.3); border-top: 3px solid white; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 15px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8em; }
+            .partidos-grid { grid-template-columns: 1fr; }
+            .apuesta-row { flex-direction: column; align-items: flex-start; }
+            .user-info-row { flex-direction: column; }
+            .user-info-label { width: 100%; margin-bottom: 5px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏆 QUINIELA MUNDIAL 2026</h1>
+            <p>Adjuntas - ¡Pronostica resultados, tarjetas y penales para ganar increíbles premios!</p>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('apostar')">📝 Apostar</button>
+            <button class="tab" onclick="showTab('ranking')">🏅 Ranking</button>
+            <button class="tab" onclick="showTab('resultados')">📊 Resultados</button>
+        </div>
+        
+        <div id="tab-apostar" class="tab-content active">
+            <div class="user-form">
+                <div class="user-info-card">
+                    <h3>📋 Información del Usuario</h3>
+                    <div class="user-info-row"><div class="user-info-label">Nombre completo:</div><div class="user-info-value" id="display-nombre">-</div></div>
+                    <div class="user-info-row"><div class="user-info-label">Cédula / PPPoE:</div><div class="user-info-value" id="display-cedula">-</div></div>
+                    <div class="user-info-note">⚠️ Esta información se ha cargado automáticamente desde tu cuenta. No es modificable.</div>
+                </div>
+                <input type="hidden" id="nombre" value=""><input type="hidden" id="cedula" value="">
+                <div class="form-grid">
+                    <div class="form-group"><label>📱 Teléfono (opcional)</label><input type="tel" id="telefono" placeholder="Ej: 0412-1234567"></div>
+                    <div class="form-group"><label>🏙️ Ciudad (opcional)</label><input type="text" id="ciudad" placeholder="Ej: Adjuntas"></div>
+                </div>
+            </div>
+            <div id="partidos-container"><div class="loading"><div class="spinner"></div>Cargando partidos...</div></div>
+            <button class="btn-apostar" id="btnEnviar" onclick="enviarApuestas()">🚀 ENVIAR MIS PRONÓSTICOS</button>
+        </div>
+        
+        <div id="tab-ranking" class="tab-content">
+            <div class="ranking-table" id="ranking-container"><div class="loading"><div class="spinner"></div>Cargando ranking...</div></div>
+        </div>
+        
+        <div id="tab-resultados" class="tab-content">
+            <div class="resultados-table" id="resultados-container"><div class="loading"><div class="spinner"></div>Cargando resultados...</div></div>
+        </div>
+    </div>
+    
+    <div id="toast" class="toast"></div>
+    
+    <script>
+        // Configuración específica para ADJUNTAS
+        const API_URL = 'https://tuquinielaisp.net';
+        const PROVEEDOR = 'fiberconnect';
+        
+        let partidos = [];
+        let usuarioData = { nombre: '', cedula: '', id: null };
+        let apuestasUsuario = {};
+        
+        // Función para obtener la URL base con el proveedor
+        function getApiUrl(endpoint) {
+            return `${API_URL}/${PROVEEDOR}${endpoint}`;
+        }
+        
+        // Cargar apuestas del usuario desde BD
+        async function cargarApuestasUsuario() {
+            if (!usuarioData.cedula) return {};
+            
+            try {
+                console.log('🔍 Buscando apuestas del usuario:', usuarioData.cedula);
+                
+                const response = await fetch(getApiUrl('/api/ranking'));
+                const usuarios = await response.json();
+                const usuario = usuarios.find(u => u.cedula === usuarioData.cedula);
+                
+                if (usuario) {
+                    usuarioData.id = usuario.id;
+                    
+                    const apuestasResponse = await fetch(getApiUrl('/api/admin/apuestas'));
+                    const todasApuestas = await apuestasResponse.json();
+                    const misApuestas = todasApuestas.filter(a => a.usuario_id === usuarioData.id);
+                    
+                    misApuestas.forEach(apuesta => {
+                        apuestasUsuario[apuesta.partido_id] = {
+                            golesLocal: apuesta.goles_local,
+                            golesVisitante: apuesta.goles_visitante,
+                            tarjetasAmarillas: apuesta.tarjetas_amarillas,
+                            tarjetasRojas: apuesta.tarjetas_rojas,
+                            huboPenales: apuesta.hubo_penales === 1,
+                            golesPenalesLocal: apuesta.goles_penales_local,
+                            golesPenalesVisitante: apuesta.goles_penales_visitante
+                        };
+                    });
+                    
+                    console.log('📊 Apuestas cargadas:', Object.keys(apuestasUsuario).length);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+            return apuestasUsuario;
+        }
+        
+        function puedeApostar(fechaPartido) {
+            if (!fechaPartido) return true;
+            const fecha = new Date(fechaPartido);
+            const ahora = new Date();
+            const limite = new Date(fecha.getTime() - 30 * 60 * 1000);
+            return ahora < limite;
+        }
+        
+        function obtenerTiempoRestante(fechaPartido) {
+            if (!fechaPartido) return '';
+            const fecha = new Date(fechaPartido);
+            const ahora = new Date();
+            const limite = new Date(fecha.getTime() - 30 * 60 * 1000);
+            
+            if (ahora >= limite) return '⏰ Plazo cerrado';
+            
+            const diff = limite - ahora;
+            const horas = Math.floor(diff / (1000 * 60 * 60));
+            const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            
+            if (horas > 0) return `⏳ Cierra en ${horas}h ${minutos}m`;
+            if (minutos > 0) return `⏳ Cierra en ${minutos} minutos`;
+            return `⏳ Cierra en menos de 1 minuto`;
+        }
+        
+        function cargarDatosUsuario() {
+            const urlParams = new URLSearchParams(window.location.search);
+            let nombre = urlParams.get('nombre');
+            let cedula = urlParams.get('cedula');
+            if (nombre) nombre = decodeURIComponent(nombre);
+            if (cedula) cedula = decodeURIComponent(cedula);
+            
+            if (nombre && cedula) {
+                usuarioData.nombre = nombre;
+                usuarioData.cedula = cedula;
+                document.getElementById('display-nombre').textContent = nombre;
+                document.getElementById('display-cedula').textContent = cedula;
+                document.getElementById('nombre').value = nombre;
+                document.getElementById('cedula').value = cedula;
+                return true;
+            } else {
+                document.getElementById('display-nombre').innerHTML = '<span style="color: red;">❌ No se pudo cargar</span>';
+                document.getElementById('display-cedula').innerHTML = '<span style="color: red;">❌ No se pudo cargar</span>';
+                return false;
+            }
+        }
+        
+        window.onload = async () => {
+            if (cargarDatosUsuario()) {
+                await cargarApuestasUsuario();
+                await cargarPartidos();
+                cargarRanking();
+                cargarResultados();
+            }
+        };
+        
+        async function cargarPartidos() {
+            try {
+                const response = await fetch(getApiUrl('/api/partidos'));
+                partidos = await response.json();
+                mostrarPartidos();
+            } catch (error) {
+                document.getElementById('partidos-container').innerHTML = '<div class="loading">Error al cargar partidos</div>';
+            }
+        }
+        
+        function mostrarPartidos() {
+            const container = document.getElementById('partidos-container');
+            container.innerHTML = '';
+            
+            const grupos = {};
+            partidos.forEach(p => { const grupo = p.grupo_nombre || 'Sin grupo'; if (!grupos[grupo]) grupos[grupo] = []; grupos[grupo].push(p); });
+            
+            for (const [grupo, partidosGrupo] of Object.entries(grupos)) {
+                const grupoDiv = document.createElement('div'); grupoDiv.className = 'grupo';
+                grupoDiv.innerHTML = `<h3>📌 Grupo ${grupo}</h3>`;
+                const gridDiv = document.createElement('div'); gridDiv.className = 'partidos-grid';
+                
+                partidosGrupo.forEach(partido => {
+                    const finalizado = partido.finalizado === 1 || partido.finalizado === true;
+                    const yaAposto = apuestasUsuario[partido.id] !== undefined;
+                    const puede = puedeApostar(partido.fecha_partido) && !finalizado && !yaAposto;
+                    const tiempoRestante = obtenerTiempoRestante(partido.fecha_partido);
+                    const apuestaGuardada = apuestasUsuario[partido.id];
+                    
+                    const card = document.createElement('div'); 
+                    card.className = `partido-card ${(!puede && !finalizado && !yaAposto) ? 'disabled' : ''}`;
+                    
+                    let apuestaHtml = '';
+                    if (yaAposto && apuestaGuardada) {
+                        apuestaHtml = `<div class="mi-apuesta"><strong>✅ Tu pronóstico:</strong> ${apuestaGuardada.golesLocal} - ${apuestaGuardada.golesVisitante} | 🟨 ${apuestaGuardada.tarjetasAmarillas} | 🟥 ${apuestaGuardada.tarjetasRojas} | ⚽ ${apuestaGuardada.huboPenales ? (apuestaGuardada.golesPenalesLocal + '-' + apuestaGuardada.golesPenalesVisitante) : 'No'}</div>`;
+                    } else if (!puede && !finalizado && !yaAposto) {
+                        apuestaHtml = `<div class="partido-bloqueado">🔒 Plazo de apuesta cerrado (30 min antes del partido)</div>`;
+                    } else if (finalizado) {
+                        apuestaHtml = `<div class="partido-bloqueado">📌 Partido ya finalizado</div>`;
+                    }
+                    
+                    card.innerHTML = `
+                        <div class="equipos"><div class="equipo">${partido.equipo_local_nombre}</div><div class="vs">VS</div><div class="equipo">${partido.equipo_visitante_nombre}</div></div>
+                        <div class="apuesta-inputs">
+                            <div class="apuesta-row"><div class="apuesta-label">📊 Resultado:</div><div class="apuesta-fields"><input type="number" id="local_${partido.id}" placeholder="0" min="0" step="1" ${!puede || finalizado || yaAposto ? 'disabled' : ''} value="${apuestaGuardada?.golesLocal || ''}"> - <input type="number" id="visit_${partido.id}" placeholder="0" min="0" step="1" ${!puede || finalizado || yaAposto ? 'disabled' : ''} value="${apuestaGuardada?.golesVisitante || ''}"></div></div>
+                            <div class="apuesta-row"><div class="apuesta-label">🟨 Tarjetas Amarillas:</div><div class="apuesta-fields"><input type="number" id="amarillas_${partido.id}" placeholder="0" min="0" step="1" ${!puede || finalizado || yaAposto ? 'disabled' : ''} value="${apuestaGuardada?.tarjetasAmarillas || ''}"></div></div>
+                            <div class="apuesta-row"><div class="apuesta-label">🟥 Tarjetas Rojas:</div><div class="apuesta-fields"><input type="number" id="rojas_${partido.id}" placeholder="0" min="0" step="1" ${!puede || finalizado || yaAposto ? 'disabled' : ''} value="${apuestaGuardada?.tarjetasRojas || ''}"></div></div>
+                            <div class="apuesta-row"><div class="apuesta-label">⚽ ¿Habrá penales?</div><div class="apuesta-fields"><select id="penales_${partido.id}" ${!puede || finalizado || yaAposto ? 'disabled' : ''}><option value="false" ${apuestaGuardada?.huboPenales === false ? 'selected' : ''}>No</option><option value="true" ${apuestaGuardada?.huboPenales === true ? 'selected' : ''}>Sí</option></select></div></div>
+                            <div class="apuesta-row" id="penales_goles_${partido.id}" style="display: ${apuestaGuardada?.huboPenales ? 'flex' : 'none'};"><div class="apuesta-label">🎯 Goles en penales:</div><div class="apuesta-fields"><input type="number" id="penales_local_${partido.id}" placeholder="0" min="0" step="1" ${!puede || finalizado || yaAposto ? 'disabled' : ''} value="${apuestaGuardada?.golesPenalesLocal || ''}"> - <input type="number" id="penales_visit_${partido.id}" placeholder="0" min="0" step="1" ${!puede || finalizado || yaAposto ? 'disabled' : ''} value="${apuestaGuardada?.golesPenalesVisitante || ''}"></div></div>
+                        </div>
+                        <div class="fecha">📅 ${new Date(partido.fecha_partido).toLocaleString()}</div>
+                        ${tiempoRestante && !finalizado && !yaAposto && puede ? `<div class="tiempo-restante">${tiempoRestante}</div>` : ''}
+                        ${apuestaHtml}
+                        ${finalizado ? `<div class="resultado-real">✅ Final: ${partido.resultado_local || 0} - ${partido.resultado_visitante || 0}</div>` : ''}
+                    `;
+                    
+                    const selectPenales = card.querySelector(`#penales_${partido.id}`);
+                    const divPenales = card.querySelector(`#penales_goles_${partido.id}`);
+                    if (selectPenales && divPenales && !yaAposto && puede) {
+                        selectPenales.addEventListener('change', () => { divPenales.style.display = selectPenales.value === 'true' ? 'flex' : 'none'; });
+                    }
+                    
+                    gridDiv.appendChild(card);
+                });
+                
+                grupoDiv.appendChild(gridDiv);
+                container.appendChild(grupoDiv);
+            }
+        }
+        
+        async function enviarApuestas() {
+            const nombre = document.getElementById('nombre').value;
+            const cedula = document.getElementById('cedula').value;
+            if (!nombre || !cedula) { mostrarToast('No se encontraron tus datos', 'error'); return; }
+            
+            const apuestas = [];
+            for (const partido of partidos) {
+                if (!partido.finalizado && !apuestasUsuario[partido.id] && puedeApostar(partido.fecha_partido)) {
+                    const golesLocal = document.getElementById(`local_${partido.id}`)?.value;
+                    const golesVisitante = document.getElementById(`visit_${partido.id}`)?.value;
+                    const tarjetasAmarillas = document.getElementById(`amarillas_${partido.id}`)?.value;
+                    const tarjetasRojas = document.getElementById(`rojas_${partido.id}`)?.value;
+                    const huboPenales = document.getElementById(`penales_${partido.id}`)?.value === 'true';
+                    const golesPenalesLocal = document.getElementById(`penales_local_${partido.id}`)?.value;
+                    const golesPenalesVisitante = document.getElementById(`penales_visit_${partido.id}`)?.value;
+                    
+                    if (golesLocal !== '' && golesLocal !== null && golesLocal !== undefined &&
+                        golesVisitante !== '' && golesVisitante !== null && golesVisitante !== undefined) {
+                        apuestas.push({
+                            partidoId: partido.id,
+                            golesLocal: parseInt(golesLocal),
+                            golesVisitante: parseInt(golesVisitante),
+                            tarjetasAmarillas: parseInt(tarjetasAmarillas) || 0,
+                            tarjetasRojas: parseInt(tarjetasRojas) || 0,
+                            huboPenales: huboPenales,
+                            golesPenalesLocal: huboPenales ? (parseInt(golesPenalesLocal) || 0) : 0,
+                            golesPenalesVisitante: huboPenales ? (parseInt(golesPenalesVisitante) || 0) : 0
+                        });
+                    }
+                }
+            }
+            
+            if (apuestas.length === 0) { mostrarToast('No hay pronósticos nuevos para enviar', 'warning'); return; }
+            
+            const btn = document.getElementById('btnEnviar');
+            const btnText = btn.innerHTML;
+            btn.innerHTML = '⏳ Enviando...';
+            btn.disabled = true;
+            
+            try {
+                const response = await fetch(getApiUrl('/api/apostar'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nombre, cedula, telefono: document.getElementById('telefono').value, ciudad: document.getElementById('ciudad').value, apuestas })
+                });
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    mostrarToast('✅ Pronósticos guardados correctamente', 'success');
+                    await cargarApuestasUsuario();
+                    mostrarPartidos();
+                    cargarRanking();
+                } else { mostrarToast(data.error || 'Error', 'error'); }
+            } catch (error) { mostrarToast('Error de conexión', 'error'); }
+            finally { btn.innerHTML = btnText; btn.disabled = false; }
+        }
+        
+        async function cargarRanking() {
+            try {
+                const response = await fetch(getApiUrl('/api/ranking'));
+                const ranking = await response.json();
+                const container = document.getElementById('ranking-container');
+                if (!ranking || ranking.length === 0) { container.innerHTML = '<div class="loading">Aún no hay participantes</div>'; return; }
+                container.innerHTML = `<table><thead><tr><th>#</th><th>Participante</th><th>Puntos</th><th>Exactos</th><th>Ganador</th><th>Tarjetas</th><th>Penales</th></tr></thead><tbody>${ranking.map((r, i) => `<tr><td><strong>${i+1}</strong></td><td>${r.nombre}</td><td><span style="font-size:1.2em;font-weight:bold;color:#e94560;">${r.total_puntos || 0}</span></td><td>${r.aciertos_exactos || 0}</td><td>${r.aciertos_ganador || 0}</td><td>${(r.aciertos_amarillas || 0) + (r.aciertos_rojas || 0)}</td><td>${r.aciertos_penales_exactos || 0}</td></tr>`).join('')}</tbody></table>`;
+            } catch (error) { console.error(error); }
+        }
+        
+        async function cargarResultados() {
+            try {
+                const response = await fetch(getApiUrl('/api/resultados'));
+                const resultados = await response.json();
+                const container = document.getElementById('resultados-container');
+                if (!resultados || resultados.length === 0) { container.innerHTML = '<div class="loading">Aún no hay resultados</div>'; return; }
+                container.innerHTML = `<table><thead><tr><th>Partido</th><th>Resultado</th><th>Amarillas</th><th>Rojas</th><th>Penales</th></tr></thead><tbody>${resultados.map(r => `<tr><td>${r.local} vs ${r.visitante}</td><td><strong>${r.resultado_local || 0} - ${r.resultado_visitante || 0}</strong></td><td>${r.tarjetas_amarillas_real || 0}</td><td>${r.tarjetas_rojas_real || 0}</td><td>${r.hubo_penales_real ? (r.goles_penales_local_real || 0) + '-' + (r.goles_penales_visitante_real || 0) : 'No'}</td></tr>`).join('')}</tbody></table>`;
+            } catch (error) { console.error(error); }
+        }
+        
+        function showTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(`tab-${tab}`).classList.add('active');
+            event.target.classList.add('active');
+            if (tab === 'ranking') cargarRanking();
+            if (tab === 'resultados') cargarResultados();
+        }
+        
+        function mostrarToast(msg, tipo) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.className = `toast ${tipo}`;
+            setTimeout(() => { toast.style.display = 'none'; toast.className = 'toast'; }, 4000);
+        }
+    </script>
+</body>
+</html>
