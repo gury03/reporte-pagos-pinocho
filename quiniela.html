@@ -151,6 +151,11 @@
             outline: none;
         }
         
+        .apuesta-inputs input:disabled {
+            background: #f0f0f0;
+            color: #999;
+        }
+        
         .apuesta-inputs span {
             font-size: 20px;
             font-weight: bold;
@@ -346,44 +351,57 @@
     <div id="toast" class="toast"></div>
     
     <script>
-        // Configuración - CAMBIA ESTA URL POR LA DE TU WORKER
+        // ============================================
+        // CONFIGURACIÓN - CAMBIA ESTA URL
+        // ============================================
         const API_URL = 'https://quiniela-mundial.thecrow859.workers.dev';
         
         let partidos = [];
         
-        // Cargar datos al iniciar
+        // ============================================
+        // INICIALIZACIÓN
+        // ============================================
         window.onload = () => {
-            console.log('🚀 Página cargada');
+            console.log('🚀 Página de Quiniela cargada');
             cargarPartidos();
             cargarRanking();
             cargarResultados();
         };
         
+        // ============================================
+        // CARGAR PARTIDOS
+        // ============================================
         async function cargarPartidos() {
             console.log('📡 Cargando partidos...');
             try {
                 const response = await fetch(`${API_URL}/api/partidos`);
                 if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
                 partidos = await response.json();
                 console.log(`✅ Partidos cargados: ${partidos.length}`);
+                
+                if (partidos.length === 0) {
+                    document.getElementById('partidos-container').innerHTML = 
+                        '<div class="loading">⚠️ No hay partidos disponibles. Contacta al administrador.</div>';
+                    return;
+                }
+                
                 mostrarPartidos();
             } catch (error) {
                 console.error('❌ Error al cargar partidos:', error);
                 document.getElementById('partidos-container').innerHTML = 
-                    '<div class="loading" style="color: #ff6b6b;">❌ Error al cargar los partidos. Intenta de nuevo.</div>';
+                    '<div class="loading" style="color: #ff6b6b;">❌ Error al cargar los partidos. Intenta de nuevo más tarde.</div>';
+                mostrarToast('Error al cargar los partidos', 'error');
             }
         }
         
+        // ============================================
+        // MOSTRAR PARTIDOS
+        // ============================================
         function mostrarPartidos() {
             const container = document.getElementById('partidos-container');
             container.innerHTML = '';
-            
-            if (!partidos || partidos.length === 0) {
-                container.innerHTML = '<div class="loading">No hay partidos disponibles</div>';
-                return;
-            }
             
             // Agrupar por grupo
             const grupos = {};
@@ -402,9 +420,10 @@
                 gridDiv.className = 'partidos-grid';
                 
                 partidosGrupo.forEach(partido => {
-                    const finalizado = partido.finalizado;
+                    const finalizado = partido.finalizado === 1 || partido.finalizado === true;
                     const card = document.createElement('div');
                     card.className = 'partido-card';
+                    
                     card.innerHTML = `
                         <div class="equipos">
                             <div class="equipo">${partido.equipo_local_nombre || '?'}</div>
@@ -425,10 +444,15 @@
                 grupoDiv.appendChild(gridDiv);
                 container.appendChild(grupoDiv);
             }
+            
+            console.log('✅ Partidos renderizados correctamente');
         }
         
+        // ============================================
+        // ENVIAR PRONÓSTICOS (VERSIÓN MEJORADA)
+        // ============================================
         async function enviarApuestas() {
-            console.log('📤 Enviando pronósticos...');
+            console.log('📤 Iniciando envío de pronósticos...');
             
             // Validar datos del usuario
             const nombre = document.getElementById('nombre').value.trim();
@@ -445,30 +469,56 @@
                 return;
             }
             
-            // Recoger pronósticos
+            // Recoger TODOS los pronósticos
             const apuestas = [];
-            let pronosticosIngresados = 0;
+            const inputsLocales = document.querySelectorAll('[id^="local_"]');
             
-            for (const partido of partidos) {
-                if (!partido.finalizado) {
-                    const golesLocal = document.getElementById(`local_${partido.id}`)?.value;
-                    const golesVisitante = document.getElementById(`visit_${partido.id}`)?.value;
+            console.log(`🔍 Encontrados ${inputsLocales.length} inputs locales`);
+            
+            for (const inputLocal of inputsLocales) {
+                // Extraer el ID del partido (local_123 -> 123)
+                const partidoId = parseInt(inputLocal.id.replace('local_', ''));
+                const inputVisitante = document.getElementById(`visit_${partidoId}`);
+                
+                if (!inputVisitante) {
+                    console.log(`⚠️ No se encontró input visitante para partido ${partidoId}`);
+                    continue;
+                }
+                
+                const golesLocal = inputLocal.value;
+                const golesVisitante = inputVisitante.value;
+                
+                console.log(`📊 Partido ${partidoId}: Local="${golesLocal}", Visitante="${golesVisitante}"`);
+                
+                // Verificar si el usuario ingresó algo en AMBOS campos
+                if (golesLocal !== '' && golesLocal !== null && 
+                    golesLocal !== undefined && 
+                    golesVisitante !== '' && golesVisitante !== null && 
+                    golesVisitante !== undefined) {
                     
-                    if (golesLocal && golesVisitante) {
+                    const golesLocalNum = parseInt(golesLocal);
+                    const golesVisitanteNum = parseInt(golesVisitante);
+                    
+                    // Verificar que sean números válidos
+                    if (!isNaN(golesLocalNum) && !isNaN(golesVisitanteNum)) {
                         apuestas.push({
-                            partidoId: partido.id,
-                            golesLocal: parseInt(golesLocal),
-                            golesVisitante: parseInt(golesVisitante)
+                            partidoId: partidoId,
+                            golesLocal: golesLocalNum,
+                            golesVisitante: golesVisitanteNum
                         });
-                        pronosticosIngresados++;
+                        console.log(`✅ Pronóstico agregado: ${golesLocalNum} - ${golesVisitanteNum}`);
+                    } else {
+                        console.log(`❌ Valores no numéricos: "${golesLocal}" - "${golesVisitante}"`);
                     }
+                } else {
+                    console.log(`⏭️ Partido ${partidoId} saltado (campos vacíos)`);
                 }
             }
             
-            console.log(`📊 Pronósticos encontrados: ${pronosticosIngresados}`);
+            console.log(`📊 Total pronósticos encontrados: ${apuestas.length}`);
             
             if (apuestas.length === 0) {
-                mostrarToast('⚠️ Ingresa al menos un pronóstico', 'error');
+                mostrarToast('⚠️ Ingresa al menos un resultado (local y visitante)', 'error');
                 return;
             }
             
@@ -490,7 +540,8 @@
                     apuestas: apuestas
                 };
                 
-                console.log('📦 Enviando datos:', dataToSend);
+                console.log('📡 Enviando a:', `${API_URL}/api/apostar`);
+                console.log('📦 Datos:', JSON.stringify(dataToSend, null, 2));
                 
                 const response = await fetch(`${API_URL}/api/apostar`, {
                     method: 'POST',
@@ -508,24 +559,20 @@
                 if (response.ok && data.success) {
                     mostrarToast('✅ ¡Tus pronósticos se guardaron correctamente!', 'success');
                     
-                    // Limpiar formulario
-                    document.getElementById('nombre').value = '';
-                    document.getElementById('email').value = '';
-                    document.getElementById('telefono').value = '';
-                    document.getElementById('ciudad').value = '';
-                    
-                    // Limpiar pronósticos
-                    partidos.forEach(partido => {
-                        const inputLocal = document.getElementById(`local_${partido.id}`);
-                        const inputVisit = document.getElementById(`visit_${partido.id}`);
-                        if (inputLocal && !partido.finalizado) inputLocal.value = '';
-                        if (inputVisit && !partido.finalizado) inputVisit.value = '';
+                    // Limpiar los pronósticos
+                    apuestas.forEach(apuesta => {
+                        const inputLocal = document.getElementById(`local_${apuesta.partidoId}`);
+                        const inputVisit = document.getElementById(`visit_${apuesta.partidoId}`);
+                        if (inputLocal) inputLocal.value = '';
+                        if (inputVisit) inputVisit.value = '';
                     });
                     
                     // Recargar ranking
                     cargarRanking();
+                    
+                    console.log('✅ Proceso completado exitosamente');
                 } else {
-                    mostrarToast(data.error || '❌ Error al guardar los pronósticos', 'error');
+                    mostrarToast(data.error || data.message || '❌ Error al guardar los pronósticos', 'error');
                 }
             } catch (error) {
                 console.error('❌ Error de conexión:', error);
@@ -536,6 +583,9 @@
             }
         }
         
+        // ============================================
+        // CARGAR RANKING
+        // ============================================
         async function cargarRanking() {
             console.log('📊 Cargando ranking...');
             try {
@@ -550,24 +600,24 @@
                 }
                 
                 container.innerHTML = `
-                    <table>
+                    <table style="width:100%;">
                         <thead>
                             <tr>
-                                <th>#</th>
-                                <th>Participante</th>
-                                <th>Puntos</th>
-                                <th>Exactos</th>
-                                <th>Ganador</th>
+                                <th style="padding: 12px;">#</th>
+                                <th style="padding: 12px;">Participante</th>
+                                <th style="padding: 12px;">Puntos</th>
+                                <th style="padding: 12px;">Exactos</th>
+                                <th style="padding: 12px;">Ganador</th>
                             </tr>
                         </thead>
                         <tbody>
                             ${ranking.map((r, i) => `
-                                <tr>
-                                    <td>${i + 1}</td>
-                                    <td><strong>${r.nombre || '?'}</strong></td>
-                                    <td><span style="font-size: 1.2em; font-weight: bold; color: #e94560;">${r.total_puntos || 0}</span></td>
-                                    <td>${r.aciertos_exactos || 0}</td>
-                                    <td>${r.aciertos_ganador || 0}</td>
+                                <tr style="border-bottom: 1px solid #eee;">
+                                    <td style="padding: 12px;"><strong>${i + 1}</strong></td>
+                                    <td style="padding: 12px;">${r.nombre || '?'}</td>
+                                    <td style="padding: 12px;"><span style="font-size: 1.2em; font-weight: bold; color: #e94560;">${r.total_puntos || 0}</span></td>
+                                    <td style="padding: 12px;">${r.aciertos_exactos || 0}</td>
+                                    <td style="padding: 12px;">${r.aciertos_ganador || 0}</td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -579,6 +629,9 @@
             }
         }
         
+        // ============================================
+        // CARGAR RESULTADOS
+        // ============================================
         async function cargarResultados() {
             console.log('📊 Cargando resultados...');
             try {
@@ -593,18 +646,18 @@
                 }
                 
                 container.innerHTML = `
-                    <table>
+                    <table style="width:100%;">
                         <thead>
                             <tr>
-                                <th>Partido</th>
-                                <th>Resultado</th>
+                                <th style="padding: 12px;">Partido</th>
+                                <th style="padding: 12px;">Resultado</th>
                             </tr>
                         </thead>
                         <tbody>
                             ${resultados.map(r => `
-                                <tr>
-                                    <td>${r.local || '?'} vs ${r.visitante || '?'}</td>
-                                    <td><strong style="font-size: 1.1em;">${r.resultado_local || 0} - ${r.resultado_visitante || 0}</strong></td>
+                                <tr style="border-bottom: 1px solid #eee;">
+                                    <td style="padding: 12px;">${r.local || '?'} vs ${r.visitante || '?'}</td>
+                                    <td style="padding: 12px;"><strong style="font-size: 1.1em;">${r.resultado_local || 0} - ${r.resultado_visitante || 0}</strong></td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -616,6 +669,9 @@
             }
         }
         
+        // ============================================
+        // CAMBIAR PESTAÑA
+        // ============================================
         function showTab(tab) {
             console.log(`🔄 Cambiando a pestaña: ${tab}`);
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -628,6 +684,9 @@
             if (tab === 'resultados') cargarResultados();
         }
         
+        // ============================================
+        // MOSTRAR MENSAJE
+        // ============================================
         function mostrarToast(msg, tipo) {
             const toast = document.getElementById('toast');
             toast.textContent = msg;
