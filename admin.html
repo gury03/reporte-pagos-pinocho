@@ -135,6 +135,14 @@
             background: #5a6268;
         }
         
+        .btn-sync {
+            background: #28a745;
+        }
+        
+        .btn-sync:hover {
+            background: #218838;
+        }
+        
         .btn-danger {
             background: #dc3545 !important;
         }
@@ -369,8 +377,11 @@
                             <i class="fas fa-sync-alt fa-fw"></i>
                             <span>Auto-refresh: 30s</span>
                         </div>
-                        <button class="btn btn-info" onclick="actualizarManual()" id="btnRefreshManual">
+                        <button class="btn btn-info btn-refresh" onclick="actualizarManual()" id="btnRefreshManual">
                             <i class="fas fa-sync-alt"></i> Actualizar Ahora
+                        </button>
+                        <button class="btn btn-success btn-sync" onclick="sincronizarMundial()">
+                            <i class="fas fa-cloud-download-alt"></i> Sincronizar Mundial
                         </button>
                         <button class="btn btn-logout" onclick="logout()">
                             <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
@@ -515,11 +526,11 @@
         }
         
         function logout() {
-            localStorage.removeItem('admin_password');
             if (autoRefreshInterval) {
                 clearInterval(autoRefreshInterval);
                 autoRefreshInterval = null;
             }
+            localStorage.removeItem('admin_password');
             document.getElementById('loginPanel').style.display = 'block';
             document.getElementById('adminPanel').style.display = 'none';
             document.getElementById('adminPass').value = '';
@@ -546,19 +557,19 @@
                 if (ultimosConteos.usuarios !== nuevosConteos.usuarios) {
                     console.log('📊 Cambio detectado en usuarios:', ultimosConteos.usuarios, '->', nuevosConteos.usuarios);
                     huboCambios = true;
-                    mostrarToast(`📊 Nuevos usuarios: ${nuevosConteos.usuarios - ultimosConteos.usuarios} nuevos registros`, 'info');
+                    mostrarToast(`📊 Usuarios: ${ultimosConteos.usuarios} → ${nuevosConteos.usuarios}`, 'info');
                 }
                 
                 if (ultimosConteos.apuestas !== nuevosConteos.apuestas) {
                     console.log('📊 Cambio detectado en apuestas:', ultimosConteos.apuestas, '->', nuevosConteos.apuestas);
                     huboCambios = true;
-                    mostrarToast(`📊 Nuevas apuestas: ${nuevosConteos.apuestas - ultimosConteos.apuestas} nuevas predicciones`, 'info');
+                    mostrarToast(`📊 Apuestas: ${ultimosConteos.apuestas} → ${nuevosConteos.apuestas}`, 'info');
                 }
                 
                 if (ultimosConteos.partidosFinalizados !== nuevosConteos.partidosFinalizados) {
                     console.log('📊 Cambio detectado en resultados:', ultimosConteos.partidosFinalizados, '->', nuevosConteos.partidosFinalizados);
                     huboCambios = true;
-                    mostrarToast(`📊 Resultados actualizados: ${nuevosConteos.partidosFinalizados - ultimosConteos.partidosFinalizados} nuevos resultados`, 'info');
+                    mostrarToast(`📊 Resultados: ${ultimosConteos.partidosFinalizados} → ${nuevosConteos.partidosFinalizados}`, 'info');
                 }
                 
                 ultimosConteos = nuevosConteos;
@@ -600,6 +611,52 @@
         }
         
         // ============================================
+        // SINCRONIZACIÓN CON OPENFOOTBALL
+        // ============================================
+        
+        async function sincronizarMundial() {
+            const password = localStorage.getItem('admin_password');
+            
+            if (!password) {
+                mostrarToast('❌ No hay sesión activa', 'error');
+                return;
+            }
+            
+            if (!confirm('⚠️ ¿Estás seguro de sincronizar los datos del Mundial?\n\nEsto creará/actualizará:\n• Grupos\n• Equipos\n• Partidos completos\n\nLos datos existentes de usuarios y apuestas NO se verán afectados.\n\n¿Deseas continuar?')) {
+                return;
+            }
+            
+            mostrarToast('🌍 Sincronizando datos del Mundial...', 'info');
+            
+            try {
+                const response = await fetch(`${API_URL}/api/admin/sincronizar-mundial`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    mostrarToast(data.message, 'success');
+                    console.log('📊 Detalles de sincronización:', data.detalles);
+                    
+                    // Recargar todos los datos
+                    await cargarGrupos();
+                    await cargarEquipos();
+                    await cargarPartidos();
+                    await cargarResultados();
+                    await cargarEstadisticas();
+                } else {
+                    mostrarToast(data.error || 'Error al sincronizar', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                mostrarToast('Error de conexión: ' + error.message, 'error');
+            }
+        }
+        
+        // ============================================
         // AUTO-REFRESH
         // ============================================
         
@@ -611,7 +668,7 @@
             autoRefreshInterval = setInterval(async () => {
                 console.log('⏰ Auto-refresh ejecutándose...');
                 await verificarCambios();
-            }, 30000); // 30 segundos
+            }, 30000);
         }
         
         // ============================================
@@ -648,8 +705,6 @@
                     
                     await cargarTodo();
                     iniciarAutoRefresh();
-                    
-                    // Actualizar la hora de última actualización
                     document.getElementById('lastUpdateTime').innerText = new Date().toLocaleTimeString();
                     
                 } else {
@@ -736,7 +791,7 @@
                                 <th style="padding: 10px;">Resultado Real</th>
                                 <th style="padding: 10px;">Puntos</th>
                                 <th style="padding: 10px;">Fecha</th>
-                              </tr>
+                             </tr>
                         </thead>
                         <tbody>
                             ${apuestas.map(a => `
@@ -780,7 +835,7 @@
                                 <th style="padding: 10px;">ID</th>
                                 <th style="padding: 10px;">Grupo</th>
                                 <th style="padding: 10px;">Acciones</th>
-                              </tr>
+                             </tr>
                         </thead>
                         <tbody>
                             ${gruposList.map(g => `
@@ -790,7 +845,7 @@
                                     <td style="padding: 10px;">
                                         <button class="btn btn-warning" onclick="editarGrupo(${g.id})">✏️ Editar</button>
                                         <button class="btn btn-danger" onclick="eliminarGrupo(${g.id})">🗑️ Eliminar</button>
-                                      </td>
+                                    </td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -845,13 +900,14 @@
                 }
                 
                 const html = `
+                    <button class="btn btn-primary" onclick="openModal('equipo')">+ Nuevo Equipo</button>
                     <table style="width:100%; margin-top: 15px; border-collapse: collapse;">
                         <thead>
                             <tr style="background: #533483; color: white;">
                                 <th style="padding: 10px;">Equipo</th>
                                 <th style="padding: 10px;">Grupo</th>
                                 <th style="padding: 10px;">Acciones</th>
-                              </tr>
+                             </tr>
                         </thead>
                         <tbody>
                             ${equiposList.map(e => `
@@ -861,7 +917,7 @@
                                     <td style="padding: 10px;">
                                         <button class="btn btn-warning" onclick="editarEquipo(${e.id})">✏️ Editar</button>
                                         <button class="btn btn-danger" onclick="eliminarEquipo(${e.id})">🗑️ Eliminar</button>
-                                      </td>
+                                    </td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -917,6 +973,7 @@
                 }
                 
                 const html = `
+                    <button class="btn btn-primary" onclick="openModal('partido')">+ Nuevo Partido</button>
                     <table style="width:100%; margin-top: 15px; border-collapse: collapse;">
                         <thead>
                             <tr style="background: #533483; color: white;">
@@ -926,7 +983,7 @@
                                 <th style="padding: 10px;">Fecha</th>
                                 <th style="padding: 10px;">Estado</th>
                                 <th style="padding: 10px;">Acciones</th>
-                              </tr>
+                             </table>
                         </thead>
                         <tbody>
                             ${partidos.map(p => `
@@ -939,7 +996,7 @@
                                     <td style="padding: 10px;">
                                         <button class="btn btn-warning" onclick="editarPartido(${p.id})">✏️ Editar</button>
                                         ${!p.finalizado ? `<button class="btn btn-danger" onclick="eliminarPartido(${p.id})">🗑️ Eliminar</button>` : ''}
-                                      </td>
+                                    </td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -1145,7 +1202,7 @@
                                     <td style="padding: 10px;"><span style="font-size: 1.2em; font-weight: bold; color: #e94560;">${u.total_puntos || 0}</span></td>
                                     <td style="padding: 10px;">
                                         <button class="btn btn-danger" onclick="eliminarUsuario(${u.id})">🗑️ Eliminar</button>
-                                      </td>
+                                    </td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -1478,7 +1535,6 @@
         // INICIALIZACIÓN
         // ============================================
         
-        // Verificar sesión al cargar la página
         checkSession();
     </script>
 </body>
