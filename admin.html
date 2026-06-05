@@ -323,6 +323,15 @@
             font-size: 0.85em;
         }
         
+        .error-message {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            text-align: center;
+        }
+        
         @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
@@ -498,6 +507,21 @@
         let autoRefreshInterval = null;
         let ultimosConteos = { usuarios: 0, apuestas: 0, partidosFinalizados: 0 };
         
+        // Función segura para obtener datos de API
+        async function fetchAPI(endpoint, options = {}) {
+            try {
+                const response = await fetch(`${API_URL}${endpoint}`, options);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                const data = await response.json();
+                return Array.isArray(data) ? data : (data.results || []);
+            } catch (error) {
+                console.error(`Error en ${endpoint}:`, error);
+                return [];
+            }
+        }
+        
         // ============================================
         // PERSISTENCIA DE SESIÓN
         // ============================================
@@ -542,7 +566,7 @@
         }
         
         async function actualizarDatos() {
-            const panelActual = document.querySelector('.panel.active').id;
+            const panelActual = document.querySelector('.panel.active')?.id || 'panel-apuestas';
             await cargarEstadisticas();
             if (panelActual === 'panel-apuestas') await cargarApuestas();
             else if (panelActual === 'panel-grupos') await cargarGrupos();
@@ -638,13 +662,16 @@
             await cargarPartidos();
             await cargarResultados();
             await cargarUsuarios();
-            const response = await fetch(`${API_URL}/api/admin/estadisticas`);
-            const stats = await response.json();
-            ultimosConteos = {
-                usuarios: stats.total_usuarios || 0,
-                apuestas: stats.total_apuestas || 0,
-                partidosFinalizados: stats.partidos_finalizados || 0
-            };
+            
+            try {
+                const response = await fetch(`${API_URL}/api/admin/estadisticas`);
+                const stats = await response.json();
+                ultimosConteos = {
+                    usuarios: stats.total_usuarios || 0,
+                    apuestas: stats.total_apuestas || 0,
+                    partidosFinalizados: stats.partidos_finalizados || 0
+                };
+            } catch(e) { console.error(e); }
         }
         
         async function cargarEstadisticas() {
@@ -657,20 +684,29 @@
                     <div class="stat-card"><div class="stat-number">${stats.partidos_finalizados || 0}/${stats.total_partidos || 0}</div><div>Partidos</div></div>
                     <div class="stat-card"><div class="stat-number">${stats.porcentaje_finalizado || 0}%</div><div>Completado</div></div>
                 `;
-            } catch (error) { console.error(error); }
+            } catch (error) { 
+                console.error(error);
+                document.getElementById('stats').innerHTML = '<div class="stat-card error-message">Error cargando estadísticas</div>';
+            }
         }
         
         // ==================== APUESTAS ====================
         
         async function cargarApuestas() {
             try {
-                const response = await fetch(`${API_URL}/api/admin/apuestas`);
-                const apuestas = Array.isArray(await response.json()) ? await response.json() : [];
-                if (apuestas.length === 0) { document.getElementById('apuestas-table').innerHTML = '<div class="loading">No hay apuestas</div>'; return; }
+                const apuestas = await fetchAPI('/api/admin/apuestas');
+                const container = document.getElementById('apuestas-table');
                 
-                document.getElementById('apuestas-table').innerHTML = `
+                if (!apuestas || apuestas.length === 0) {
+                    container.innerHTML = '<div class="loading">No hay apuestas registradas</div>';
+                    return;
+                }
+                
+                container.innerHTML = `
                     <table>
-                        <thead><tr><th>Usuario</th><th>Cédula</th><th>Partido</th><th>Apuesta</th><th>Resultado</th><th>Amarillas</th><th>Rojas</th><th>Penales</th><th>Puntos</th><th>Fecha</th></tr></thead>
+                        <thead>
+                            <tr><th>Usuario</th><th>Cédula</th><th>Partido</th><th>Apuesta</th><th>Resultado</th><th>Amarillas</th><th>Rojas</th><th>Penales</th><th>Puntos</th><th>Fecha</th></tr>
+                        </thead>
                         <tbody>
                             ${apuestas.map(a => `
                                 <tr>
@@ -689,40 +725,57 @@
                         </tbody>
                     </table>
                 `;
-            } catch (error) { document.getElementById('apuestas-table').innerHTML = '<div class="loading">Error</div>'; }
+            } catch (error) { 
+                document.getElementById('apuestas-table').innerHTML = '<div class="loading error-message">Error cargando apuestas</div>';
+            }
         }
         
         // ==================== GRUPOS ====================
         
         async function cargarGrupos() {
             try {
-                const response = await fetch(`${API_URL}/api/admin/grupos`);
-                gruposList = Array.isArray(await response.json()) ? await response.json() : [];
-                if (gruposList.length === 0) { document.getElementById('grupos-table').innerHTML = '<div class="loading">No hay grupos</div>'; return; }
+                gruposList = await fetchAPI('/api/admin/grupos');
+                const container = document.getElementById('grupos-table');
                 
-                document.getElementById('grupos-table').innerHTML = `
+                if (!gruposList || gruposList.length === 0) {
+                    container.innerHTML = '<div class="loading">No hay grupos registrados</div>';
+                    return;
+                }
+                
+                container.innerHTML = `
                     <button class="btn btn-primary" onclick="openModal('grupo')">+ Nuevo Grupo</button>
                     <table style="margin-top:15px">
                         <thead><tr><th>ID</th><th>Grupo</th><th>Acciones</th></tr></thead>
                         <tbody>
                             ${gruposList.map(g => `
-                                <tr><td>${g.id}</td><td><strong>Grupo ${g.nombre}</strong></td>
-                                <td><div class="btn-group"><button class="btn btn-warning" onclick="editarGrupo(${g.id})">✏️</button>
-                                <button class="btn btn-danger" onclick="eliminarGrupo(${g.id})">🗑️</button></div></td></tr>
+                                <tr>
+                                    <td>${g.id}</td>
+                                    <td><strong>Grupo ${g.nombre}</strong></td>
+                                    <td><div class="btn-group">
+                                        <button class="btn btn-warning" onclick="editarGrupo(${g.id})">✏️ Editar</button>
+                                        <button class="btn btn-danger" onclick="eliminarGrupo(${g.id})">🗑️ Eliminar</button>
+                                    </div></td>
+                                </tr>
                             `).join('')}
                         </tbody>
                     </table>
                 `;
-            } catch (error) { document.getElementById('grupos-table').innerHTML = '<div class="loading">Error</div>'; }
+            } catch (error) { 
+                document.getElementById('grupos-table').innerHTML = '<div class="loading error-message">Error cargando grupos</div>';
+            }
         }
         
-        async function editarGrupo(id) { const g = gruposList.find(g => g.id === id); if (g) { currentEditId = id; openModal('grupo', g); } }
+        async function editarGrupo(id) { 
+            const g = gruposList.find(g => g.id === id); 
+            if (g) { currentEditId = id; openModal('grupo', g); } 
+        }
+        
         async function eliminarGrupo(id) {
             if (!confirm('¿Eliminar este grupo?')) return;
             try {
                 const response = await fetch(`${API_URL}/api/admin/grupos?id=${id}`, { method: 'DELETE' });
                 if (response.ok) { mostrarToast('Grupo eliminado', 'success'); await cargarGrupos(); await cargarEquipos(); }
-                else mostrarToast('Error', 'error');
+                else { const data = await response.json(); mostrarToast(data.error || 'Error', 'error'); }
             } catch (error) { mostrarToast('Error', 'error'); }
         }
         
@@ -730,27 +783,42 @@
         
         async function cargarEquipos() {
             try {
-                const response = await fetch(`${API_URL}/api/admin/equipos`);
-                equiposList = Array.isArray(await response.json()) ? await response.json() : [];
-                if (equiposList.length === 0) { document.getElementById('equipos-table').innerHTML = '<div class="loading">No hay equipos</div>'; return; }
+                equiposList = await fetchAPI('/api/admin/equipos');
+                const container = document.getElementById('equipos-table');
                 
-                document.getElementById('equipos-table').innerHTML = `
+                if (!equiposList || equiposList.length === 0) {
+                    container.innerHTML = '<div class="loading">No hay equipos registrados</div>';
+                    return;
+                }
+                
+                container.innerHTML = `
                     <button class="btn btn-primary" onclick="openModal('equipo')">+ Nuevo Equipo</button>
                     <table style="margin-top:15px">
                         <thead><tr><th>Equipo</th><th>Grupo</th><th>Acciones</th></tr></thead>
                         <tbody>
                             ${equiposList.map(e => `
-                                <tr><td><strong>${e.nombre}</strong></td><td>${e.grupo_nombre || 'Sin grupo'}</td>
-                                <td><div class="btn-group"><button class="btn btn-warning" onclick="editarEquipo(${e.id})">✏️</button>
-                                <button class="btn btn-danger" onclick="eliminarEquipo(${e.id})">🗑️</button></div></td></tr>
+                                <tr>
+                                    <td><strong>${e.nombre}</strong></td>
+                                    <td>${e.grupo_nombre || 'Sin grupo'}</td>
+                                    <td><div class="btn-group">
+                                        <button class="btn btn-warning" onclick="editarEquipo(${e.id})">✏️ Editar</button>
+                                        <button class="btn btn-danger" onclick="eliminarEquipo(${e.id})">🗑️ Eliminar</button>
+                                    </div></td>
+                                </tr>
                             `).join('')}
                         </tbody>
                     </table>
                 `;
-            } catch (error) { document.getElementById('equipos-table').innerHTML = '<div class="loading">Error</div>'; }
+            } catch (error) { 
+                document.getElementById('equipos-table').innerHTML = '<div class="loading error-message">Error cargando equipos</div>';
+            }
         }
         
-        async function editarEquipo(id) { const e = equiposList.find(e => e.id === id); if (e) { currentEditId = id; openModal('equipo', e); } }
+        async function editarEquipo(id) { 
+            const e = equiposList.find(e => e.id === id); 
+            if (e) { currentEditId = id; openModal('equipo', e); } 
+        }
+        
         async function eliminarEquipo(id) {
             if (!confirm('¿Eliminar este equipo?')) return;
             try {
@@ -764,33 +832,42 @@
         
         async function cargarPartidos() {
             try {
-                const response = await fetch(`${API_URL}/api/admin/partidos`);
-                const partidos = Array.isArray(await response.json()) ? await response.json() : [];
-                if (partidos.length === 0) { document.getElementById('partidos-table').innerHTML = '<div class="loading">No hay partidos</div>'; return; }
+                const partidos = await fetchAPI('/api/admin/partidos');
+                const container = document.getElementById('partidos-table');
                 
-                document.getElementById('partidos-table').innerHTML = `
+                if (!partidos || partidos.length === 0) {
+                    container.innerHTML = '<div class="loading">No hay partidos registrados</div>';
+                    return;
+                }
+                
+                container.innerHTML = `
                     <button class="btn btn-primary" onclick="openModal('partido')">+ Nuevo Partido</button>
                     <table style="margin-top:15px">
                         <thead><tr><th>Local</th><th>Visitante</th><th>Grupo</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead>
                         <tbody>
                             ${partidos.map(p => `
                                 <tr>
-                                    <td>${p.equipo_local_nombre}</td><td>${p.equipo_visitante_nombre}</td>
-                                    <td>${p.grupo_nombre || '-'}</td><td>${new Date(p.fecha_partido).toLocaleString()}</td>
+                                    <td>${p.equipo_local_nombre}</td>
+                                    <td>${p.equipo_visitante_nombre}</td>
+                                    <td>${p.grupo_nombre || '-'}</td>
+                                    <td>${new Date(p.fecha_partido).toLocaleString()}</td>
                                     <td>${p.finalizado ? '✅ Finalizado' : '⏳ Pendiente'}</td>
-                                    <td><div class="btn-group"><button class="btn btn-warning" onclick="editarPartido(${p.id})">✏️</button>
-                                    ${!p.finalizado ? `<button class="btn btn-danger" onclick="eliminarPartido(${p.id})">🗑️</button>` : ''}</div></td>
+                                    <td><div class="btn-group">
+                                        <button class="btn btn-warning" onclick="editarPartido(${p.id})">✏️ Editar</button>
+                                        ${!p.finalizado ? `<button class="btn btn-danger" onclick="eliminarPartido(${p.id})">🗑️ Eliminar</button>` : ''}
+                                    </div></td>
                                 </tr>
                             `).join('')}
                         </tbody>
                     </table>
                 `;
-            } catch (error) { document.getElementById('partidos-table').innerHTML = '<div class="loading">Error</div>'; }
+            } catch (error) { 
+                document.getElementById('partidos-table').innerHTML = '<div class="loading error-message">Error cargando partidos</div>';
+            }
         }
         
         async function editarPartido(id) {
-            const response = await fetch(`${API_URL}/api/admin/partidos`);
-            const partidos = Array.isArray(await response.json()) ? await response.json() : [];
+            const partidos = await fetchAPI('/api/admin/partidos');
             const p = partidos.find(p => p.id === id);
             if (p) { currentEditId = id; openModal('partido', p); }
         }
@@ -808,11 +885,15 @@
         
         async function cargarResultados() {
             try {
-                const response = await fetch(`${API_URL}/api/admin/todos-resultados`);
-                const resultados = Array.isArray(await response.json()) ? await response.json() : [];
-                if (resultados.length === 0) { document.getElementById('resultados-container').innerHTML = '<div class="loading">No hay partidos</div>'; return; }
+                const resultados = await fetchAPI('/api/admin/todos-resultados');
+                const container = document.getElementById('resultados-container');
                 
-                document.getElementById('resultados-container').innerHTML = `
+                if (!resultados || resultados.length === 0) {
+                    container.innerHTML = '<div class="loading">No hay partidos registrados</div>';
+                    return;
+                }
+                
+                container.innerHTML = `
                     <div style="margin-bottom:20px;padding:15px;background:#e8f4f8;border-radius:10px;">
                         <strong>📌 Instrucciones:</strong>
                         <ul style="margin-top:10px;margin-left:20px;">
@@ -826,10 +907,12 @@
                             <div class="resultado-equipos">${r.local} vs ${r.visitante}</div>
                             <div class="resultado-info">
                                 <div class="resultado-valor">
-                                    ${r.finalizado ? `<span style="background:#28a745;color:white;padding:5px 12px;border-radius:20px;">${r.resultado_local} - ${r.resultado_visitante}</span>
-                                    <span style="margin-left:10px;background:#17a2b8;color:white;padding:5px 12px;border-radius:20px;">🟨${r.tarjetas_amarillas_real || 0} 🟥${r.tarjetas_rojas_real || 0}</span>
-                                    <span style="margin-left:10px;background:#6c757d;color:white;padding:5px 12px;border-radius:20px;">⚽ ${r.hubo_penales_real ? (r.goles_penales_local_real || 0) + '-' + (r.goles_penales_visitante_real || 0) : 'Sin penales'}</span>` : 
-                                    '<span style="background:#ffc107;color:#333;padding:5px 12px;border-radius:20px;">⏳ Pendiente</span>'}
+                                    ${r.finalizado ? 
+                                        `<span style="background:#28a745;color:white;padding:5px 12px;border-radius:20px;">${r.resultado_local} - ${r.resultado_visitante}</span>
+                                        <span style="margin-left:10px;background:#17a2b8;color:white;padding:5px 12px;border-radius:20px;">🟨${r.tarjetas_amarillas_real || 0} 🟥${r.tarjetas_rojas_real || 0}</span>
+                                        <span style="margin-left:10px;background:#6c757d;color:white;padding:5px 12px;border-radius:20px;">⚽ ${r.hubo_penales_real ? (r.goles_penales_local_real || 0) + '-' + (r.goles_penales_visitante_real || 0) : 'Sin penales'}</span>` : 
+                                        '<span style="background:#ffc107;color:#333;padding:5px 12px;border-radius:20px;">⏳ Pendiente</span>'
+                                    }
                                 </div>
                                 <div class="resultado-fecha">📅 ${new Date(r.fecha_partido).toLocaleString()}</div>
                                 <div class="btn-group">
@@ -843,7 +926,9 @@
                         </div>
                     `).join('')}
                 `;
-            } catch (error) { document.getElementById('resultados-container').innerHTML = '<div class="loading">Error</div>'; }
+            } catch (error) { 
+                document.getElementById('resultados-container').innerHTML = '<div class="loading error-message">Error cargando resultados</div>';
+            }
         }
         
         function abrirCargarResultado(partidoId, local, visitante) {
@@ -908,7 +993,10 @@
                     await cargarApuestas();
                     await cargarPartidos();
                     await cargarEstadisticas();
-                } else { mostrarToast('Error', 'error'); }
+                } else { 
+                    const data = await response.json();
+                    mostrarToast(data.error || 'Error', 'error');
+                }
             } catch (error) { mostrarToast('Error', 'error'); }
         }
         
@@ -916,16 +1004,34 @@
         
         async function cargarUsuarios() {
             try {
-                const response = await fetch(`${API_URL}/api/ranking`);
-                const usuarios = Array.isArray(await response.json()) ? await response.json() : [];
-                if (usuarios.length === 0) { document.getElementById('usuarios-table').innerHTML = '<div class="loading">No hay usuarios</div>'; return; }
+                const usuarios = await fetchAPI('/api/ranking');
+                const container = document.getElementById('usuarios-table');
                 
-                document.getElementById('usuarios-table').innerHTML = `
-                    <table><thead><tr><th>Nombre</th><th>Cédula</th><th>Teléfono</th><th>Ciudad</th><th>Puntos</th><th>Acciones</th></tr></thead><tbody>
-                        ${usuarios.map(u => `<tr><td>${u.nombre}</td><td>${u.cedula || '-'}</td><td>${u.telefono || '-'}</td><td>${u.ciudad || '-'}</td><td><strong>${u.total_puntos || 0}</strong></td><td><button class="btn btn-danger" onclick="eliminarUsuario(${u.id})">🗑️</button></td></tr>`).join('')}
-                    </tbody></table>
+                if (!usuarios || usuarios.length === 0) {
+                    container.innerHTML = '<div class="loading">No hay usuarios registrados</div>';
+                    return;
+                }
+                
+                container.innerHTML = `
+                    <table>
+                        <thead><tr><th>Nombre</th><th>Cédula</th><th>Teléfono</th><th>Ciudad</th><th>Puntos</th><th>Acciones</th></tr></thead>
+                        <tbody>
+                            ${usuarios.map(u => `
+                                <tr>
+                                    <td>${u.nombre || '?'}</td>
+                                    <td>${u.cedula || '-'}</td>
+                                    <td>${u.telefono || '-'}</td>
+                                    <td>${u.ciudad || '-'}</td>
+                                    <td><strong>${u.total_puntos || 0}</strong></td>
+                                    <td><button class="btn btn-danger" onclick="eliminarUsuario(${u.id})">🗑️ Eliminar</button></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
                 `;
-            } catch (error) { document.getElementById('usuarios-table').innerHTML = '<div class="loading">Error</div>'; }
+            } catch (error) { 
+                document.getElementById('usuarios-table').innerHTML = '<div class="loading error-message">Error cargando usuarios</div>';
+            }
         }
         
         async function eliminarUsuario(id) {
@@ -1118,6 +1224,7 @@
             setTimeout(() => { toast.style.display = 'none'; toast.className = 'toast'; }, 3000);
         }
         
+        // Inicializar
         checkSession();
     </script>
 </body>
