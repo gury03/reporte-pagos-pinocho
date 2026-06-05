@@ -87,24 +87,6 @@
             flex-wrap: wrap;
         }
 
-        .quiniela-icon {
-            background: rgba(255,255,255,0.2);
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 18px;
-        }
-
-        .quiniela-icon:hover {
-            background: rgba(255,255,255,0.3);
-            transform: scale(1.1);
-        }
-
         .tech-icon {
             background: rgba(255,255,255,0.2);
             width: 35px;
@@ -284,13 +266,27 @@
             padding: 10px 20px;
         }
 
-        .card {
-            background: white;
-            border: 2px solid var(--gray-light);
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        .quiniela-btn {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+        }
+
+        .quiniela-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+        }
+
+        .quiniela-btn i {
+            font-size: 18px;
         }
 
         .card-header {
@@ -499,6 +495,11 @@
             .header-controls {
                 justify-content: center;
             }
+            
+            .quiniela-btn {
+                width: 100%;
+                justify-content: center;
+            }
         }
 
         .action-buttons {
@@ -528,6 +529,10 @@
             background: linear-gradient(to right, var(--tech), #9d4edd);
         }
 
+        .btn-quiniela {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+        }
+
         .close-btn {
             position: absolute;
             top: 15px;
@@ -544,20 +549,6 @@
         .close-btn:hover {
             color: var(--dark);
         }
-        
-        .quiniela-btn-movil {
-            display: none;
-        }
-        
-        @media (max-width: 768px) {
-            .quiniela-btn-movil {
-                display: block;
-                margin-top: 10px;
-            }
-            .quiniela-btn-movil button {
-                background: var(--quiniela);
-            }
-        }
     </style>
 </head>
 <body>
@@ -572,10 +563,6 @@
             </div>
             
             <div class="header-controls">
-                <div class="quiniela-icon" id="quinielaIcon" onclick="openQuiniela()" title="Quiniela del Mundial">
-                    <i class="fas fa-futbol"></i>
-                </div>
-                
                 <div class="tech-icon" id="techIcon" onclick="showTechLoginModal()" title="Acceso Técnico">
                     <i class="fas fa-cog"></i>
                 </div>
@@ -620,12 +607,6 @@
                 <button id="btnLogin" onclick="login()">
                     <i class="fas fa-search"></i> Consultar
                 </button>
-                
-                <div class="quiniela-btn-movil">
-                    <button onclick="openQuiniela()">
-                        <i class="fas fa-futbol"></i> Quiniela del Mundial
-                    </button>
-                </div>
                 
                 <div class="tech-footer">
                     <p><strong><i class="fas fa-info-circle"></i> Información:</strong></p>
@@ -693,6 +674,9 @@
                     </button>
                     <button onclick="refreshUserData()" class="btn-secondary">
                         <i class="fas fa-sync-alt"></i> Actualizar
+                    </button>
+                    <button onclick="openQuiniela()" class="btn-quiniela">
+                        <i class="fas fa-futbol"></i> Quiniela del Mundial
                     </button>
                 </div>
             </div>
@@ -924,17 +908,14 @@
         let currentUser = null;
         let currentCurrency = 'BS';
         let uploadedFile = null;
-        let pendingFile = null;  // Variable global para el archivo
+        let pendingFile = null;
         let pendingPayment = null;
         let refreshInterval = null;
         let isTechLoggedIn = false;
         let selectedDatabase = localStorage.getItem('selectedDatabase') || 'isp_control';
 
-        // ================= FUNCIONES ADICIONALES =================
-        
-        // Función para abrir la Quiniela
+        // ================= FUNCIÓN PARA ABRIR QUINIELA =================
         function openQuiniela() {
-            // Abrir en una nueva pestaña
             window.open('quiniela.html', '_blank');
         }
 
@@ -969,7 +950,6 @@
                 document.getElementById('techIcon').classList.add('active');
                 closeTechLoginModal();
                 showMessage('loginMessage', '✅ Acceso técnico concedido', 'success');
-                // Aquí puedes abrir el panel de configuración
                 alert('Acceso técnico concedido. Próximamente panel de configuración.');
             } else {
                 showMessage('techLoginMessage', '❌ Usuario o contraseña incorrectos', 'error');
