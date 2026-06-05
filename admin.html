@@ -144,11 +144,12 @@
         }
         
         .btn {
-            padding: 10px 20px;
+            padding: 8px 16px;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
-            margin: 5px;
+            margin: 2px;
+            font-size: 13px;
         }
         
         .btn-primary {
@@ -168,6 +169,11 @@
         
         .btn-danger {
             background: #dc3545;
+            color: white;
+        }
+        
+        .btn-info {
+            background: #17a2b8;
             color: white;
         }
         
@@ -193,15 +199,58 @@
             display: block;
         }
         
+        .toast.info {
+            background: #17a2b8;
+            color: white;
+            display: block;
+        }
+        
         .loading {
             text-align: center;
             padding: 20px;
             color: #666;
         }
         
+        .resultado-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #28a745;
+        }
+        
+        .resultado-card.pendiente {
+            border-left-color: #ffc107;
+        }
+        
+        .resultado-equipos {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+        
+        .resultado-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .resultado-valor {
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+        
+        .resultado-fecha {
+            color: #666;
+            font-size: 0.85em;
+        }
+        
         @media (max-width: 768px) {
             .admin-container { padding: 10px; }
             th, td { padding: 8px; font-size: 12px; }
+            .resultado-info { flex-direction: column; align-items: flex-start; }
         }
     </style>
 </head>
@@ -252,8 +301,9 @@
             </div>
             
             <div id="panel-resultados" class="panel">
-                <h3>Cargar Resultados</h3>
-                <div id="resultados-partidos"><div class="loading">Cargando partidos pendientes...</div></div>
+                <h3 style="margin-bottom: 20px;">📊 Gestión de Resultados</h3>
+                <p style="margin-bottom: 15px; color: #666;">Aquí puedes ver, cargar, editar y eliminar resultados de partidos.</p>
+                <div id="resultados-container"><div class="loading">Cargando resultados...</div></div>
             </div>
             
             <div id="panel-usuarios" class="panel">
@@ -274,7 +324,9 @@
     <div id="toast" class="toast"></div>
     
     <script>
-        // CAMBIA ESTA URL POR LA DE TU WORKER
+        // ============================================
+        // CONFIGURACIÓN
+        // ============================================
         const API_URL = 'https://quiniela-mundial.thecrow859.workers.dev';
         
         let equiposList = [];
@@ -282,6 +334,9 @@
         let currentModalType = '';
         let currentEditId = null;
         
+        // ============================================
+        // LOGIN
+        // ============================================
         async function verificarAdmin() {
             const password = document.getElementById('adminPass').value;
             const loginError = document.getElementById('loginError');
@@ -319,7 +374,7 @@
             await cargarGrupos();
             await cargarEquipos();
             await cargarPartidos();
-            await cargarResultadosPendientes();
+            await cargarResultados();
             await cargarUsuarios();
         }
         
@@ -353,20 +408,20 @@
                 }
                 
                 const html = `
-                    <table style="width:100%; margin-top: 15px; border-collapse: collapse;">
+                    <table>
                         <thead>
-                            <tr style="background: #533483; color: white;">
-                                <th style="padding: 10px;">ID</th>
-                                <th style="padding: 10px;">Grupo</th>
-                                <th style="padding: 10px;">Acciones</th>
+                            <tr>
+                                <th>ID</th>
+                                <th>Grupo</th>
+                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             ${gruposList.map(g => `
-                                <tr style="border-bottom: 1px solid #ddd;">
-                                    <td style="padding: 10px;">${g.id}</td>
-                                    <td style="padding: 10px;"><strong>Grupo ${g.nombre}</strong></td>
-                                    <td style="padding: 10px;">
+                                <tr>
+                                    <td>${g.id}</td>
+                                    <td><strong>Grupo ${g.nombre}</strong></td>
+                                    <td>
                                         <button class="btn btn-warning" onclick="editarGrupo(${g.id})">✏️ Editar</button>
                                         <button class="btn btn-danger" onclick="eliminarGrupo(${g.id})">🗑️ Eliminar</button>
                                     </td>
@@ -424,20 +479,20 @@
                 }
                 
                 const html = `
-                    <table style="width:100%; margin-top: 15px; border-collapse: collapse;">
+                    <table>
                         <thead>
-                            <tr style="background: #533483; color: white;">
-                                <th style="padding: 10px;">Equipo</th>
-                                <th style="padding: 10px;">Grupo</th>
-                                <th style="padding: 10px;">Acciones</th>
+                            <tr>
+                                <th>Equipo</th>
+                                <th>Grupo</th>
+                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             ${equiposList.map(e => `
-                                <tr style="border-bottom: 1px solid #ddd;">
-                                    <td style="padding: 10px;"><strong>${e.nombre}</strong></td>
-                                    <td style="padding: 10px;">${e.grupo_nombre || 'Sin grupo'}</td>
-                                    <td style="padding: 10px;">
+                                <tr>
+                                    <td><strong>${e.nombre}</strong></td>
+                                    <td>${e.grupo_nombre || 'Sin grupo'}</td>
+                                    <td>
                                         <button class="btn btn-warning" onclick="editarEquipo(${e.id})">✏️ Editar</button>
                                         <button class="btn btn-danger" onclick="eliminarEquipo(${e.id})">🗑️ Eliminar</button>
                                     </td>
@@ -472,6 +527,7 @@
                     mostrarToast('Equipo eliminado correctamente', 'success');
                     await cargarEquipos();
                     await cargarPartidos();
+                    await cargarResultados();
                     await cargarEstadisticas();
                 } else {
                     mostrarToast(data.error || 'Error al eliminar', 'error');
@@ -495,26 +551,27 @@
                 }
                 
                 const html = `
-                    <table style="width:100%; margin-top: 15px; border-collapse: collapse;">
+                    <button class="btn btn-primary" onclick="openModal('partido')">+ Nuevo Partido</button>
+                    <table style="margin-top: 15px;">
                         <thead>
-                            <tr style="background: #533483; color: white;">
-                                <th style="padding: 10px;">Local</th>
-                                <th style="padding: 10px;">Visitante</th>
-                                <th style="padding: 10px;">Grupo</th>
-                                <th style="padding: 10px;">Fecha</th>
-                                <th style="padding: 10px;">Estado</th>
-                                <th style="padding: 10px;">Acciones</th>
+                            <tr>
+                                <th>Local</th>
+                                <th>Visitante</th>
+                                <th>Grupo</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             ${partidos.map(p => `
-                                <tr style="border-bottom: 1px solid #ddd;">
-                                    <td style="padding: 10px;">${p.equipo_local_nombre}</td>
-                                    <td style="padding: 10px;">${p.equipo_visitante_nombre}</td>
-                                    <td style="padding: 10px;">${p.grupo_nombre || '-'}</td>
-                                    <td style="padding: 10px;">${new Date(p.fecha_partido).toLocaleString()}</td>
-                                    <td style="padding: 10px;">${p.finalizado ? '✅ Finalizado' : '⏳ Pendiente'}</td>
-                                    <td style="padding: 10px;">
+                                <tr>
+                                    <td>${p.equipo_local_nombre}</td>
+                                    <td>${p.equipo_visitante_nombre}</td>
+                                    <td>${p.grupo_nombre || '-'}</td>
+                                    <td>${new Date(p.fecha_partido).toLocaleString()}</td>
+                                    <td>${p.finalizado ? '✅ Finalizado' : '⏳ Pendiente'}</td>
+                                    <td>
                                         <button class="btn btn-warning" onclick="editarPartido(${p.id})">✏️ Editar</button>
                                         ${!p.finalizado ? `<button class="btn btn-danger" onclick="eliminarPartido(${p.id})">🗑️ Eliminar</button>` : ''}
                                     </td>
@@ -552,7 +609,7 @@
                 if (response.ok) {
                     mostrarToast('Partido eliminado correctamente', 'success');
                     await cargarPartidos();
-                    await cargarResultadosPendientes();
+                    await cargarResultados();
                     await cargarEstadisticas();
                 } else {
                     mostrarToast(data.error || 'Error al eliminar', 'error');
@@ -562,85 +619,168 @@
             }
         }
         
-        // ==================== RESULTADOS ====================
+        // ==================== RESULTADOS (MEJORADO) ====================
         
-        async function cargarResultadosPendientes() {
+        async function cargarResultados() {
             try {
-                const response = await fetch(`${API_URL}/api/admin/partidos`);
+                const response = await fetch(`${API_URL}/api/admin/todos-resultados`);
                 const data = await response.json();
-                const partidos = Array.isArray(data) ? data : [];
-                const pendientes = partidos.filter(p => !p.finalizado);
+                const resultados = Array.isArray(data) ? data : [];
                 
-                if (pendientes.length === 0) {
-                    document.getElementById('resultados-partidos').innerHTML = '<div class="loading">Todos los partidos ya están finalizados</div>';
+                if (resultados.length === 0) {
+                    document.getElementById('resultados-container').innerHTML = '<div class="loading">No hay partidos registrados</div>';
                     return;
                 }
                 
                 const html = `
-                    <table style="width:100%; border-collapse: collapse;">
-                        <thead>
-                            <tr style="background: #533483; color: white;">
-                                <th style="padding: 10px;">Local</th>
-                                <th style="padding: 10px;">Visitante</th>
-                                <th style="padding: 10px;">Fecha</th>
-                                <th style="padding: 10px;">Resultado</th>
-                                <th style="padding: 10px;">Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${pendientes.map(p => `
-                                <tr style="border-bottom: 1px solid #ddd;">
-                                    <td style="padding: 10px;">${p.equipo_local_nombre}</td>
-                                    <td style="padding: 10px;">${p.equipo_visitante_nombre}</td>
-                                    <td style="padding: 10px;">${new Date(p.fecha_partido).toLocaleString()}</td>
-                                    <td style="padding: 10px;">
-                                        <input type="number" id="res_local_${p.id}" placeholder="0" style="width: 60px;"> -
-                                        <input type="number" id="res_visit_${p.id}" placeholder="0" style="width: 60px;">
-                                    </td>
-                                    <td style="padding: 10px;">
-                                        <button class="btn btn-success" onclick="cargarResultado(${p.id})">Cargar</button>
-                                    </td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
+                    <div style="margin-bottom: 20px; padding: 15px; background: #e8f4f8; border-radius: 10px;">
+                        <strong>📌 Instrucciones:</strong>
+                        <ul style="margin-top: 10px; margin-left: 20px;">
+                            <li><span style="color: #28a745;">●</span> <strong>Cargar</strong> - Para partidos pendientes</li>
+                            <li><span style="color: #ffc107;">●</span> <strong>Editar</strong> - Para modificar un resultado ya cargado</li>
+                            <li><span style="color: #dc3545;">●</span> <strong>Eliminar</strong> - Para volver a estado pendiente</li>
+                        </ul>
+                    </div>
+                    <div id="resultados-lista">
+                        ${resultados.map(r => `
+                            <div class="resultado-card ${r.finalizado ? '' : 'pendiente'}" id="resultado-${r.id}">
+                                <div class="resultado-equipos">
+                                    ${r.local} vs ${r.visitante}
+                                </div>
+                                <div class="resultado-info">
+                                    <div class="resultado-valor">
+                                        ${r.finalizado ? 
+                                            `<span style="background: #28a745; color: white; padding: 5px 12px; border-radius: 20px;">${r.resultado_local} - ${r.resultado_visitante}</span>` : 
+                                            '<span style="background: #ffc107; color: #333; padding: 5px 12px; border-radius: 20px;">⏳ Pendiente</span>'
+                                        }
+                                    </div>
+                                    <div class="resultado-fecha">
+                                        📅 ${new Date(r.fecha_partido).toLocaleString()}
+                                    </div>
+                                    <div>
+                                        ${!r.finalizado ? 
+                                            `<button class="btn btn-success" onclick="abrirCargarResultado(${r.id}, '${r.local}', '${r.visitante}')">➕ Cargar Resultado</button>` :
+                                            `
+                                                <button class="btn btn-warning" onclick="abrirEditarResultado(${r.id}, ${r.resultado_local}, ${r.resultado_visitante}, '${r.local}', '${r.visitante}')">✏️ Editar</button>
+                                                <button class="btn btn-danger" onclick="eliminarResultado(${r.id})">🗑️ Eliminar</button>
+                                            `
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
                 `;
-                document.getElementById('resultados-partidos').innerHTML = html;
+                document.getElementById('resultados-container').innerHTML = html;
             } catch (error) {
                 console.error('Error:', error);
-                document.getElementById('resultados-partidos').innerHTML = '<div class="loading">Error al cargar partidos</div>';
+                document.getElementById('resultados-container').innerHTML = '<div class="loading">Error al cargar resultados</div>';
             }
         }
         
-        async function cargarResultado(partidoId) {
-            const golesLocal = document.getElementById(`res_local_${partidoId}`).value;
-            const golesVisitante = document.getElementById(`res_visit_${partidoId}`).value;
+        function abrirCargarResultado(partidoId, local, visitante) {
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modal-title');
+            const body = document.getElementById('modal-body');
+            
+            title.textContent = `Cargar Resultado: ${local} vs ${visitante}`;
+            body.innerHTML = `
+                <div class="form-group">
+                    <label>Goles ${local}</label>
+                    <input type="number" id="resultado_local" placeholder="0" min="0" style="font-size: 18px; text-align: center;">
+                </div>
+                <div class="form-group">
+                    <label>Goles ${visitante}</label>
+                    <input type="number" id="resultado_visitante" placeholder="0" min="0" style="font-size: 18px; text-align: center;">
+                </div>
+            `;
+            
+            currentModalType = 'cargar-resultado';
+            currentEditId = partidoId;
+            modal.style.display = 'flex';
+        }
+        
+        function abrirEditarResultado(partidoId, resultadoLocal, resultadoVisitante, local, visitante) {
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modal-title');
+            const body = document.getElementById('modal-body');
+            
+            title.textContent = `Editar Resultado: ${local} vs ${visitante}`;
+            body.innerHTML = `
+                <div class="form-group">
+                    <label>Goles ${local}</label>
+                    <input type="number" id="resultado_local" value="${resultadoLocal}" min="0" style="font-size: 18px; text-align: center;">
+                </div>
+                <div class="form-group">
+                    <label>Goles ${visitante}</label>
+                    <input type="number" id="resultado_visitante" value="${resultadoVisitante}" min="0" style="font-size: 18px; text-align: center;">
+                </div>
+                <p style="color: #ffc107; margin-top: 10px;">⚠️ Al editar, se recalcularán los puntos automáticamente.</p>
+            `;
+            
+            currentModalType = 'editar-resultado';
+            currentEditId = partidoId;
+            modal.style.display = 'flex';
+        }
+        
+        async function guardarResultado() {
+            const golesLocal = document.getElementById('resultado_local').value;
+            const golesVisitante = document.getElementById('resultado_visitante').value;
             
             if (!golesLocal || !golesVisitante) {
                 mostrarToast('Ingresa ambos resultados', 'error');
-                return;
+                return false;
             }
             
+            const endpoint = currentModalType === 'cargar-resultado' ? '/api/admin/resultado' : '/api/admin/editar-resultado';
+            
             try {
-                const response = await fetch(`${API_URL}/api/admin/resultado`, {
+                const response = await fetch(`${API_URL}${endpoint}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        partido_id: partidoId,
+                        partido_id: currentEditId,
                         resultado_local: parseInt(golesLocal),
                         resultado_visitante: parseInt(golesVisitante)
                     })
                 });
                 
+                const data = await response.json();
+                
                 if (response.ok) {
-                    mostrarToast('Resultado cargado correctamente', 'success');
-                    await cargarResultadosPendientes();
+                    mostrarToast(data.message || 'Resultado guardado correctamente', 'success');
+                    await cargarResultados();
                     await cargarApuestas();
                     await cargarPartidos();
                     await cargarEstadisticas();
+                    await cargarUsuarios();
+                    return true;
                 } else {
-                    const error = await response.json();
-                    mostrarToast(error.error || 'Error al cargar resultado', 'error');
+                    mostrarToast(data.error || 'Error al guardar', 'error');
+                    return false;
+                }
+            } catch (error) {
+                mostrarToast('Error de conexión', 'error');
+                return false;
+            }
+        }
+        
+        async function eliminarResultado(partidoId) {
+            if (!confirm('¿Estás seguro de eliminar este resultado? El partido volverá a estado pendiente y se perderán los puntos de los usuarios para este partido.')) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/api/admin/eliminar-resultado?id=${partidoId}`, { method: 'DELETE' });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    mostrarToast(data.message || 'Resultado eliminado correctamente', 'success');
+                    await cargarResultados();
+                    await cargarApuestas();
+                    await cargarPartidos();
+                    await cargarEstadisticas();
+                    await cargarUsuarios();
+                } else {
+                    mostrarToast(data.error || 'Error al eliminar', 'error');
                 }
             } catch (error) {
                 mostrarToast('Error de conexión', 'error');
@@ -661,26 +801,26 @@
                 }
                 
                 const html = `
-                    <table style="width:100%; border-collapse: collapse;">
+                    <table>
                         <thead>
-                            <tr style="background: #533483; color: white;">
-                                <th style="padding: 10px;">Usuario</th>
-                                <th style="padding: 10px;">Partido</th>
-                                <th style="padding: 10px;">Apuesta</th>
-                                <th style="padding: 10px;">Resultado Real</th>
-                                <th style="padding: 10px;">Puntos</th>
-                                <th style="padding: 10px;">Fecha</th>
+                            <tr>
+                                <th>Usuario</th>
+                                <th>Partido</th>
+                                <th>Apuesta</th>
+                                <th>Resultado Real</th>
+                                <th>Puntos</th>
+                                <th>Fecha</th>
                             </tr>
                         </thead>
                         <tbody>
                             ${apuestas.map(a => `
-                                <tr style="border-bottom: 1px solid #ddd;">
-                                    <td style="padding: 10px;">${a.usuario_nombre}<br><small>${a.email}</small></td>
-                                    <td style="padding: 10px;">${a.equipo_local} vs ${a.equipo_visitante}</td>
-                                    <td style="padding: 10px;"><strong>${a.goles_local} - ${a.goles_visitante}</strong></td>
-                                    <td style="padding: 10px;">${a.finalizado ? `${a.resultado_local} - ${a.resultado_visitante}` : 'Pendiente'}</td>
-                                    <td style="padding: 10px; color: ${(a.puntos_obtenidos || 0) > 0 ? 'green' : 'red'}; font-weight: bold;">${a.puntos_obtenidos || 0}</td>
-                                    <td style="padding: 10px;">${new Date(a.fecha_apuesta).toLocaleDateString()}</td>
+                                <tr>
+                                    <td>${a.usuario_nombre}<br><small>${a.email}</small></td>
+                                    <td>${a.equipo_local} vs ${a.equipo_visitante}</td>
+                                    <td><strong>${a.goles_local} - ${a.goles_visitante}</strong></td>
+                                    <td>${a.finalizado ? `${a.resultado_local} - ${a.resultado_visitante}` : 'Pendiente'}</td>
+                                    <td style="color: ${(a.puntos_obtenidos || 0) > 0 ? 'green' : 'red'}; font-weight: bold;">${a.puntos_obtenidos || 0}</td>
+                                    <td>${new Date(a.fecha_apuesta).toLocaleDateString()}</td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -707,26 +847,26 @@
                 }
                 
                 const html = `
-                    <table style="width:100%; border-collapse: collapse;">
+                    <table>
                         <thead>
-                            <tr style="background: #533483; color: white;">
-                                <th style="padding: 10px;">Nombre</th>
-                                <th style="padding: 10px;">Email</th>
-                                <th style="padding: 10px;">Teléfono</th>
-                                <th style="padding: 10px;">Ciudad</th>
-                                <th style="padding: 10px;">Puntos</th>
-                                <th style="padding: 10px;">Acciones</th>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Email</th>
+                                <th>Teléfono</th>
+                                <th>Ciudad</th>
+                                <th>Puntos</th>
+                                <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             ${usuarios.map(u => `
-                                <tr style="border-bottom: 1px solid #ddd;">
-                                    <td style="padding: 10px;">${u.nombre}</td>
-                                    <td style="padding: 10px;">${u.email}</td>
-                                    <td style="padding: 10px;">${u.telefono || '-'}</td>
-                                    <td style="padding: 10px;">${u.ciudad || '-'}</td>
-                                    <td style="padding: 10px;"><strong>${u.total_puntos || 0}</strong></td>
-                                    <td style="padding: 10px;">
+                                <tr>
+                                    <td>${u.nombre}</td>
+                                    <td>${u.email}</td>
+                                    <td>${u.telefono || '-'}</td>
+                                    <td>${u.ciudad || '-'}</td>
+                                    <td><strong>${u.total_puntos || 0}</strong></td>
+                                    <td>
                                         <button class="btn btn-danger" onclick="eliminarUsuario(${u.id})">🗑️ Eliminar</button>
                                     </td>
                                 </tr>
@@ -761,7 +901,7 @@
             }
         }
         
-        // ==================== MODALES ====================
+        // ==================== MODALES GENERALES ====================
         
         function openModal(type, data = null) {
             currentModalType = type;
@@ -838,6 +978,14 @@
         }
         
         async function guardarModal() {
+            let success = false;
+            
+            if (currentModalType === 'cargar-resultado' || currentModalType === 'editar-resultado') {
+                success = await guardarResultado();
+                if (success) closeModal();
+                return;
+            }
+            
             try {
                 if (currentModalType === 'grupo') {
                     const nombre = document.getElementById('grupo_nombre').value.trim().toUpperCase();
@@ -863,6 +1011,7 @@
                     } else {
                         const error = await response.json();
                         mostrarToast(error.error || 'Error', 'error');
+                        return;
                     }
                 } else if (currentModalType === 'equipo') {
                     const nombre = document.getElementById('equipo_nombre').value.trim();
@@ -891,6 +1040,7 @@
                     } else {
                         const error = await response.json();
                         mostrarToast(error.error || 'Error', 'error');
+                        return;
                     }
                 } else if (currentModalType === 'partido') {
                     const equipo_local_id = document.getElementById('partido_local').value;
@@ -917,10 +1067,11 @@
                     if (response.ok) {
                         mostrarToast(currentEditId ? 'Partido actualizado' : 'Partido creado', 'success');
                         await cargarPartidos();
-                        await cargarResultadosPendientes();
+                        await cargarResultados();
                     } else {
                         const error = await response.json();
                         mostrarToast(error.error || 'Error', 'error');
+                        return;
                     }
                 }
                 
@@ -944,7 +1095,7 @@
             setTimeout(() => {
                 toast.style.display = 'none';
                 toast.className = 'toast';
-            }, 3000);
+            }, 4000);
         }
     </script>
 </body>
