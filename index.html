@@ -916,8 +916,26 @@
 
         // ================= FUNCIÓN PARA ABRIR QUINIELA =================
         function openQuiniela() {
-            window.open('quiniela.html', '_blank');
+        // Verificar que hay un usuario logueado
+        if (!currentUser) {
+            showMessage('loginMessage', '❌ Debes iniciar sesión primero', 'error');
+            return;
         }
+        
+        // Obtener los datos del usuario
+        const nombre = currentUser.nombre || '';
+        const cedula = currentUser.usuario_pppoe || '';  // El campo pppoe es la cédula
+        
+        // Codificar los datos para la URL
+        const nombreCodificado = encodeURIComponent(nombre);
+        const cedulaCodificada = encodeURIComponent(cedula);
+        
+        // Construir la URL con los parámetros
+        const urlQuiniela = `quiniela.html?nombre=${nombreCodificado}&cedula=${cedulaCodificada}`;
+        
+        // Abrir la quiniela en una nueva pestaña
+        window.open(urlQuiniela, '_blank');
+    }
 
         // ================= FUNCIONES DE BASE DE DATOS =================
         async function loadDatabases() {
