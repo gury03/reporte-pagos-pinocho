@@ -10,7 +10,6 @@
     <!-- ============================================ -->
     <script>
         (function verificarAcceso() {
-            // Dominios permitidos (solo estos pueden abrir la página)
             const dominiosPermitidos = [
                 'pagos1.robertsystems.org',
                 'robertsystems.org',
@@ -18,17 +17,13 @@
                 '127.0.0.1'
             ];
             
-            // Obtener el referer (de dónde viene la página)
             const referer = document.referrer;
             
-            // Si no hay referer (acceso directo escribiendo la URL)
             if (!referer) {
-                // Redirigir al dashboard
                 window.location.href = 'https://pagos1.robertsystems.org';
                 return;
             }
             
-            // Verificar si el referer contiene algún dominio permitido
             let origenPermitido = false;
             for (const dominio of dominiosPermitidos) {
                 if (referer.includes(dominio)) {
@@ -37,7 +32,6 @@
                 }
             }
             
-            // Si el origen no está permitido, redirigir
             if (!origenPermitido) {
                 window.location.href = 'https://pagos1.robertsystems.org';
             }
@@ -101,6 +95,47 @@
             padding: 25px;
             border-radius: 15px;
             margin-bottom: 30px;
+        }
+        
+        .user-info-card {
+            background: linear-gradient(135deg, #e8f4f8 0%, #d1e7f0 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #e94560;
+        }
+        
+        .user-info-card h3 {
+            color: #e94560;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+        
+        .user-info-row {
+            display: flex;
+            margin-bottom: 10px;
+            padding: 8px;
+            background: white;
+            border-radius: 8px;
+        }
+        
+        .user-info-label {
+            font-weight: bold;
+            width: 120px;
+            color: #533483;
+        }
+        
+        .user-info-value {
+            color: #333;
+            flex: 1;
+        }
+        
+        .user-info-note {
+            font-size: 12px;
+            color: #666;
+            margin-top: 10px;
+            text-align: center;
+            font-style: italic;
         }
         
         .form-grid {
@@ -285,6 +320,12 @@
             display: block;
         }
         
+        .toast.warning { 
+            background: #ffc107; 
+            color: #333; 
+            display: block;
+        }
+        
         @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
@@ -316,6 +357,8 @@
             .header h1 { font-size: 1.8em; }
             .partidos-grid { grid-template-columns: 1fr; }
             .equipo { font-size: 0.9em; }
+            .user-info-row { flex-direction: column; }
+            .user-info-label { width: 100%; margin-bottom: 5px; }
         }
     </style>
 </head>
@@ -334,24 +377,37 @@
         
         <!-- Tab Apostar -->
         <div id="tab-apostar" class="tab-content active">
+            <!-- Información del usuario (cargada automática, no editable) -->
             <div class="user-form">
-                <h3 style="margin-bottom: 20px;">📋 Tus datos</h3>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Nombre completo *</label>
-                        <input type="text" id="nombre" placeholder="Ej: Juan Pérez">
+                <div class="user-info-card">
+                    <h3>📋 Información del Usuario</h3>
+                    <div class="user-info-row">
+                        <div class="user-info-label">Nombre completo:</div>
+                        <div class="user-info-value" id="display-nombre">-</div>
                     </div>
-                    <div class="form-group">
-                        <label>Email *</label>
-                        <input type="email" id="email" placeholder="tu@email.com">
+                    <div class="user-info-row">
+                        <div class="user-info-label">Cédula / PPPoE:</div>
+                        <div class="user-info-value" id="display-cedula">-</div>
                     </div>
-                    <div class="form-group">
-                        <label>Teléfono</label>
-                        <input type="tel" id="telefono" placeholder="Opcional">
+                    <div class="user-info-note">
+                        ⚠️ Esta información se ha cargado automáticamente desde tu cuenta. No es modificable.
                     </div>
-                    <div class="form-group">
-                        <label>Ciudad</label>
-                        <input type="text" id="ciudad" placeholder="Opcional">
+                </div>
+                
+                <!-- Campos ocultos que se enviarán al servidor -->
+                <input type="hidden" id="nombre" value="">
+                <input type="hidden" id="cedula" value="">
+                
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #ddd;">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>📱 Teléfono (opcional)</label>
+                            <input type="tel" id="telefono" placeholder="Ej: 0412-1234567">
+                        </div>
+                        <div class="form-group">
+                            <label>🏙️ Ciudad (opcional)</label>
+                            <input type="text" id="ciudad" placeholder="Ej: Caracas">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -393,20 +449,74 @@
     
     <script>
         // ============================================
-        // CONFIGURACIÓN - CAMBIA ESTA URL SI ES NECESARIO
+        // CONFIGURACIÓN
         // ============================================
         const API_URL = 'https://quiniela-mundial.thecrow859.workers.dev';
         
         let partidos = [];
+        let usuarioData = {
+            nombre: '',
+            cedula: ''
+        };
+        
+        // ============================================
+        // CARGAR DATOS DEL USUARIO DESDE URL
+        // ============================================
+        function cargarDatosUsuario() {
+            console.log('📋 Cargando datos del usuario desde URL...');
+            
+            // Obtener parámetros de la URL
+            const urlParams = new URLSearchParams(window.location.search);
+            let nombre = urlParams.get('nombre');
+            let cedula = urlParams.get('cedula');
+            
+            // Decodificar si es necesario
+            if (nombre) nombre = decodeURIComponent(nombre);
+            if (cedula) cedula = decodeURIComponent(cedula);
+            
+            if (nombre && cedula) {
+                usuarioData.nombre = nombre;
+                usuarioData.cedula = cedula;
+                
+                // Mostrar en la interfaz
+                document.getElementById('display-nombre').textContent = nombre;
+                document.getElementById('display-cedula').textContent = cedula;
+                document.getElementById('nombre').value = nombre;
+                document.getElementById('cedula').value = cedula;
+                
+                console.log('✅ Usuario cargado correctamente:', usuarioData);
+                return true;
+            } else {
+                // No hay datos, mostrar error
+                console.warn('⚠️ No se encontraron datos de usuario en la URL');
+                document.getElementById('display-nombre').innerHTML = '<span style="color: red;">❌ No se pudo cargar</span>';
+                document.getElementById('display-cedula').innerHTML = '<span style="color: red;">❌ No se pudo cargar</span>';
+                mostrarToast('⚠️ No se pudieron cargar tus datos. Por favor, accede desde el dashboard.', 'warning');
+                
+                // Deshabilitar el botón de envío
+                const btn = document.getElementById('btnEnviar');
+                btn.disabled = true;
+                btn.style.opacity = '0.5';
+                btn.style.cursor = 'not-allowed';
+                return false;
+            }
+        }
         
         // ============================================
         // INICIALIZACIÓN
         // ============================================
         window.onload = () => {
             console.log('🚀 Página de Quiniela cargada');
-            cargarPartidos();
-            cargarRanking();
-            cargarResultados();
+            
+            // Primero cargar datos del usuario
+            const datosCargados = cargarDatosUsuario();
+            
+            // Si hay datos, cargar el resto
+            if (datosCargados) {
+                cargarPartidos();
+                cargarRanking();
+                cargarResultados();
+            }
         };
         
         // ============================================
@@ -495,18 +605,12 @@
         async function enviarApuestas() {
             console.log('📤 Iniciando envío de pronósticos...');
             
-            // Validar datos del usuario
-            const nombre = document.getElementById('nombre').value.trim();
-            const email = document.getElementById('email').value.trim();
+            // Validar que los datos del usuario estén cargados
+            const nombre = document.getElementById('nombre').value;
+            const cedula = document.getElementById('cedula').value;
             
-            if (!nombre || !email) {
-                mostrarToast('❌ Por favor, ingresa tu nombre y email', 'error');
-                return;
-            }
-            
-            // Validar email
-            if (!email.includes('@') || !email.includes('.')) {
-                mostrarToast('❌ Ingresa un email válido', 'error');
+            if (!nombre || !cedula) {
+                mostrarToast('❌ No se encontraron tus datos. Por favor, accede desde el dashboard.', 'error');
                 return;
             }
             
@@ -520,20 +624,13 @@
                 const partidoId = parseInt(inputLocal.id.replace('local_', ''));
                 const inputVisitante = document.getElementById(`visit_${partidoId}`);
                 
-                if (!inputVisitante) {
-                    console.log(`⚠️ No se encontró input visitante para partido ${partidoId}`);
-                    continue;
-                }
+                if (!inputVisitante) continue;
                 
                 const golesLocal = inputLocal.value;
                 const golesVisitante = inputVisitante.value;
                 
-                console.log(`📊 Partido ${partidoId}: Local="${golesLocal}", Visitante="${golesVisitante}"`);
-                
                 if (golesLocal !== '' && golesLocal !== null && 
-                    golesLocal !== undefined && 
-                    golesVisitante !== '' && golesVisitante !== null && 
-                    golesVisitante !== undefined) {
+                    golesVisitante !== '' && golesVisitante !== null) {
                     
                     const golesLocalNum = parseInt(golesLocal);
                     const golesVisitanteNum = parseInt(golesVisitante);
@@ -568,7 +665,7 @@
                 
                 const dataToSend = {
                     nombre: nombre,
-                    email: email,
+                    cedula: cedula,
                     telefono: telefono || null,
                     ciudad: ciudad || null,
                     apuestas: apuestas
@@ -584,10 +681,7 @@
                     body: JSON.stringify(dataToSend)
                 });
                 
-                console.log('📡 Respuesta status:', response.status);
-                
                 const data = await response.json();
-                console.log('📨 Respuesta:', data);
                 
                 if (response.ok && data.success) {
                     mostrarToast('✅ ¡Tus pronósticos se guardaron correctamente!', 'success');
@@ -648,7 +742,7 @@
                                     <td style="padding: 12px;"><span style="font-size: 1.2em; font-weight: bold; color: #e94560;">${r.total_puntos || 0}</span></td>
                                     <td style="padding: 12px;">${r.aciertos_exactos || 0}</td>
                                     <td style="padding: 12px;">${r.aciertos_ganador || 0}</td>
-                                 </tr>
+                                </tr>
                             `).join('')}
                         </tbody>
                     </table>
@@ -688,7 +782,7 @@
                                 <tr style="border-bottom: 1px solid #eee;">
                                     <td style="padding: 12px;">${r.local || '?'} vs ${r.visitante || '?'}</td>
                                     <td style="padding: 12px;"><strong style="font-size: 1.1em;">${r.resultado_local || 0} - ${r.resultado_visitante || 0}</strong></td>
-                                 </tr>
+                                </tr>
                             `).join('')}
                         </tbody>
                     </table>
