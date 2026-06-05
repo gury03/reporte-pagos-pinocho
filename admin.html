@@ -36,6 +36,32 @@
             margin-bottom: 30px;
         }
         
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .auto-refresh-status {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .auto-refresh-status i {
+            font-size: 10px;
+        }
+        
+        .auto-refresh-status.active i {
+            color: #10b981;
+        }
+        
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -48,12 +74,24 @@
             padding: 20px;
             border-radius: 15px;
             text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .stat-card.changed {
+            animation: pulse 0.5s ease-in-out;
+            background: #d1fae5;
         }
         
         .stat-number {
             font-size: 2em;
             font-weight: bold;
             color: #e94560;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); background: white; }
+            50% { transform: scale(1.02); background: #d1fae5; }
+            100% { transform: scale(1); background: white; }
         }
         
         .nav-tabs {
@@ -81,6 +119,22 @@
             transform: translateY(-2px);
         }
         
+        .btn-refresh {
+            background: #17a2b8;
+        }
+        
+        .btn-refresh:hover {
+            background: #138496;
+        }
+        
+        .btn-logout {
+            background: #6c757d;
+        }
+        
+        .btn-logout:hover {
+            background: #5a6268;
+        }
+        
         .btn-danger {
             background: #dc3545 !important;
         }
@@ -99,6 +153,20 @@
         
         .panel.active {
             display: block;
+        }
+        
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .last-update {
+            color: rgba(255,255,255,0.8);
+            font-size: 12px;
         }
         
         table {
@@ -276,6 +344,7 @@
             .admin-container { padding: 10px; }
             th, td { padding: 8px; font-size: 12px; }
             .resultado-info { flex-direction: column; align-items: flex-start; }
+            .header-top { flex-direction: column; text-align: center; }
         }
     </style>
 </head>
@@ -290,8 +359,27 @@
     <div id="adminPanel" style="display: none;">
         <div class="admin-container">
             <div class="header">
-                <h1>⚽ Panel de Administración - Quiniela Mundial 2026</h1>
-                <p>Gestiona grupos, equipos, partidos, resultados y apuestas</p>
+                <div class="header-top">
+                    <div>
+                        <h1>⚽ Panel de Administración - Quiniela Mundial 2026</h1>
+                        <p>Gestiona grupos, equipos, partidos, resultados y apuestas</p>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <div class="auto-refresh-status active" id="autoRefreshStatus">
+                            <i class="fas fa-sync-alt fa-fw"></i>
+                            <span>Auto-refresh: 30s</span>
+                        </div>
+                        <button class="btn btn-info" onclick="actualizarManual()" id="btnRefreshManual">
+                            <i class="fas fa-sync-alt"></i> Actualizar Ahora
+                        </button>
+                        <button class="btn btn-logout" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                        </button>
+                    </div>
+                </div>
+                <div class="last-update" style="margin-top: 10px; text-align: right;">
+                    Última actualización: <span id="lastUpdateTime">--:--:--</span>
+                </div>
             </div>
             
             <div class="stats-grid" id="stats"></div>
@@ -307,33 +395,48 @@
             </div>
             
             <div id="panel-apuestas" class="panel active">
-                <h3>📊 Apuestas de Usuarios</h3>
+                <div class="panel-header">
+                    <h3>📊 Apuestas de Usuarios</h3>
+                </div>
                 <div id="apuestas-table"><div class="loading">Cargando apuestas...</div></div>
             </div>
             
             <div id="panel-grupos" class="panel">
-                <button class="btn btn-primary" onclick="openModal('grupo')">+ Nuevo Grupo</button>
+                <div class="panel-header">
+                    <h3>📁 Grupos</h3>
+                    <button class="btn btn-primary" onclick="openModal('grupo')">+ Nuevo Grupo</button>
+                </div>
                 <div id="grupos-table"><div class="loading">Cargando grupos...</div></div>
             </div>
             
             <div id="panel-equipos" class="panel">
-                <button class="btn btn-primary" onclick="openModal('equipo')">+ Nuevo Equipo</button>
+                <div class="panel-header">
+                    <h3>⚽ Equipos</h3>
+                    <button class="btn btn-primary" onclick="openModal('equipo')">+ Nuevo Equipo</button>
+                </div>
                 <div id="equipos-table"><div class="loading">Cargando equipos...</div></div>
             </div>
             
             <div id="panel-partidos" class="panel">
-                <button class="btn btn-primary" onclick="openModal('partido')">+ Nuevo Partido</button>
+                <div class="panel-header">
+                    <h3>📅 Partidos</h3>
+                    <button class="btn btn-primary" onclick="openModal('partido')">+ Nuevo Partido</button>
+                </div>
                 <div id="partidos-table"><div class="loading">Cargando partidos...</div></div>
             </div>
             
             <div id="panel-resultados" class="panel">
-                <h3>🎯 Gestión de Resultados</h3>
+                <div class="panel-header">
+                    <h3>🎯 Gestión de Resultados</h3>
+                </div>
                 <p style="margin-bottom: 15px; color: #666;">Aquí puedes ver, cargar, editar y eliminar resultados de partidos.</p>
                 <div id="resultados-container"><div class="loading">Cargando resultados...</div></div>
             </div>
             
             <div id="panel-usuarios" class="panel">
-                <h3>👥 Usuarios Registrados</h3>
+                <div class="panel-header">
+                    <h3>👥 Usuarios Registrados</h3>
+                </div>
                 <div id="usuarios-table"><div class="loading">Cargando usuarios...</div></div>
             </div>
         </div>
@@ -392,128 +495,135 @@
         let gruposList = [];
         let currentModalType = '';
         let currentEditId = null;
-        let eventoSource = null;
-        let adminPasswordGuardada = null;
+        let autoRefreshInterval = null;
+        let ultimosConteos = {
+            usuarios: 0,
+            apuestas: 0,
+            partidosFinalizados: 0
+        };
         
         // ============================================
-        // NOTIFICACIONES EN TIEMPO REAL (SSE)
+        // PERSISTENCIA DE SESIÓN
         // ============================================
         
-        function conectarEventos() {
-            const adminPassword = localStorage.getItem('admin_password') || 'admin123';
-            adminPasswordGuardada = adminPassword;
-            
-            if (eventoSource) {
-                eventoSource.close();
+        function checkSession() {
+            const adminPassword = localStorage.getItem('admin_password');
+            if (adminPassword) {
+                document.getElementById('adminPass').value = adminPassword;
+                verificarAdmin(true);
             }
-            
-            eventoSource = new EventSource(`${API_URL}/api/admin/eventos?token=${encodeURIComponent(adminPassword)}`);
-            
-            eventoSource.onmessage = function(event) {
-                console.log('📨 Notificación recibida:', event.data);
-                try {
-                    const data = JSON.parse(event.data);
-                    if (data.tipo === 'nueva_apuesta') {
-                        mostrarToast(`📊 Nueva apuesta de ${data.usuario} (C.I: ${data.cedula})`, 'info');
-                        cargarApuestas();
-                        cargarEstadisticas();
-                        cargarUsuarios();
-                    }
-                } catch(e) {
-                    console.error('Error procesando notificación:', e);
-                }
-            };
-            
-            eventoSource.onerror = function(error) {
-                console.error('❌ Error en conexión SSE:', error);
-                setTimeout(() => {
-                    if (eventoSource) {
-                        conectarEventos();
-                    }
-                }, 5000);
-            };
+        }
+        
+        function logout() {
+            localStorage.removeItem('admin_password');
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+                autoRefreshInterval = null;
+            }
+            document.getElementById('loginPanel').style.display = 'block';
+            document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('adminPass').value = '';
+            mostrarToast('Sesión cerrada correctamente', 'success');
         }
         
         // ============================================
-        // REINICIO DE BASE DE DATOS
+        // DETECCIÓN DE CAMBIOS
         // ============================================
         
-        function mostrarModalReinicio() {
-            document.getElementById('reinicioPassword').value = '';
-            document.getElementById('reinicioConfirmar').value = '';
-            document.getElementById('reinicioMessage').style.display = 'none';
-            document.getElementById('modalReinicio').style.display = 'flex';
-        }
-        
-        function cerrarModalReinicio() {
-            document.getElementById('modalReinicio').style.display = 'none';
-        }
-        
-        async function ejecutarReinicio() {
-            const password = document.getElementById('reinicioPassword').value;
-            const confirmar = document.getElementById('reinicioConfirmar').value;
-            const messageDiv = document.getElementById('reinicioMessage');
-            
-            if (!password) {
-                messageDiv.innerHTML = '❌ Ingresa la contraseña';
-                messageDiv.style.background = '#fee2e2';
-                messageDiv.style.color = '#991b1b';
-                messageDiv.style.display = 'block';
-                return;
-            }
-            
-            if (confirmar !== 'REINICIAR') {
-                messageDiv.innerHTML = '❌ Debes escribir REINICIAR para confirmar';
-                messageDiv.style.background = '#fee2e2';
-                messageDiv.style.color = '#991b1b';
-                messageDiv.style.display = 'block';
-                return;
-            }
-            
+        async function verificarCambios() {
             try {
-                const response = await fetch(`${API_URL}/api/admin/reiniciar`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ password, confirmar })
-                });
+                const response = await fetch(`${API_URL}/api/admin/estadisticas`);
+                const stats = await response.json();
                 
-                const data = await response.json();
+                const nuevosConteos = {
+                    usuarios: stats.total_usuarios || 0,
+                    apuestas: stats.total_apuestas || 0,
+                    partidosFinalizados: stats.partidos_finalizados || 0
+                };
                 
-                if (response.ok) {
-                    messageDiv.innerHTML = '✅ ' + data.message;
-                    messageDiv.style.background = '#d1fae5';
-                    messageDiv.style.color = '#065f46';
-                    messageDiv.style.display = 'block';
-                    
-                    setTimeout(() => {
-                        cerrarModalReinicio();
-                        cargarTodo();
-                        mostrarToast('Base de datos reiniciada correctamente', 'success');
-                    }, 2000);
-                } else {
-                    messageDiv.innerHTML = '❌ ' + (data.error || 'Error al reiniciar');
-                    messageDiv.style.background = '#fee2e2';
-                    messageDiv.style.color = '#991b1b';
-                    messageDiv.style.display = 'block';
+                let huboCambios = false;
+                
+                if (ultimosConteos.usuarios !== nuevosConteos.usuarios) {
+                    console.log('📊 Cambio detectado en usuarios:', ultimosConteos.usuarios, '->', nuevosConteos.usuarios);
+                    huboCambios = true;
+                    mostrarToast(`📊 Nuevos usuarios: ${nuevosConteos.usuarios - ultimosConteos.usuarios} nuevos registros`, 'info');
                 }
+                
+                if (ultimosConteos.apuestas !== nuevosConteos.apuestas) {
+                    console.log('📊 Cambio detectado en apuestas:', ultimosConteos.apuestas, '->', nuevosConteos.apuestas);
+                    huboCambios = true;
+                    mostrarToast(`📊 Nuevas apuestas: ${nuevosConteos.apuestas - ultimosConteos.apuestas} nuevas predicciones`, 'info');
+                }
+                
+                if (ultimosConteos.partidosFinalizados !== nuevosConteos.partidosFinalizados) {
+                    console.log('📊 Cambio detectado en resultados:', ultimosConteos.partidosFinalizados, '->', nuevosConteos.partidosFinalizados);
+                    huboCambios = true;
+                    mostrarToast(`📊 Resultados actualizados: ${nuevosConteos.partidosFinalizados - ultimosConteos.partidosFinalizados} nuevos resultados`, 'info');
+                }
+                
+                ultimosConteos = nuevosConteos;
+                
+                if (huboCambios) {
+                    await actualizarDatos();
+                }
+                
             } catch (error) {
-                messageDiv.innerHTML = '❌ Error de conexión: ' + error.message;
-                messageDiv.style.background = '#fee2e2';
-                messageDiv.style.color = '#991b1b';
-                messageDiv.style.display = 'block';
+                console.error('Error verificando cambios:', error);
             }
+        }
+        
+        // ============================================
+        // ACTUALIZACIÓN DE DATOS
+        // ============================================
+        
+        async function actualizarDatos() {
+            console.log('🔄 Actualizando datos...');
+            const panelActual = document.querySelector('.panel.active').id;
+            
+            await cargarEstadisticas();
+            
+            if (panelActual === 'panel-apuestas') await cargarApuestas();
+            else if (panelActual === 'panel-grupos') await cargarGrupos();
+            else if (panelActual === 'panel-equipos') await cargarEquipos();
+            else if (panelActual === 'panel-partidos') await cargarPartidos();
+            else if (panelActual === 'panel-resultados') await cargarResultados();
+            else if (panelActual === 'panel-usuarios') await cargarUsuarios();
+            
+            document.getElementById('lastUpdateTime').innerText = new Date().toLocaleTimeString();
+        }
+        
+        async function actualizarManual() {
+            mostrarToast('🔄 Actualizando información...', 'info');
+            await verificarCambios();
+            await actualizarDatos();
+            mostrarToast('✅ Información actualizada', 'success');
+        }
+        
+        // ============================================
+        // AUTO-REFRESH
+        // ============================================
+        
+        function iniciarAutoRefresh() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+            }
+            
+            autoRefreshInterval = setInterval(async () => {
+                console.log('⏰ Auto-refresh ejecutándose...');
+                await verificarCambios();
+            }, 30000); // 30 segundos
         }
         
         // ============================================
         // LOGIN
         // ============================================
         
-        async function verificarAdmin() {
+        async function verificarAdmin(esRecarga = false) {
             const password = document.getElementById('adminPass').value;
             const loginError = document.getElementById('loginError');
             
             if (!password) {
-                loginError.textContent = 'Ingresa la contraseña';
+                if (!esRecarga) loginError.textContent = 'Ingresa la contraseña';
                 return;
             }
             
@@ -528,15 +638,26 @@
                 
                 if (response.ok) {
                     localStorage.setItem('admin_password', password);
-                    adminPasswordGuardada = password;
                     
                     document.getElementById('loginPanel').style.display = 'none';
                     document.getElementById('adminPanel').style.display = 'block';
-                    cargarTodo();
-                    conectarEventos();
+                    
+                    if (!esRecarga) {
+                        mostrarToast('✅ Sesión iniciada correctamente', 'success');
+                    }
+                    
+                    await cargarTodo();
+                    iniciarAutoRefresh();
+                    
+                    // Actualizar la hora de última actualización
+                    document.getElementById('lastUpdateTime').innerText = new Date().toLocaleTimeString();
+                    
                 } else {
                     const error = await response.json();
                     loginError.textContent = error.error || 'Contraseña incorrecta';
+                    if (esRecarga) {
+                        localStorage.removeItem('admin_password');
+                    }
                 }
             } catch (error) {
                 loginError.textContent = 'Error de conexión: ' + error.message;
@@ -551,6 +672,15 @@
             await cargarPartidos();
             await cargarResultados();
             await cargarUsuarios();
+            
+            // Inicializar conteos para detección de cambios
+            const response = await fetch(`${API_URL}/api/admin/estadisticas`);
+            const stats = await response.json();
+            ultimosConteos = {
+                usuarios: stats.total_usuarios || 0,
+                apuestas: stats.total_apuestas || 0,
+                partidosFinalizados: stats.partidos_finalizados || 0
+            };
         }
         
         async function cargarEstadisticas() {
@@ -558,12 +688,25 @@
                 const response = await fetch(`${API_URL}/api/admin/estadisticas`);
                 const stats = await response.json();
                 
-                document.getElementById('stats').innerHTML = `
-                    <div class="stat-card"><div class="stat-number">${stats.total_usuarios || 0}</div><div>Usuarios</div></div>
-                    <div class="stat-card"><div class="stat-number">${stats.total_apuestas || 0}</div><div>Apuestas</div></div>
-                    <div class="stat-card"><div class="stat-number">${stats.partidos_finalizados || 0}/${stats.total_partidos || 0}</div><div>Partidos</div></div>
-                    <div class="stat-card"><div class="stat-number">${stats.porcentaje_finalizado || 0}%</div><div>Completado</div></div>
+                const statsHtml = `
+                    <div class="stat-card" id="statUsuarios">
+                        <div class="stat-number">${stats.total_usuarios || 0}</div>
+                        <div>Usuarios Registrados</div>
+                    </div>
+                    <div class="stat-card" id="statApuestas">
+                        <div class="stat-number">${stats.total_apuestas || 0}</div>
+                        <div>Apuestas Realizadas</div>
+                    </div>
+                    <div class="stat-card" id="statPartidos">
+                        <div class="stat-number">${stats.partidos_finalizados || 0}/${stats.total_partidos || 0}</div>
+                        <div>Partidos Finalizados</div>
+                    </div>
+                    <div class="stat-card" id="statPorcentaje">
+                        <div class="stat-number">${stats.porcentaje_finalizado || 0}%</div>
+                        <div>Completado</div>
+                    </div>
                 `;
+                document.getElementById('stats').innerHTML = statsHtml;
             } catch (error) {
                 console.error('Error:', error);
             }
@@ -593,7 +736,7 @@
                                 <th style="padding: 10px;">Resultado Real</th>
                                 <th style="padding: 10px;">Puntos</th>
                                 <th style="padding: 10px;">Fecha</th>
-                             </tr>
+                              </tr>
                         </thead>
                         <tbody>
                             ${apuestas.map(a => `
@@ -605,7 +748,7 @@
                                     <td style="padding: 10px;">${a.finalizado ? `${a.resultado_local || 0} - ${a.resultado_visitante || 0}` : '⏳ Pendiente'}</td>
                                     <td style="padding: 10px; color: ${(a.puntos_obtenidos || 0) > 0 ? 'green' : 'red'}; font-weight: bold;">${a.puntos_obtenidos || 0}</td>
                                     <td style="padding: 10px;">${new Date(a.fecha_apuesta).toLocaleString()}</td>
-                                 </tr>
+                                </tr>
                             `).join('')}
                         </tbody>
                     </table>
@@ -637,7 +780,7 @@
                                 <th style="padding: 10px;">ID</th>
                                 <th style="padding: 10px;">Grupo</th>
                                 <th style="padding: 10px;">Acciones</th>
-                             </tr>
+                              </tr>
                         </thead>
                         <tbody>
                             ${gruposList.map(g => `
@@ -647,8 +790,8 @@
                                     <td style="padding: 10px;">
                                         <button class="btn btn-warning" onclick="editarGrupo(${g.id})">✏️ Editar</button>
                                         <button class="btn btn-danger" onclick="eliminarGrupo(${g.id})">🗑️ Eliminar</button>
-                                     </td>
-                                 </tr>
+                                      </td>
+                                </tr>
                             `).join('')}
                         </tbody>
                     </table>
@@ -702,25 +845,24 @@
                 }
                 
                 const html = `
-                    <button class="btn btn-primary" onclick="openModal('equipo')">+ Nuevo Equipo</button>
                     <table style="width:100%; margin-top: 15px; border-collapse: collapse;">
                         <thead>
                             <tr style="background: #533483; color: white;">
                                 <th style="padding: 10px;">Equipo</th>
                                 <th style="padding: 10px;">Grupo</th>
                                 <th style="padding: 10px;">Acciones</th>
-                             </tr>
+                              </tr>
                         </thead>
                         <tbody>
                             ${equiposList.map(e => `
                                 <tr style="border-bottom: 1px solid #ddd;">
                                     <td style="padding: 10px;"><strong>${e.nombre}</strong></td>
-                                    <td style="padding: 10px;">${e.grupo_nombre || 'Sin grupo'} (<span style="color:#666;">ID: ${e.grupo_id || 'N/A'}</span>)</td>
+                                    <td style="padding: 10px;">${e.grupo_nombre || 'Sin grupo'}</td>
                                     <td style="padding: 10px;">
                                         <button class="btn btn-warning" onclick="editarEquipo(${e.id})">✏️ Editar</button>
                                         <button class="btn btn-danger" onclick="eliminarEquipo(${e.id})">🗑️ Eliminar</button>
-                                     </td>
-                                 </tr>
+                                      </td>
+                                </tr>
                             `).join('')}
                         </tbody>
                     </table>
@@ -775,7 +917,6 @@
                 }
                 
                 const html = `
-                    <button class="btn btn-primary" onclick="openModal('partido')">+ Nuevo Partido</button>
                     <table style="width:100%; margin-top: 15px; border-collapse: collapse;">
                         <thead>
                             <tr style="background: #533483; color: white;">
@@ -785,7 +926,7 @@
                                 <th style="padding: 10px;">Fecha</th>
                                 <th style="padding: 10px;">Estado</th>
                                 <th style="padding: 10px;">Acciones</th>
-                             </tr>
+                              </tr>
                         </thead>
                         <tbody>
                             ${partidos.map(p => `
@@ -798,8 +939,8 @@
                                     <td style="padding: 10px;">
                                         <button class="btn btn-warning" onclick="editarPartido(${p.id})">✏️ Editar</button>
                                         ${!p.finalizado ? `<button class="btn btn-danger" onclick="eliminarPartido(${p.id})">🗑️ Eliminar</button>` : ''}
-                                     </td>
-                                 </tr>
+                                      </td>
+                                </tr>
                             `).join('')}
                         </tbody>
                     </table>
@@ -992,7 +1133,7 @@
                                 <th style="padding: 10px;">Ciudad</th>
                                 <th style="padding: 10px;">Puntos</th>
                                 <th style="padding: 10px;">Acciones</th>
-                             </tr>
+                              </tr>
                         </thead>
                         <tbody>
                             ${usuarios.map(u => `
@@ -1004,8 +1145,8 @@
                                     <td style="padding: 10px;"><span style="font-size: 1.2em; font-weight: bold; color: #e94560;">${u.total_puntos || 0}</span></td>
                                     <td style="padding: 10px;">
                                         <button class="btn btn-danger" onclick="eliminarUsuario(${u.id})">🗑️ Eliminar</button>
-                                     </td>
-                                 </tr>
+                                      </td>
+                                </tr>
                             `).join('')}
                         </tbody>
                     </table>
@@ -1037,7 +1178,75 @@
             }
         }
         
-        // ==================== MODALES ====================
+        // ==================== REINICIO DE BASE DE DATOS ====================
+        
+        function mostrarModalReinicio() {
+            document.getElementById('reinicioPassword').value = '';
+            document.getElementById('reinicioConfirmar').value = '';
+            document.getElementById('reinicioMessage').style.display = 'none';
+            document.getElementById('modalReinicio').style.display = 'flex';
+        }
+        
+        function cerrarModalReinicio() {
+            document.getElementById('modalReinicio').style.display = 'none';
+        }
+        
+        async function ejecutarReinicio() {
+            const password = document.getElementById('reinicioPassword').value;
+            const confirmar = document.getElementById('reinicioConfirmar').value;
+            const messageDiv = document.getElementById('reinicioMessage');
+            
+            if (!password) {
+                messageDiv.innerHTML = '❌ Ingresa la contraseña';
+                messageDiv.style.background = '#fee2e2';
+                messageDiv.style.color = '#991b1b';
+                messageDiv.style.display = 'block';
+                return;
+            }
+            
+            if (confirmar !== 'REINICIAR') {
+                messageDiv.innerHTML = '❌ Debes escribir REINICIAR para confirmar';
+                messageDiv.style.background = '#fee2e2';
+                messageDiv.style.color = '#991b1b';
+                messageDiv.style.display = 'block';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/api/admin/reiniciar`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password, confirmar })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    messageDiv.innerHTML = '✅ ' + data.message;
+                    messageDiv.style.background = '#d1fae5';
+                    messageDiv.style.color = '#065f46';
+                    messageDiv.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        cerrarModalReinicio();
+                        cargarTodo();
+                        mostrarToast('Base de datos reiniciada correctamente', 'success');
+                    }, 2000);
+                } else {
+                    messageDiv.innerHTML = '❌ ' + (data.error || 'Error al reiniciar');
+                    messageDiv.style.background = '#fee2e2';
+                    messageDiv.style.color = '#991b1b';
+                    messageDiv.style.display = 'block';
+                }
+            } catch (error) {
+                messageDiv.innerHTML = '❌ Error de conexión: ' + error.message;
+                messageDiv.style.background = '#fee2e2';
+                messageDiv.style.color = '#991b1b';
+                messageDiv.style.display = 'block';
+            }
+        }
+        
+        // ==================== MODALES GENERALES ====================
         
         function openModal(type, data = null) {
             currentModalType = type;
@@ -1245,6 +1454,14 @@
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(`panel-${panel}`).classList.add('active');
             if (event && event.target) event.target.classList.add('active');
+            
+            // Recargar el panel activo
+            if (panel === 'apuestas') cargarApuestas();
+            else if (panel === 'grupos') cargarGrupos();
+            else if (panel === 'equipos') cargarEquipos();
+            else if (panel === 'partidos') cargarPartidos();
+            else if (panel === 'resultados') cargarResultados();
+            else if (panel === 'usuarios') cargarUsuarios();
         }
         
         function mostrarToast(msg, tipo) {
@@ -1256,6 +1473,13 @@
                 toast.className = 'toast';
             }, 4000);
         }
+        
+        // ============================================
+        // INICIALIZACIÓN
+        // ============================================
+        
+        // Verificar sesión al cargar la página
+        checkSession();
     </script>
 </body>
 </html>
