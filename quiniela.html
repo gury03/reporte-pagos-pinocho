@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiniela del Mundial 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #1e3c72;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitulo {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        /* Formulario de usuario */
+        .form-usuario {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .form-usuario h2 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .input-group label {
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+        
+        .input-group input {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: #2a5298;
+            box-shadow: 0 0 5px rgba(42, 82, 152, 0.3);
+        }
+        
+        /* Partidos */
+        .partidos-section h2 {
+            color: #1e3c72;
+            margin: 30px 0 20px 0;
+            font-size: 1.5em;
+        }
+        
+        .grupo {
+            margin-bottom: 30px;
+        }
+        
+        .grupo h3 {
+            background: #1e3c72;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .partidos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        
+        .partido-card {
+            background: #f9f9f9;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .partido-card:hover {
+            border-color: #2a5298;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transform: translateY(-3px);
+        }
+        
+        .equipos {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        .equipo {
+            font-size: 1.1em;
+            color: #333;
+            text-align: center;
+            flex: 1;
+        }
+        
+        .vs {
+            font-size: 0.9em;
+            color: #999;
+            margin: 0 10px;
+        }
+        
+        .pronostico {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .pronostico input {
+            width: 80px;
+            padding: 10px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+        
+        .pronostico span {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .fecha {
+            text-align: center;
+            font-size: 0.85em;
+            color: #999;
+            margin-top: 10px;
+        }
+        
+        .resultado-real {
+            text-align: center;
+            font-size: 0.9em;
+            margin-top: 10px;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        
+        .resultado-real.finalizado {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        /* Botón enviar */
+        .btn-enviar {
+            display: block;
+            width: 100%;
+            margin-top: 40px;
+            padding: 15px;
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-enviar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(40, 167, 69, 0.3);
+        }
+        
+        /* Mensajes */
+        .mensaje-flotante {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            display: none;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .mensaje-flotante.success {
+            background: #28a745;
+            color: white;
+            display: block;
+        }
+        
+        .mensaje-flotante.error {
+            background: #dc3545;
+            color: white;
+            display: block;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 50px;
+            font-size: 1.2em;
+            color: #666;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #2a5298;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .partidos-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏆 QUINIELA MUNDIAL 2026</h1>
+        <p class="subtitulo">¡Pronostica los resultados y gana premios increíbles!</p>
+        
+        <!-- Formulario de datos del usuario -->
+        <div class="form-usuario">
+            <h2>📝 Tus datos</h2>
+            <div class="form-grid">
+                <div class="input-group">
+                    <label>Nombre completo *</label>
+                    <input type="text" id="nombre" placeholder="Ej: Juan Pérez" required>
+                </div>
+                <div class="input-group">
+                    <label>Email *</label>
+                    <input type="email" id="email" placeholder="tu@email.com" required>
+                </div>
+                <div class="input-group">
+                    <label>Teléfono</label>
+                    <input type="tel" id="telefono" placeholder="Opcional">
+                </div>
+                <div class="input-group">
+                    <label>Ciudad</label>
+                    <input type="text" id="ciudad" placeholder="Opcional">
+                </div>
+            </div>
+        </div>
+        
+        <!-- Partidos -->
+        <div class="partidos-section">
+            <h2>⚽ Partidos del Mundial</h2>
+            <div id="partidosContainer" class="partidos-grid">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    Cargando partidos...
+                </div>
+            </div>
+        </div>
+        
+        <button class="btn-enviar" onclick="enviarPronosticos()">
+            🚀 ENVIAR MIS PRONÓSTICOS
+        </button>
+    </div>
+    
+    <div id="mensaje" class="mensaje-flotante"></div>
+    
+    <script>
+        // Configuración - CAMBIA ESTA URL
+        const WORKER_URL = 'https://tu-worker.workers.dev';
+        
+        let partidos = [];
+        
+        // Cargar partidos al iniciar
+        window.onload = async () => {
+            await cargarPartidos();
+        };
+        
+        async function cargarPartidos() {
+            try {
+                const response = await fetch(`${WORKER_URL}/api/partidos`);
+                if (response.ok) {
+                    partidos = await response.json();
+                } else {
+                    throw new Error('Error al cargar partidos');
+                }
+                
+                // También cargar resultados ya finalizados
+                const resultadosResponse = await fetch(`${WORKER_URL}/api/resultados`);
+                const resultados = resultadosResponse.ok ? await resultadosResponse.json() : [];
+                
+                mostrarPartidos(resultados);
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('partidosContainer').innerHTML = 
+                    '<div class="loading" style="color: red;">Error al cargar los partidos. Intenta de nuevo más tarde.</div>';
+            }
+        }
+        
+        function mostrarPartidos(resultados) {
+            const container = document.getElementById('partidosContainer');
+            container.innerHTML = '';
+            
+            // Agrupar por grupo
+            const grupos = {};
+            partidos.forEach(partido => {
+                const grupo = partido.GRUPO || 'Fase de Grupos';
+                if (!grupos[grupo]) grupos[grupo] = [];
+                grupos[grupo].push(partido);
+            });
+            
+            for (const [grupo, partidosGrupo] of Object.entries(grupos)) {
+                const grupoDiv = document.createElement('div');
+                grupoDiv.style.gridColumn = '1 / -1';
+                grupoDiv.innerHTML = `<h3>📌 Grupo ${grupo}</h3>`;
+                container.appendChild(grupoDiv);
+                
+                const gridDiv = document.createElement('div');
+                gridDiv.className = 'partidos-grid';
+                
+                partidosGrupo.forEach(partido => {
+                    // Buscar si ya hay resultado
+                    const resultado = resultados.find(r => r.ID === partido.ID);
+                    const finalizado = resultado && resultado.FINALIZADO;
+                    
+                    const card = document.createElement('div');
+                    card.className = 'partido-card';
+                    card.innerHTML = `
+                        <div class="equipos">
+                            <div class="equipo">${partido.EQUIPO_LOCAL}</div>
+                            <div class="vs">VS</div>
+                            <div class="equipo">${partido.EQUIPO_VISITANTE}</div>
+                        </div>
+                        <div class="pronostico">
+                            <input type="number" id="local_${partido.ID}" placeholder="0" min="0" step="1" ${finalizado ? 'disabled' : ''}>
+                            <span>-</span>
+                            <input type="number" id="visit_${partido.ID}" placeholder="0" min="0" step="1" ${finalizado ? 'disabled' : ''}>
+                        </div>
+                        <div class="fecha">
+                            📅 ${new Date(partido.FECHA_PARTIDO).toLocaleString()}
+                        </div>
+                        ${finalizado ? `
+                            <div class="resultado-real finalizado">
+                                ✅ Resultado final: ${partido.RESULTADO_LOCAL} - ${partido.RESULTADO_VISITANTE}
+                            </div>
+                        ` : ''}
+                    `;
+                    gridDiv.appendChild(card);
+                });
+                
+                container.appendChild(gridDiv);
+            }
+        }
+        
+        async function enviarPronosticos() {
+            // Validar datos del usuario
+            const nombre = document.getElementById('nombre').value.trim();
+            const email = document.getElementById('email').value.trim();
+            
+            if (!nombre || !email) {
+                mostrarMensaje('Por favor, ingresa tu nombre y email', 'error');
+                return;
+            }
+            
+            // Validar email
+            if (!email.includes('@') || !email.includes('.')) {
+                mostrarMensaje('Ingresa un email válido', 'error');
+                return;
+            }
+            
+            // Recoger todos los pronósticos
+            const pronosticos = [];
+            let pronosticosCompletos = true;
+            
+            for (const partido of partidos) {
+                const golesLocal = document.getElementById(`local_${partido.ID}`)?.value;
+                const golesVisitante = document.getElementById(`visit_${partido.ID}`)?.value;
+                
+                // Solo guardar si el usuario ingresó algo
+                if (golesLocal && golesVisitante) {
+                    pronosticos.push({
+                        partidoId: partido.ID,
+                        golesLocal: parseInt(golesLocal),
+                        golesVisitante: parseInt(golesVisitante)
+                    });
+                }
+            }
+            
+            if (pronosticos.length === 0) {
+                mostrarMensaje('Por favor, ingresa al menos un pronóstico', 'error');
+                return;
+            }
+            
+            // Mostrar loading
+            const btn = document.querySelector('.btn-enviar');
+            const btnText = btn.innerHTML;
+            btn.innerHTML = '⏳ Enviando...';
+            btn.disabled = true;
+            
+            try {
+                const telefono = document.getElementById('telefono').value;
+                const ciudad = document.getElementById('ciudad').value;
+                
+                const response = await fetch(`${WORKER_URL}/api/guardar-pronostico`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        nombre,
+                        email,
+                        telefono,
+                        ciudad,
+                        pronosticos
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    mostrarMensaje('✅ ¡Tus pronósticos se guardaron correctamente!', 'success');
+                    // Limpiar formulario
+                    document.getElementById('nombre').value = '';
+                    document.getElementById('email').value = '';
+                    document.getElementById('telefono').value = '';
+                    document.getElementById('ciudad').value = '';
+                    // Limpiar pronósticos
+                    partidos.forEach(partido => {
+                        const inputLocal = document.getElementById(`local_${partido.ID}`);
+                        const inputVisit = document.getElementById(`visit_${partido.ID}`);
+                        if (inputLocal) inputLocal.value = '';
+                        if (inputVisit) inputVisit.value = '';
+                    });
+                } else {
+                    mostrarMensaje(data.error || 'Error al guardar los pronósticos', 'error');
+                }
+            } catch (error) {
+                mostrarMensaje('Error de conexión. Intenta de nuevo.', 'error');
+            } finally {
+                btn.innerHTML = btnText;
+                btn.disabled = false;
+            }
+        }
+        
+        function mostrarMensaje(msg, tipo) {
+            const mensajeDiv = document.getElementById('mensaje');
+            mensajeDiv.textContent = msg;
+            mensajeDiv.className = `mensaje-flotante ${tipo}`;
+            
+            setTimeout(() => {
+                mensajeDiv.style.display = 'none';
+                mensajeDiv.className = 'mensaje-flotante';
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
