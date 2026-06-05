@@ -949,8 +949,11 @@
                 isTechLoggedIn = true;
                 document.getElementById('techIcon').classList.add('active');
                 closeTechLoginModal();
+                
+                // Abrir admin.html en una nueva pestaña
+                window.open('admin.html', '_blank');
+                
                 showMessage('loginMessage', '✅ Acceso técnico concedido', 'success');
-                alert('Acceso técnico concedido. Próximamente panel de configuración.');
             } else {
                 showMessage('techLoginMessage', '❌ Usuario o contraseña incorrectos', 'error');
             }
