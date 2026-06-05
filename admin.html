@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Quiniela Mundial</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -69,10 +70,23 @@
             border: none;
             border-radius: 8px;
             cursor: pointer;
+            transition: all 0.3s;
         }
         
         .nav-btn.active {
             background: #e94560;
+        }
+        
+        .nav-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background: #dc3545 !important;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333 !important;
         }
         
         .panel {
@@ -150,6 +164,11 @@
             cursor: pointer;
             margin: 2px;
             font-size: 13px;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
         }
         
         .btn-primary {
@@ -185,6 +204,7 @@
             border-radius: 10px;
             display: none;
             z-index: 1000;
+            animation: slideIn 0.3s ease;
         }
         
         .toast.success {
@@ -247,6 +267,11 @@
             font-size: 0.85em;
         }
         
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
         @media (max-width: 768px) {
             .admin-container { padding: 10px; }
             th, td { padding: 8px; font-size: 12px; }
@@ -265,7 +290,7 @@
     <div id="adminPanel" style="display: none;">
         <div class="admin-container">
             <div class="header">
-                <h1>⚽ Panel de Administración</h1>
+                <h1>⚽ Panel de Administración - Quiniela Mundial 2026</h1>
                 <p>Gestiona grupos, equipos, partidos, resultados y apuestas</p>
             </div>
             
@@ -278,10 +303,11 @@
                 <button class="nav-btn" onclick="showPanel('partidos')">📅 Partidos</button>
                 <button class="nav-btn" onclick="showPanel('resultados')">🎯 Resultados</button>
                 <button class="nav-btn" onclick="showPanel('usuarios')">👥 Usuarios</button>
+                <button class="nav-btn btn-danger" onclick="mostrarModalReinicio()">🗑️ Reiniciar DB</button>
             </div>
             
             <div id="panel-apuestas" class="panel active">
-                <h3>Apuestas de Usuarios</h3>
+                <h3>📊 Apuestas de Usuarios</h3>
                 <div id="apuestas-table"><div class="loading">Cargando apuestas...</div></div>
             </div>
             
@@ -301,23 +327,56 @@
             </div>
             
             <div id="panel-resultados" class="panel">
-                <h3 style="margin-bottom: 20px;">📊 Gestión de Resultados</h3>
+                <h3>🎯 Gestión de Resultados</h3>
                 <p style="margin-bottom: 15px; color: #666;">Aquí puedes ver, cargar, editar y eliminar resultados de partidos.</p>
                 <div id="resultados-container"><div class="loading">Cargando resultados...</div></div>
             </div>
             
             <div id="panel-usuarios" class="panel">
+                <h3>👥 Usuarios Registrados</h3>
                 <div id="usuarios-table"><div class="loading">Cargando usuarios...</div></div>
             </div>
         </div>
     </div>
     
+    <!-- Modal de Reinicio de Base de Datos -->
+    <div id="modalReinicio" class="form-modal">
+        <div class="form-modal-content" style="max-width: 450px;">
+            <h3 style="color: #dc3545; margin-bottom: 20px;">
+                <i class="fas fa-exclamation-triangle"></i> Reiniciar Base de Datos
+            </h3>
+            <p style="margin-bottom: 20px; color: #666; line-height: 1.5;">
+                ⚠️ <strong>¡ATENCIÓN!</strong> Esta acción ELIMINARÁ todos los datos de:<br>
+                • Usuarios registrados<br>
+                • Apuestas realizadas<br>
+                • Puntajes acumulados<br><br>
+                Los <strong>grupos, equipos y partidos NO se verán afectados</strong>.
+            </p>
+            <div class="form-group">
+                <label><i class="fas fa-key"></i> Contraseña de autorización</label>
+                <input type="password" id="reinicioPassword" placeholder="Ingresa la contraseña">
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-check-circle"></i> Escribe <strong style="color: #dc3545;">REINICIAR</strong> para confirmar</label>
+                <input type="text" id="reinicioConfirmar" placeholder="REINICIAR">
+            </div>
+            <div id="reinicioMessage" class="message" style="display: none; padding: 10px; border-radius: 8px; margin-bottom: 15px;"></div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button class="btn" onclick="cerrarModalReinicio()">Cancelar</button>
+                <button class="btn btn-danger" onclick="ejecutarReinicio()">🗑️ Reiniciar DB</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal General -->
     <div id="modal" class="form-modal">
         <div class="form-modal-content">
             <h3 id="modal-title"></h3>
             <div id="modal-body"></div>
-            <button class="btn btn-primary" onclick="guardarModal()">Guardar</button>
-            <button class="btn" onclick="closeModal()">Cancelar</button>
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                <button class="btn" onclick="closeModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="guardarModal()">Guardar</button>
+            </div>
         </div>
     </div>
     
@@ -333,10 +392,122 @@
         let gruposList = [];
         let currentModalType = '';
         let currentEditId = null;
+        let eventoSource = null;
+        let adminPasswordGuardada = null;
+        
+        // ============================================
+        // NOTIFICACIONES EN TIEMPO REAL (SSE)
+        // ============================================
+        
+        function conectarEventos() {
+            const adminPassword = localStorage.getItem('admin_password') || 'admin123';
+            adminPasswordGuardada = adminPassword;
+            
+            if (eventoSource) {
+                eventoSource.close();
+            }
+            
+            eventoSource = new EventSource(`${API_URL}/api/admin/eventos?token=${encodeURIComponent(adminPassword)}`);
+            
+            eventoSource.onmessage = function(event) {
+                console.log('📨 Notificación recibida:', event.data);
+                try {
+                    const data = JSON.parse(event.data);
+                    if (data.tipo === 'nueva_apuesta') {
+                        mostrarToast(`📊 Nueva apuesta de ${data.usuario} (C.I: ${data.cedula})`, 'info');
+                        cargarApuestas();
+                        cargarEstadisticas();
+                        cargarUsuarios();
+                    }
+                } catch(e) {
+                    console.error('Error procesando notificación:', e);
+                }
+            };
+            
+            eventoSource.onerror = function(error) {
+                console.error('❌ Error en conexión SSE:', error);
+                setTimeout(() => {
+                    if (eventoSource) {
+                        conectarEventos();
+                    }
+                }, 5000);
+            };
+        }
+        
+        // ============================================
+        // REINICIO DE BASE DE DATOS
+        // ============================================
+        
+        function mostrarModalReinicio() {
+            document.getElementById('reinicioPassword').value = '';
+            document.getElementById('reinicioConfirmar').value = '';
+            document.getElementById('reinicioMessage').style.display = 'none';
+            document.getElementById('modalReinicio').style.display = 'flex';
+        }
+        
+        function cerrarModalReinicio() {
+            document.getElementById('modalReinicio').style.display = 'none';
+        }
+        
+        async function ejecutarReinicio() {
+            const password = document.getElementById('reinicioPassword').value;
+            const confirmar = document.getElementById('reinicioConfirmar').value;
+            const messageDiv = document.getElementById('reinicioMessage');
+            
+            if (!password) {
+                messageDiv.innerHTML = '❌ Ingresa la contraseña';
+                messageDiv.style.background = '#fee2e2';
+                messageDiv.style.color = '#991b1b';
+                messageDiv.style.display = 'block';
+                return;
+            }
+            
+            if (confirmar !== 'REINICIAR') {
+                messageDiv.innerHTML = '❌ Debes escribir REINICIAR para confirmar';
+                messageDiv.style.background = '#fee2e2';
+                messageDiv.style.color = '#991b1b';
+                messageDiv.style.display = 'block';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/api/admin/reiniciar`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password, confirmar })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    messageDiv.innerHTML = '✅ ' + data.message;
+                    messageDiv.style.background = '#d1fae5';
+                    messageDiv.style.color = '#065f46';
+                    messageDiv.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        cerrarModalReinicio();
+                        cargarTodo();
+                        mostrarToast('Base de datos reiniciada correctamente', 'success');
+                    }, 2000);
+                } else {
+                    messageDiv.innerHTML = '❌ ' + (data.error || 'Error al reiniciar');
+                    messageDiv.style.background = '#fee2e2';
+                    messageDiv.style.color = '#991b1b';
+                    messageDiv.style.display = 'block';
+                }
+            } catch (error) {
+                messageDiv.innerHTML = '❌ Error de conexión: ' + error.message;
+                messageDiv.style.background = '#fee2e2';
+                messageDiv.style.color = '#991b1b';
+                messageDiv.style.display = 'block';
+            }
+        }
         
         // ============================================
         // LOGIN
         // ============================================
+        
         async function verificarAdmin() {
             const password = document.getElementById('adminPass').value;
             const loginError = document.getElementById('loginError');
@@ -356,9 +527,13 @@
                 });
                 
                 if (response.ok) {
+                    localStorage.setItem('admin_password', password);
+                    adminPasswordGuardada = password;
+                    
                     document.getElementById('loginPanel').style.display = 'none';
                     document.getElementById('adminPanel').style.display = 'block';
                     cargarTodo();
+                    conectarEventos();
                 } else {
                     const error = await response.json();
                     loginError.textContent = error.error || 'Contraseña incorrecta';
@@ -394,6 +569,54 @@
             }
         }
         
+        // ==================== APUESTAS ====================
+        
+        async function cargarApuestas() {
+            try {
+                const response = await fetch(`${API_URL}/api/admin/apuestas`);
+                const data = await response.json();
+                const apuestas = Array.isArray(data) ? data : [];
+                
+                if (apuestas.length === 0) {
+                    document.getElementById('apuestas-table').innerHTML = '<div class="loading">No hay apuestas registradas</div>';
+                    return;
+                }
+                
+                const html = `
+                    <table style="width:100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #533483; color: white;">
+                                <th style="padding: 10px;">Usuario</th>
+                                <th style="padding: 10px;">Cédula</th>
+                                <th style="padding: 10px;">Partido</th>
+                                <th style="padding: 10px;">Apuesta</th>
+                                <th style="padding: 10px;">Resultado Real</th>
+                                <th style="padding: 10px;">Puntos</th>
+                                <th style="padding: 10px;">Fecha</th>
+                             </tr>
+                        </thead>
+                        <tbody>
+                            ${apuestas.map(a => `
+                                <tr style="border-bottom: 1px solid #ddd;">
+                                    <td style="padding: 10px;"><strong>${a.usuario_nombre || '?'}</strong><br><small>${a.telefono || 'Sin teléfono'}</small></td>
+                                    <td style="padding: 10px;">${a.usuario_cedula || '-'}</td>
+                                    <td style="padding: 10px;">${a.equipo_local || '?'} vs ${a.equipo_visitante || '?'}</td>
+                                    <td style="padding: 10px;"><strong>${a.goles_local || 0} - ${a.goles_visitante || 0}</strong></td>
+                                    <td style="padding: 10px;">${a.finalizado ? `${a.resultado_local || 0} - ${a.resultado_visitante || 0}` : '⏳ Pendiente'}</td>
+                                    <td style="padding: 10px; color: ${(a.puntos_obtenidos || 0) > 0 ? 'green' : 'red'}; font-weight: bold;">${a.puntos_obtenidos || 0}</td>
+                                    <td style="padding: 10px;">${new Date(a.fecha_apuesta).toLocaleString()}</td>
+                                 </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                document.getElementById('apuestas-table').innerHTML = html;
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('apuestas-table').innerHTML = '<div class="loading">Error al cargar apuestas</div>';
+            }
+        }
+        
         // ==================== GRUPOS ====================
         
         async function cargarGrupos() {
@@ -408,24 +631,24 @@
                 }
                 
                 const html = `
-                    <table>
+                    <table style="width:100%; margin-top: 15px; border-collapse: collapse;">
                         <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Grupo</th>
-                                <th>Acciones</th>
-                            </tr>
+                            <tr style="background: #533483; color: white;">
+                                <th style="padding: 10px;">ID</th>
+                                <th style="padding: 10px;">Grupo</th>
+                                <th style="padding: 10px;">Acciones</th>
+                             </tr>
                         </thead>
                         <tbody>
                             ${gruposList.map(g => `
-                                <tr>
-                                    <td>${g.id}</td>
-                                    <td><strong>Grupo ${g.nombre}</strong></td>
-                                    <td>
+                                <tr style="border-bottom: 1px solid #ddd;">
+                                    <td style="padding: 10px;">${g.id}</td>
+                                    <td style="padding: 10px;"><strong>Grupo ${g.nombre}</strong></td>
+                                    <td style="padding: 10px;">
                                         <button class="btn btn-warning" onclick="editarGrupo(${g.id})">✏️ Editar</button>
                                         <button class="btn btn-danger" onclick="eliminarGrupo(${g.id})">🗑️ Eliminar</button>
-                                    </td>
-                                </tr>
+                                     </td>
+                                 </tr>
                             `).join('')}
                         </tbody>
                     </table>
@@ -479,24 +702,25 @@
                 }
                 
                 const html = `
-                    <table>
+                    <button class="btn btn-primary" onclick="openModal('equipo')">+ Nuevo Equipo</button>
+                    <table style="width:100%; margin-top: 15px; border-collapse: collapse;">
                         <thead>
-                            <tr>
-                                <th>Equipo</th>
-                                <th>Grupo</th>
-                                <th>Acciones</th>
-                            </tr>
+                            <tr style="background: #533483; color: white;">
+                                <th style="padding: 10px;">Equipo</th>
+                                <th style="padding: 10px;">Grupo</th>
+                                <th style="padding: 10px;">Acciones</th>
+                             </tr>
                         </thead>
                         <tbody>
                             ${equiposList.map(e => `
-                                <tr>
-                                    <td><strong>${e.nombre}</strong></td>
-                                    <td>${e.grupo_nombre || 'Sin grupo'}</td>
-                                    <td>
+                                <tr style="border-bottom: 1px solid #ddd;">
+                                    <td style="padding: 10px;"><strong>${e.nombre}</strong></td>
+                                    <td style="padding: 10px;">${e.grupo_nombre || 'Sin grupo'} (<span style="color:#666;">ID: ${e.grupo_id || 'N/A'}</span>)</td>
+                                    <td style="padding: 10px;">
                                         <button class="btn btn-warning" onclick="editarEquipo(${e.id})">✏️ Editar</button>
                                         <button class="btn btn-danger" onclick="eliminarEquipo(${e.id})">🗑️ Eliminar</button>
-                                    </td>
-                                </tr>
+                                     </td>
+                                 </tr>
                             `).join('')}
                         </tbody>
                     </table>
@@ -552,30 +776,30 @@
                 
                 const html = `
                     <button class="btn btn-primary" onclick="openModal('partido')">+ Nuevo Partido</button>
-                    <table style="margin-top: 15px;">
+                    <table style="width:100%; margin-top: 15px; border-collapse: collapse;">
                         <thead>
-                            <tr>
-                                <th>Local</th>
-                                <th>Visitante</th>
-                                <th>Grupo</th>
-                                <th>Fecha</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
+                            <tr style="background: #533483; color: white;">
+                                <th style="padding: 10px;">Local</th>
+                                <th style="padding: 10px;">Visitante</th>
+                                <th style="padding: 10px;">Grupo</th>
+                                <th style="padding: 10px;">Fecha</th>
+                                <th style="padding: 10px;">Estado</th>
+                                <th style="padding: 10px;">Acciones</th>
+                             </tr>
                         </thead>
                         <tbody>
                             ${partidos.map(p => `
-                                <tr>
-                                    <td>${p.equipo_local_nombre}</td>
-                                    <td>${p.equipo_visitante_nombre}</td>
-                                    <td>${p.grupo_nombre || '-'}</td>
-                                    <td>${new Date(p.fecha_partido).toLocaleString()}</td>
-                                    <td>${p.finalizado ? '✅ Finalizado' : '⏳ Pendiente'}</td>
-                                    <td>
+                                <tr style="border-bottom: 1px solid #ddd;">
+                                    <td style="padding: 10px;">${p.equipo_local_nombre}</td>
+                                    <td style="padding: 10px;">${p.equipo_visitante_nombre}</td>
+                                    <td style="padding: 10px;">${p.grupo_nombre || '-'}</td>
+                                    <td style="padding: 10px;">${new Date(p.fecha_partido).toLocaleString()}</td>
+                                    <td style="padding: 10px;">${p.finalizado ? '✅ Finalizado' : '⏳ Pendiente'}</td>
+                                    <td style="padding: 10px;">
                                         <button class="btn btn-warning" onclick="editarPartido(${p.id})">✏️ Editar</button>
                                         ${!p.finalizado ? `<button class="btn btn-danger" onclick="eliminarPartido(${p.id})">🗑️ Eliminar</button>` : ''}
-                                    </td>
-                                </tr>
+                                     </td>
+                                 </tr>
                             `).join('')}
                         </tbody>
                     </table>
@@ -619,7 +843,7 @@
             }
         }
         
-        // ==================== RESULTADOS (MEJORADO) ====================
+        // ==================== RESULTADOS ====================
         
         async function cargarResultados() {
             try {
@@ -679,6 +903,9 @@
         }
         
         function abrirCargarResultado(partidoId, local, visitante) {
+            currentModalType = 'cargar-resultado';
+            currentEditId = partidoId;
+            
             const modal = document.getElementById('modal');
             const title = document.getElementById('modal-title');
             const body = document.getElementById('modal-body');
@@ -694,13 +921,13 @@
                     <input type="number" id="resultado_visitante" placeholder="0" min="0" style="font-size: 18px; text-align: center;">
                 </div>
             `;
-            
-            currentModalType = 'cargar-resultado';
-            currentEditId = partidoId;
             modal.style.display = 'flex';
         }
         
         function abrirEditarResultado(partidoId, resultadoLocal, resultadoVisitante, local, visitante) {
+            currentModalType = 'editar-resultado';
+            currentEditId = partidoId;
+            
             const modal = document.getElementById('modal');
             const title = document.getElementById('modal-title');
             const body = document.getElementById('modal-body');
@@ -717,52 +944,7 @@
                 </div>
                 <p style="color: #ffc107; margin-top: 10px;">⚠️ Al editar, se recalcularán los puntos automáticamente.</p>
             `;
-            
-            currentModalType = 'editar-resultado';
-            currentEditId = partidoId;
             modal.style.display = 'flex';
-        }
-        
-        async function guardarResultado() {
-            const golesLocal = document.getElementById('resultado_local').value;
-            const golesVisitante = document.getElementById('resultado_visitante').value;
-            
-            if (!golesLocal || !golesVisitante) {
-                mostrarToast('Ingresa ambos resultados', 'error');
-                return false;
-            }
-            
-            const endpoint = currentModalType === 'cargar-resultado' ? '/api/admin/resultado' : '/api/admin/editar-resultado';
-            
-            try {
-                const response = await fetch(`${API_URL}${endpoint}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        partido_id: currentEditId,
-                        resultado_local: parseInt(golesLocal),
-                        resultado_visitante: parseInt(golesVisitante)
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok) {
-                    mostrarToast(data.message || 'Resultado guardado correctamente', 'success');
-                    await cargarResultados();
-                    await cargarApuestas();
-                    await cargarPartidos();
-                    await cargarEstadisticas();
-                    await cargarUsuarios();
-                    return true;
-                } else {
-                    mostrarToast(data.error || 'Error al guardar', 'error');
-                    return false;
-                }
-            } catch (error) {
-                mostrarToast('Error de conexión', 'error');
-                return false;
-            }
         }
         
         async function eliminarResultado(partidoId) {
@@ -787,52 +969,6 @@
             }
         }
         
-        // ==================== APUESTAS ====================
-        
-        async function cargarApuestas() {
-            try {
-                const response = await fetch(`${API_URL}/api/admin/apuestas`);
-                const data = await response.json();
-                const apuestas = Array.isArray(data) ? data : [];
-                
-                if (apuestas.length === 0) {
-                    document.getElementById('apuestas-table').innerHTML = '<div class="loading">No hay apuestas registradas</div>';
-                    return;
-                }
-                
-                const html = `
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Usuario</th>
-                                <th>Partido</th>
-                                <th>Apuesta</th>
-                                <th>Resultado Real</th>
-                                <th>Puntos</th>
-                                <th>Fecha</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${apuestas.map(a => `
-                                <tr>
-                                    <td>${a.usuario_nombre}<br><small>${a.email}</small></td>
-                                    <td>${a.equipo_local} vs ${a.equipo_visitante}</td>
-                                    <td><strong>${a.goles_local} - ${a.goles_visitante}</strong></td>
-                                    <td>${a.finalizado ? `${a.resultado_local} - ${a.resultado_visitante}` : 'Pendiente'}</td>
-                                    <td style="color: ${(a.puntos_obtenidos || 0) > 0 ? 'green' : 'red'}; font-weight: bold;">${a.puntos_obtenidos || 0}</td>
-                                    <td>${new Date(a.fecha_apuesta).toLocaleDateString()}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                `;
-                document.getElementById('apuestas-table').innerHTML = html;
-            } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('apuestas-table').innerHTML = '<div class="loading">Error al cargar apuestas</div>';
-            }
-        }
-        
         // ==================== USUARIOS ====================
         
         async function cargarUsuarios() {
@@ -847,29 +983,29 @@
                 }
                 
                 const html = `
-                    <table>
+                    <table style="width:100%; border-collapse: collapse;">
                         <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Email</th>
-                                <th>Teléfono</th>
-                                <th>Ciudad</th>
-                                <th>Puntos</th>
-                                <th>Acciones</th>
-                            </tr>
+                            <tr style="background: #533483; color: white;">
+                                <th style="padding: 10px;">Nombre</th>
+                                <th style="padding: 10px;">Cédula</th>
+                                <th style="padding: 10px;">Teléfono</th>
+                                <th style="padding: 10px;">Ciudad</th>
+                                <th style="padding: 10px;">Puntos</th>
+                                <th style="padding: 10px;">Acciones</th>
+                             </tr>
                         </thead>
                         <tbody>
                             ${usuarios.map(u => `
-                                <tr>
-                                    <td>${u.nombre}</td>
-                                    <td>${u.email}</td>
-                                    <td>${u.telefono || '-'}</td>
-                                    <td>${u.ciudad || '-'}</td>
-                                    <td><strong>${u.total_puntos || 0}</strong></td>
-                                    <td>
+                                <tr style="border-bottom: 1px solid #ddd;">
+                                    <td style="padding: 10px;"><strong>${u.nombre}</strong></td>
+                                    <td style="padding: 10px;">${u.cedula || '-'}</td>
+                                    <td style="padding: 10px;">${u.telefono || '-'}</td>
+                                    <td style="padding: 10px;">${u.ciudad || '-'}</td>
+                                    <td style="padding: 10px;"><span style="font-size: 1.2em; font-weight: bold; color: #e94560;">${u.total_puntos || 0}</span></td>
+                                    <td style="padding: 10px;">
                                         <button class="btn btn-danger" onclick="eliminarUsuario(${u.id})">🗑️ Eliminar</button>
-                                    </td>
-                                </tr>
+                                     </td>
+                                 </tr>
                             `).join('')}
                         </tbody>
                     </table>
@@ -901,7 +1037,7 @@
             }
         }
         
-        // ==================== MODALES GENERALES ====================
+        // ==================== MODALES ====================
         
         function openModal(type, data = null) {
             currentModalType = type;
@@ -978,11 +1114,44 @@
         }
         
         async function guardarModal() {
-            let success = false;
-            
             if (currentModalType === 'cargar-resultado' || currentModalType === 'editar-resultado') {
-                success = await guardarResultado();
-                if (success) closeModal();
+                const golesLocal = document.getElementById('resultado_local')?.value;
+                const golesVisitante = document.getElementById('resultado_visitante')?.value;
+                
+                if (!golesLocal || !golesVisitante) {
+                    mostrarToast('Ingresa ambos resultados', 'error');
+                    return;
+                }
+                
+                const endpoint = currentModalType === 'cargar-resultado' ? '/api/admin/resultado' : '/api/admin/editar-resultado';
+                
+                try {
+                    const response = await fetch(`${API_URL}${endpoint}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            partido_id: currentEditId,
+                            resultado_local: parseInt(golesLocal),
+                            resultado_visitante: parseInt(golesVisitante)
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        mostrarToast(data.message || 'Resultado guardado correctamente', 'success');
+                        await cargarResultados();
+                        await cargarApuestas();
+                        await cargarPartidos();
+                        await cargarEstadisticas();
+                        await cargarUsuarios();
+                        closeModal();
+                    } else {
+                        mostrarToast(data.error || 'Error al guardar', 'error');
+                    }
+                } catch (error) {
+                    mostrarToast('Error de conexión', 'error');
+                }
                 return;
             }
             
@@ -994,24 +1163,20 @@
                         return;
                     }
                     
-                    const url = `${API_URL}/api/admin/grupos`;
-                    const method = currentEditId ? 'PUT' : 'POST';
-                    const body = currentEditId ? { id: currentEditId, nombre } : { nombre };
-                    
-                    const response = await fetch(url, {
-                        method: method,
+                    const response = await fetch(`${API_URL}/api/admin/grupos`, {
+                        method: currentEditId ? 'PUT' : 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(body)
+                        body: JSON.stringify(currentEditId ? { id: currentEditId, nombre } : { nombre })
                     });
                     
                     if (response.ok) {
                         mostrarToast(currentEditId ? 'Grupo actualizado' : 'Grupo creado', 'success');
                         await cargarGrupos();
                         await cargarEquipos();
+                        closeModal();
                     } else {
                         const error = await response.json();
                         mostrarToast(error.error || 'Error', 'error');
-                        return;
                     }
                 } else if (currentModalType === 'equipo') {
                     const nombre = document.getElementById('equipo_nombre').value.trim();
@@ -1023,24 +1188,22 @@
                         return;
                     }
                     
-                    const url = `${API_URL}/api/admin/equipos`;
-                    const method = currentEditId ? 'PUT' : 'POST';
-                    const body = currentEditId ? { id: currentEditId, nombre, grupo_id: grupo_id ? parseInt(grupo_id) : null, bandera_url } : { nombre, grupo_id: grupo_id ? parseInt(grupo_id) : null, bandera_url };
-                    
-                    const response = await fetch(url, {
-                        method: method,
+                    const response = await fetch(`${API_URL}/api/admin/equipos`, {
+                        method: currentEditId ? 'PUT' : 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(body)
+                        body: JSON.stringify(currentEditId ? 
+                            { id: currentEditId, nombre, grupo_id: grupo_id ? parseInt(grupo_id) : null, bandera_url } : 
+                            { nombre, grupo_id: grupo_id ? parseInt(grupo_id) : null, bandera_url })
                     });
                     
                     if (response.ok) {
                         mostrarToast(currentEditId ? 'Equipo actualizado' : 'Equipo creado', 'success');
                         await cargarEquipos();
                         await cargarPartidos();
+                        closeModal();
                     } else {
                         const error = await response.json();
                         mostrarToast(error.error || 'Error', 'error');
-                        return;
                     }
                 } else if (currentModalType === 'partido') {
                     const equipo_local_id = document.getElementById('partido_local').value;
@@ -1054,28 +1217,24 @@
                         return;
                     }
                     
-                    const url = `${API_URL}/api/admin/partidos`;
-                    const method = currentEditId ? 'PUT' : 'POST';
-                    const body = currentEditId ? { id: currentEditId, equipo_local_id: parseInt(equipo_local_id), equipo_visitante_id: parseInt(equipo_visitante_id), grupo_id: grupo_id ? parseInt(grupo_id) : null, fecha_partido, jornada: parseInt(jornada) } : { equipo_local_id: parseInt(equipo_local_id), equipo_visitante_id: parseInt(equipo_visitante_id), grupo_id: grupo_id ? parseInt(grupo_id) : null, fecha_partido, jornada: parseInt(jornada) };
-                    
-                    const response = await fetch(url, {
-                        method: method,
+                    const response = await fetch(`${API_URL}/api/admin/partidos`, {
+                        method: currentEditId ? 'PUT' : 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(body)
+                        body: JSON.stringify(currentEditId ? 
+                            { id: currentEditId, equipo_local_id: parseInt(equipo_local_id), equipo_visitante_id: parseInt(equipo_visitante_id), grupo_id: grupo_id ? parseInt(grupo_id) : null, fecha_partido, jornada: parseInt(jornada) } :
+                            { equipo_local_id: parseInt(equipo_local_id), equipo_visitante_id: parseInt(equipo_visitante_id), grupo_id: grupo_id ? parseInt(grupo_id) : null, fecha_partido, jornada: parseInt(jornada) })
                     });
                     
                     if (response.ok) {
                         mostrarToast(currentEditId ? 'Partido actualizado' : 'Partido creado', 'success');
                         await cargarPartidos();
                         await cargarResultados();
+                        closeModal();
                     } else {
                         const error = await response.json();
                         mostrarToast(error.error || 'Error', 'error');
-                        return;
                     }
                 }
-                
-                closeModal();
             } catch (error) {
                 mostrarToast('Error de conexión: ' + error.message, 'error');
             }
