@@ -4,6 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiniela Mundial 2026</title>
+    
+    <!-- ============================================ -->
+    <!-- PROTECCIÓN DE ACCESO - VERIFICAR ORIGEN       -->
+    <!-- ============================================ -->
+    <script>
+        (function verificarAcceso() {
+            // Dominios permitidos (solo estos pueden abrir la página)
+            const dominiosPermitidos = [
+                'pagos1.robertsystems.org',
+                'robertsystems.org',
+                'localhost',
+                '127.0.0.1'
+            ];
+            
+            // Obtener el referer (de dónde viene la página)
+            const referer = document.referrer;
+            
+            // Si no hay referer (acceso directo escribiendo la URL)
+            if (!referer) {
+                // Redirigir al dashboard
+                window.location.href = 'https://pagos1.robertsystems.org';
+                return;
+            }
+            
+            // Verificar si el referer contiene algún dominio permitido
+            let origenPermitido = false;
+            for (const dominio of dominiosPermitidos) {
+                if (referer.includes(dominio)) {
+                    origenPermitido = true;
+                    break;
+                }
+            }
+            
+            // Si el origen no está permitido, redirigir
+            if (!origenPermitido) {
+                window.location.href = 'https://pagos1.robertsystems.org';
+            }
+        })();
+    </script>
+    <!-- ============================================ -->
+    
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -352,7 +393,7 @@
     
     <script>
         // ============================================
-        // CONFIGURACIÓN - CAMBIA ESTA URL
+        // CONFIGURACIÓN - CAMBIA ESTA URL SI ES NECESARIO
         // ============================================
         const API_URL = 'https://quiniela-mundial.thecrow859.workers.dev';
         
@@ -449,7 +490,7 @@
         }
         
         // ============================================
-        // ENVIAR PRONÓSTICOS (VERSIÓN MEJORADA)
+        // ENVIAR PRONÓSTICOS
         // ============================================
         async function enviarApuestas() {
             console.log('📤 Iniciando envío de pronósticos...');
@@ -476,7 +517,6 @@
             console.log(`🔍 Encontrados ${inputsLocales.length} inputs locales`);
             
             for (const inputLocal of inputsLocales) {
-                // Extraer el ID del partido (local_123 -> 123)
                 const partidoId = parseInt(inputLocal.id.replace('local_', ''));
                 const inputVisitante = document.getElementById(`visit_${partidoId}`);
                 
@@ -490,7 +530,6 @@
                 
                 console.log(`📊 Partido ${partidoId}: Local="${golesLocal}", Visitante="${golesVisitante}"`);
                 
-                // Verificar si el usuario ingresó algo en AMBOS campos
                 if (golesLocal !== '' && golesLocal !== null && 
                     golesLocal !== undefined && 
                     golesVisitante !== '' && golesVisitante !== null && 
@@ -499,7 +538,6 @@
                     const golesLocalNum = parseInt(golesLocal);
                     const golesVisitanteNum = parseInt(golesVisitante);
                     
-                    // Verificar que sean números válidos
                     if (!isNaN(golesLocalNum) && !isNaN(golesVisitanteNum)) {
                         apuestas.push({
                             partidoId: partidoId,
@@ -507,11 +545,7 @@
                             golesVisitante: golesVisitanteNum
                         });
                         console.log(`✅ Pronóstico agregado: ${golesLocalNum} - ${golesVisitanteNum}`);
-                    } else {
-                        console.log(`❌ Valores no numéricos: "${golesLocal}" - "${golesVisitante}"`);
                     }
-                } else {
-                    console.log(`⏭️ Partido ${partidoId} saltado (campos vacíos)`);
                 }
             }
             
@@ -541,7 +575,6 @@
                 };
                 
                 console.log('📡 Enviando a:', `${API_URL}/api/apostar`);
-                console.log('📦 Datos:', JSON.stringify(dataToSend, null, 2));
                 
                 const response = await fetch(`${API_URL}/api/apostar`, {
                     method: 'POST',
@@ -567,12 +600,9 @@
                         if (inputVisit) inputVisit.value = '';
                     });
                     
-                    // Recargar ranking
                     cargarRanking();
-                    
-                    console.log('✅ Proceso completado exitosamente');
                 } else {
-                    mostrarToast(data.error || data.message || '❌ Error al guardar los pronósticos', 'error');
+                    mostrarToast(data.error || '❌ Error al guardar los pronósticos', 'error');
                 }
             } catch (error) {
                 console.error('❌ Error de conexión:', error);
@@ -618,7 +648,7 @@
                                     <td style="padding: 12px;"><span style="font-size: 1.2em; font-weight: bold; color: #e94560;">${r.total_puntos || 0}</span></td>
                                     <td style="padding: 12px;">${r.aciertos_exactos || 0}</td>
                                     <td style="padding: 12px;">${r.aciertos_ganador || 0}</td>
-                                </tr>
+                                 </tr>
                             `).join('')}
                         </tbody>
                     </table>
@@ -658,7 +688,7 @@
                                 <tr style="border-bottom: 1px solid #eee;">
                                     <td style="padding: 12px;">${r.local || '?'} vs ${r.visitante || '?'}</td>
                                     <td style="padding: 12px;"><strong style="font-size: 1.1em;">${r.resultado_local || 0} - ${r.resultado_visitante || 0}</strong></td>
-                                </tr>
+                                 </tr>
                             `).join('')}
                         </tbody>
                     </table>
@@ -679,7 +709,6 @@
             document.getElementById(`tab-${tab}`).classList.add('active');
             if (event && event.target) event.target.classList.add('active');
             
-            // Recargar datos al cambiar de pestaña
             if (tab === 'ranking') cargarRanking();
             if (tab === 'resultados') cargarResultados();
         }
