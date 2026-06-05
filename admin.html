@@ -54,14 +54,6 @@
             gap: 8px;
         }
         
-        .auto-refresh-status i {
-            font-size: 10px;
-        }
-        
-        .auto-refresh-status.active i {
-            color: #10b981;
-        }
-        
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -74,24 +66,12 @@
             padding: 20px;
             border-radius: 15px;
             text-align: center;
-            transition: all 0.3s;
-        }
-        
-        .stat-card.changed {
-            animation: pulse 0.5s ease-in-out;
-            background: #d1fae5;
         }
         
         .stat-number {
             font-size: 2em;
             font-weight: bold;
             color: #e94560;
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); background: white; }
-            50% { transform: scale(1.02); background: #d1fae5; }
-            100% { transform: scale(1); background: white; }
         }
         
         .nav-tabs {
@@ -123,32 +103,16 @@
             background: #17a2b8;
         }
         
-        .btn-refresh:hover {
-            background: #138496;
-        }
-        
         .btn-logout {
             background: #6c757d;
-        }
-        
-        .btn-logout:hover {
-            background: #5a6268;
         }
         
         .btn-sync {
             background: #28a745;
         }
         
-        .btn-sync:hover {
-            background: #218838;
-        }
-        
         .btn-danger {
             background: #dc3545 !important;
-        }
-        
-        .btn-danger:hover {
-            background: #c82333 !important;
         }
         
         .panel {
@@ -177,11 +141,16 @@
             font-size: 12px;
         }
         
+        /* Tablas responsivas */
+        .table-responsive {
+            overflow-x: auto;
+            width: 100%;
+        }
+        
         table {
             width: 100%;
             border-collapse: collapse;
-            overflow-x: auto;
-            display: block;
+            min-width: 600px;
         }
         
         th, td {
@@ -193,54 +162,26 @@
         th {
             background: #533483;
             color: white;
-        }
-        
-        .form-modal {
-            display: none;
-            position: fixed;
+            position: sticky;
             top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
         }
         
-        .form-modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 500px;
-        }
-        
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
+        td .btn-group {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
         }
         
         .btn {
-            padding: 8px 16px;
+            padding: 6px 12px;
             border: none;
             border-radius: 6px;
             cursor: pointer;
-            margin: 2px;
-            font-size: 13px;
+            font-size: 12px;
             transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
         }
         
         .btn:hover {
@@ -270,6 +211,46 @@
         .btn-info {
             background: #17a2b8;
             color: white;
+        }
+        
+        .form-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .form-modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
         }
         
         .toast {
@@ -351,8 +332,10 @@
         @media (max-width: 768px) {
             .admin-container { padding: 10px; }
             th, td { padding: 8px; font-size: 12px; }
+            .btn { padding: 4px 8px; font-size: 10px; }
             .resultado-info { flex-direction: column; align-items: flex-start; }
             .header-top { flex-direction: column; text-align: center; }
+            .nav-tabs { justify-content: center; }
         }
     </style>
 </head>
@@ -377,14 +360,14 @@
                             <i class="fas fa-sync-alt fa-fw"></i>
                             <span>Auto-refresh: 30s</span>
                         </div>
-                        <button class="btn btn-info btn-refresh" onclick="actualizarManual()" id="btnRefreshManual">
-                            <i class="fas fa-sync-alt"></i> Actualizar Ahora
+                        <button class="btn btn-info btn-refresh" onclick="actualizarManual()">
+                            <i class="fas fa-sync-alt"></i> Actualizar
                         </button>
                         <button class="btn btn-success btn-sync" onclick="sincronizarMundial()">
                             <i class="fas fa-cloud-download-alt"></i> Sincronizar Mundial
                         </button>
                         <button class="btn btn-logout" onclick="logout()">
-                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                            <i class="fas fa-sign-out-alt"></i> Salir
                         </button>
                     </div>
                 </div>
@@ -409,7 +392,9 @@
                 <div class="panel-header">
                     <h3>📊 Apuestas de Usuarios</h3>
                 </div>
-                <div id="apuestas-table"><div class="loading">Cargando apuestas...</div></div>
+                <div class="table-responsive">
+                    <div id="apuestas-table"><div class="loading">Cargando apuestas...</div></div>
+                </div>
             </div>
             
             <div id="panel-grupos" class="panel">
@@ -417,7 +402,9 @@
                     <h3>📁 Grupos</h3>
                     <button class="btn btn-primary" onclick="openModal('grupo')">+ Nuevo Grupo</button>
                 </div>
-                <div id="grupos-table"><div class="loading">Cargando grupos...</div></div>
+                <div class="table-responsive">
+                    <div id="grupos-table"><div class="loading">Cargando grupos...</div></div>
+                </div>
             </div>
             
             <div id="panel-equipos" class="panel">
@@ -425,7 +412,9 @@
                     <h3>⚽ Equipos</h3>
                     <button class="btn btn-primary" onclick="openModal('equipo')">+ Nuevo Equipo</button>
                 </div>
-                <div id="equipos-table"><div class="loading">Cargando equipos...</div></div>
+                <div class="table-responsive">
+                    <div id="equipos-table"><div class="loading">Cargando equipos...</div></div>
+                </div>
             </div>
             
             <div id="panel-partidos" class="panel">
@@ -433,7 +422,9 @@
                     <h3>📅 Partidos</h3>
                     <button class="btn btn-primary" onclick="openModal('partido')">+ Nuevo Partido</button>
                 </div>
-                <div id="partidos-table"><div class="loading">Cargando partidos...</div></div>
+                <div class="table-responsive">
+                    <div id="partidos-table"><div class="loading">Cargando partidos...</div></div>
+                </div>
             </div>
             
             <div id="panel-resultados" class="panel">
@@ -448,36 +439,35 @@
                 <div class="panel-header">
                     <h3>👥 Usuarios Registrados</h3>
                 </div>
-                <div id="usuarios-table"><div class="loading">Cargando usuarios...</div></div>
+                <div class="table-responsive">
+                    <div id="usuarios-table"><div class="loading">Cargando usuarios...</div></div>
+                </div>
             </div>
         </div>
     </div>
     
-    <!-- Modal de Reinicio de Base de Datos -->
+    <!-- Modal de Reinicio -->
     <div id="modalReinicio" class="form-modal">
-        <div class="form-modal-content" style="max-width: 450px;">
+        <div class="form-modal-content">
             <h3 style="color: #dc3545; margin-bottom: 20px;">
                 <i class="fas fa-exclamation-triangle"></i> Reiniciar Base de Datos
             </h3>
-            <p style="margin-bottom: 20px; color: #666; line-height: 1.5;">
-                ⚠️ <strong>¡ATENCIÓN!</strong> Esta acción ELIMINARÁ todos los datos de:<br>
-                • Usuarios registrados<br>
-                • Apuestas realizadas<br>
-                • Puntajes acumulados<br><br>
-                Los <strong>grupos, equipos y partidos NO se verán afectados</strong>.
+            <p style="margin-bottom: 20px; color: #666;">
+                ⚠️ Esta acción ELIMINARÁ usuarios, apuestas y puntajes.<br>
+                Los grupos, equipos y partidos NO se verán afectados.
             </p>
             <div class="form-group">
-                <label><i class="fas fa-key"></i> Contraseña de autorización</label>
-                <input type="password" id="reinicioPassword" placeholder="Ingresa la contraseña">
+                <label>Contraseña</label>
+                <input type="password" id="reinicioPassword" placeholder="Contraseña">
             </div>
             <div class="form-group">
-                <label><i class="fas fa-check-circle"></i> Escribe <strong style="color: #dc3545;">REINICIAR</strong> para confirmar</label>
+                <label>Escribe <strong style="color: #dc3545;">REINICIAR</strong> para confirmar</label>
                 <input type="text" id="reinicioConfirmar" placeholder="REINICIAR">
             </div>
-            <div id="reinicioMessage" class="message" style="display: none; padding: 10px; border-radius: 8px; margin-bottom: 15px;"></div>
+            <div id="reinicioMessage" style="display: none; padding: 10px; border-radius: 8px; margin-bottom: 15px;"></div>
             <div style="display: flex; gap: 10px; justify-content: flex-end;">
                 <button class="btn" onclick="cerrarModalReinicio()">Cancelar</button>
-                <button class="btn btn-danger" onclick="ejecutarReinicio()">🗑️ Reiniciar DB</button>
+                <button class="btn btn-danger" onclick="ejecutarReinicio()">Reiniciar</button>
             </div>
         </div>
     </div>
@@ -513,6 +503,18 @@
             partidosFinalizados: 0
         };
         
+        // Lista de países válidos para filtrar
+        const paisesValidos = [
+            'Argentina', 'Perú', 'Chile', 'Canadá', 'España', 'Países Bajos', 'Japón', 'Marruecos',
+            'Brasil', 'Alemania', 'México', 'Costa Rica', 'Francia', 'Inglaterra', 'Senegal', 'Australia',
+            'Portugal', 'Uruguay', 'Corea del Sur', 'Ghana', 'Croacia', 'Bélgica', 'Estados Unidos', 'Irán',
+            'Italia', 'Colombia', 'Suiza', 'Camerún', 'Serbia', 'Ecuador', 'Túnez'
+        ];
+        
+        function esPaisValido(nombre) {
+            return paisesValidos.includes(nombre);
+        }
+        
         // ============================================
         // PERSISTENCIA DE SESIÓN
         // ============================================
@@ -534,11 +536,11 @@
             document.getElementById('loginPanel').style.display = 'block';
             document.getElementById('adminPanel').style.display = 'none';
             document.getElementById('adminPass').value = '';
-            mostrarToast('Sesión cerrada correctamente', 'success');
+            mostrarToast('Sesión cerrada', 'success');
         }
         
         // ============================================
-        // DETECCIÓN DE CAMBIOS
+        // DETECCIÓN DE CAMBIOS Y ACTUALIZACIÓN
         // ============================================
         
         async function verificarCambios() {
@@ -554,41 +556,21 @@
                 
                 let huboCambios = false;
                 
-                if (ultimosConteos.usuarios !== nuevosConteos.usuarios) {
-                    console.log('📊 Cambio detectado en usuarios:', ultimosConteos.usuarios, '->', nuevosConteos.usuarios);
-                    huboCambios = true;
-                    mostrarToast(`📊 Usuarios: ${ultimosConteos.usuarios} → ${nuevosConteos.usuarios}`, 'info');
-                }
-                
-                if (ultimosConteos.apuestas !== nuevosConteos.apuestas) {
-                    console.log('📊 Cambio detectado en apuestas:', ultimosConteos.apuestas, '->', nuevosConteos.apuestas);
-                    huboCambios = true;
-                    mostrarToast(`📊 Apuestas: ${ultimosConteos.apuestas} → ${nuevosConteos.apuestas}`, 'info');
-                }
-                
-                if (ultimosConteos.partidosFinalizados !== nuevosConteos.partidosFinalizados) {
-                    console.log('📊 Cambio detectado en resultados:', ultimosConteos.partidosFinalizados, '->', nuevosConteos.partidosFinalizados);
-                    huboCambios = true;
-                    mostrarToast(`📊 Resultados: ${ultimosConteos.partidosFinalizados} → ${nuevosConteos.partidosFinalizados}`, 'info');
-                }
+                if (ultimosConteos.usuarios !== nuevosConteos.usuarios) huboCambios = true;
+                if (ultimosConteos.apuestas !== nuevosConteos.apuestas) huboCambios = true;
+                if (ultimosConteos.partidosFinalizados !== nuevosConteos.partidosFinalizados) huboCambios = true;
                 
                 ultimosConteos = nuevosConteos;
                 
                 if (huboCambios) {
                     await actualizarDatos();
                 }
-                
             } catch (error) {
-                console.error('Error verificando cambios:', error);
+                console.error('Error:', error);
             }
         }
         
-        // ============================================
-        // ACTUALIZACIÓN DE DATOS
-        // ============================================
-        
         async function actualizarDatos() {
-            console.log('🔄 Actualizando datos...');
             const panelActual = document.querySelector('.panel.active').id;
             
             await cargarEstadisticas();
@@ -604,29 +586,29 @@
         }
         
         async function actualizarManual() {
-            mostrarToast('🔄 Actualizando información...', 'info');
+            mostrarToast('🔄 Actualizando...', 'info');
             await verificarCambios();
             await actualizarDatos();
-            mostrarToast('✅ Información actualizada', 'success');
+            mostrarToast('✅ Actualizado', 'success');
         }
         
         // ============================================
-        // SINCRONIZACIÓN CON OPENFOOTBALL
+        // SINCRONIZACIÓN MUNDIAL (SOLO PAÍSES)
         // ============================================
         
         async function sincronizarMundial() {
             const password = localStorage.getItem('admin_password');
             
             if (!password) {
-                mostrarToast('❌ No hay sesión activa', 'error');
+                mostrarToast('No hay sesión activa', 'error');
                 return;
             }
             
-            if (!confirm('⚠️ ¿Estás seguro de sincronizar los datos del Mundial?\n\nEsto creará/actualizará:\n• Grupos\n• Equipos\n• Partidos completos\n\nLos datos existentes de usuarios y apuestas NO se verán afectados.\n\n¿Deseas continuar?')) {
+            if (!confirm('⚠️ ¿Sincronizar datos del Mundial?\n\nSe cargarán grupos, países participantes y partidos.')) {
                 return;
             }
             
-            mostrarToast('🌍 Sincronizando datos del Mundial...', 'info');
+            mostrarToast('🌍 Sincronizando...', 'info');
             
             try {
                 const response = await fetch(`${API_URL}/api/admin/sincronizar-mundial`, {
@@ -639,20 +621,15 @@
                 
                 if (response.ok && data.success) {
                     mostrarToast(data.message, 'success');
-                    console.log('📊 Detalles de sincronización:', data.detalles);
-                    
-                    // Recargar todos los datos
                     await cargarGrupos();
                     await cargarEquipos();
                     await cargarPartidos();
                     await cargarResultados();
-                    await cargarEstadisticas();
                 } else {
-                    mostrarToast(data.error || 'Error al sincronizar', 'error');
+                    mostrarToast(data.error || 'Error', 'error');
                 }
             } catch (error) {
-                console.error('Error:', error);
-                mostrarToast('Error de conexión: ' + error.message, 'error');
+                mostrarToast('Error de conexión', 'error');
             }
         }
         
@@ -661,14 +638,8 @@
         // ============================================
         
         function iniciarAutoRefresh() {
-            if (autoRefreshInterval) {
-                clearInterval(autoRefreshInterval);
-            }
-            
-            autoRefreshInterval = setInterval(async () => {
-                console.log('⏰ Auto-refresh ejecutándose...');
-                await verificarCambios();
-            }, 30000);
+            if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+            autoRefreshInterval = setInterval(verificarCambios, 30000);
         }
         
         // ============================================
@@ -695,27 +666,21 @@
                 
                 if (response.ok) {
                     localStorage.setItem('admin_password', password);
-                    
                     document.getElementById('loginPanel').style.display = 'none';
                     document.getElementById('adminPanel').style.display = 'block';
                     
-                    if (!esRecarga) {
-                        mostrarToast('✅ Sesión iniciada correctamente', 'success');
-                    }
+                    if (!esRecarga) mostrarToast('✅ Sesión iniciada', 'success');
                     
                     await cargarTodo();
                     iniciarAutoRefresh();
                     document.getElementById('lastUpdateTime').innerText = new Date().toLocaleTimeString();
-                    
                 } else {
                     const error = await response.json();
                     loginError.textContent = error.error || 'Contraseña incorrecta';
-                    if (esRecarga) {
-                        localStorage.removeItem('admin_password');
-                    }
+                    if (esRecarga) localStorage.removeItem('admin_password');
                 }
             } catch (error) {
-                loginError.textContent = 'Error de conexión: ' + error.message;
+                loginError.textContent = 'Error de conexión';
             }
         }
         
@@ -728,7 +693,6 @@
             await cargarResultados();
             await cargarUsuarios();
             
-            // Inicializar conteos para detección de cambios
             const response = await fetch(`${API_URL}/api/admin/estadisticas`);
             const stats = await response.json();
             ultimosConteos = {
@@ -743,25 +707,12 @@
                 const response = await fetch(`${API_URL}/api/admin/estadisticas`);
                 const stats = await response.json();
                 
-                const statsHtml = `
-                    <div class="stat-card" id="statUsuarios">
-                        <div class="stat-number">${stats.total_usuarios || 0}</div>
-                        <div>Usuarios Registrados</div>
-                    </div>
-                    <div class="stat-card" id="statApuestas">
-                        <div class="stat-number">${stats.total_apuestas || 0}</div>
-                        <div>Apuestas Realizadas</div>
-                    </div>
-                    <div class="stat-card" id="statPartidos">
-                        <div class="stat-number">${stats.partidos_finalizados || 0}/${stats.total_partidos || 0}</div>
-                        <div>Partidos Finalizados</div>
-                    </div>
-                    <div class="stat-card" id="statPorcentaje">
-                        <div class="stat-number">${stats.porcentaje_finalizado || 0}%</div>
-                        <div>Completado</div>
-                    </div>
+                document.getElementById('stats').innerHTML = `
+                    <div class="stat-card"><div class="stat-number">${stats.total_usuarios || 0}</div><div>Usuarios</div></div>
+                    <div class="stat-card"><div class="stat-number">${stats.total_apuestas || 0}</div><div>Apuestas</div></div>
+                    <div class="stat-card"><div class="stat-number">${stats.partidos_finalizados || 0}/${stats.total_partidos || 0}</div><div>Partidos</div></div>
+                    <div class="stat-card"><div class="stat-number">${stats.porcentaje_finalizado || 0}%</div><div>Completado</div></div>
                 `;
-                document.getElementById('stats').innerHTML = statsHtml;
             } catch (error) {
                 console.error('Error:', error);
             }
@@ -776,33 +727,25 @@
                 const apuestas = Array.isArray(data) ? data : [];
                 
                 if (apuestas.length === 0) {
-                    document.getElementById('apuestas-table').innerHTML = '<div class="loading">No hay apuestas registradas</div>';
+                    document.getElementById('apuestas-table').innerHTML = '<div class="loading">No hay apuestas</div>';
                     return;
                 }
                 
                 const html = `
-                    <table style="width:100%; border-collapse: collapse;">
+                    <table>
                         <thead>
-                            <tr style="background: #533483; color: white;">
-                                <th style="padding: 10px;">Usuario</th>
-                                <th style="padding: 10px;">Cédula</th>
-                                <th style="padding: 10px;">Partido</th>
-                                <th style="padding: 10px;">Apuesta</th>
-                                <th style="padding: 10px;">Resultado Real</th>
-                                <th style="padding: 10px;">Puntos</th>
-                                <th style="padding: 10px;">Fecha</th>
-                             </tr>
+                            <tr><th>Usuario</th><th>Cédula</th><th>Partido</th><th>Apuesta</th><th>Resultado</th><th>Puntos</th><th>Fecha</th></tr>
                         </thead>
                         <tbody>
                             ${apuestas.map(a => `
-                                <tr style="border-bottom: 1px solid #ddd;">
-                                    <td style="padding: 10px;"><strong>${a.usuario_nombre || '?'}</strong><br><small>${a.telefono || 'Sin teléfono'}</small></td>
-                                    <td style="padding: 10px;">${a.usuario_cedula || '-'}</td>
-                                    <td style="padding: 10px;">${a.equipo_local || '?'} vs ${a.equipo_visitante || '?'}</td>
-                                    <td style="padding: 10px;"><strong>${a.goles_local || 0} - ${a.goles_visitante || 0}</strong></td>
-                                    <td style="padding: 10px;">${a.finalizado ? `${a.resultado_local || 0} - ${a.resultado_visitante || 0}` : '⏳ Pendiente'}</td>
-                                    <td style="padding: 10px; color: ${(a.puntos_obtenidos || 0) > 0 ? 'green' : 'red'}; font-weight: bold;">${a.puntos_obtenidos || 0}</td>
-                                    <td style="padding: 10px;">${new Date(a.fecha_apuesta).toLocaleString()}</td>
+                                <tr>
+                                    <td>${a.usuario_nombre || '?'}<br><small>${a.telefono || ''}</small></td>
+                                    <td>${a.usuario_cedula || '-'}</td>
+                                    <td>${a.equipo_local || '?'} vs ${a.equipo_visitante || '?'}</td>
+                                    <td><strong>${a.goles_local || 0} - ${a.goles_visitante || 0}</strong></td>
+                                    <td>${a.finalizado ? `${a.resultado_local || 0} - ${a.resultado_visitante || 0}` : '⏳ Pendiente'}</td>
+                                    <td style="color: ${(a.puntos_obtenidos || 0) > 0 ? 'green' : 'red'}">${a.puntos_obtenidos || 0}</td>
+                                    <td>${new Date(a.fecha_apuesta).toLocaleString()}</td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -810,8 +753,7 @@
                 `;
                 document.getElementById('apuestas-table').innerHTML = html;
             } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('apuestas-table').innerHTML = '<div class="loading">Error al cargar apuestas</div>';
+                document.getElementById('apuestas-table').innerHTML = '<div class="loading">Error</div>';
             }
         }
         
@@ -824,27 +766,23 @@
                 gruposList = Array.isArray(data) ? data : [];
                 
                 if (gruposList.length === 0) {
-                    document.getElementById('grupos-table').innerHTML = '<div class="loading">No hay grupos registrados</div>';
+                    document.getElementById('grupos-table').innerHTML = '<div class="loading">No hay grupos</div>';
                     return;
                 }
                 
                 const html = `
-                    <table style="width:100%; margin-top: 15px; border-collapse: collapse;">
-                        <thead>
-                            <tr style="background: #533483; color: white;">
-                                <th style="padding: 10px;">ID</th>
-                                <th style="padding: 10px;">Grupo</th>
-                                <th style="padding: 10px;">Acciones</th>
-                             </tr>
-                        </thead>
+                    <table>
+                        <thead><tr><th>ID</th><th>Grupo</th><th>Acciones</th></tr></thead>
                         <tbody>
                             ${gruposList.map(g => `
-                                <tr style="border-bottom: 1px solid #ddd;">
-                                    <td style="padding: 10px;">${g.id}</td>
-                                    <td style="padding: 10px;"><strong>Grupo ${g.nombre}</strong></td>
-                                    <td style="padding: 10px;">
-                                        <button class="btn btn-warning" onclick="editarGrupo(${g.id})">✏️ Editar</button>
-                                        <button class="btn btn-danger" onclick="eliminarGrupo(${g.id})">🗑️ Eliminar</button>
+                                <tr>
+                                    <td>${g.id}</td>
+                                    <td><strong>Grupo ${g.nombre}</strong></td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button class="btn btn-warning" onclick="editarGrupo(${g.id})">✏️ Editar</button>
+                                            <button class="btn btn-danger" onclick="eliminarGrupo(${g.id})">🗑️ Eliminar</button>
+                                        </div>
                                     </td>
                                 </tr>
                             `).join('')}
@@ -853,8 +791,7 @@
                 `;
                 document.getElementById('grupos-table').innerHTML = html;
             } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('grupos-table').innerHTML = '<div class="loading">Error al cargar grupos</div>';
+                document.getElementById('grupos-table').innerHTML = '<div class="loading">Error</div>';
             }
         }
         
@@ -867,22 +804,18 @@
         }
         
         async function eliminarGrupo(id) {
-            if (!confirm('¿Estás seguro de eliminar este grupo? Se eliminarán todos los equipos asociados.')) return;
-            
+            if (!confirm('¿Eliminar este grupo?')) return;
             try {
                 const response = await fetch(`${API_URL}/api/admin/grupos?id=${id}`, { method: 'DELETE' });
-                const data = await response.json();
-                
                 if (response.ok) {
-                    mostrarToast('Grupo eliminado correctamente', 'success');
+                    mostrarToast('Grupo eliminado', 'success');
                     await cargarGrupos();
                     await cargarEquipos();
-                    await cargarEstadisticas();
                 } else {
-                    mostrarToast(data.error || 'Error al eliminar', 'error');
+                    mostrarToast('Error', 'error');
                 }
             } catch (error) {
-                mostrarToast('Error de conexión', 'error');
+                mostrarToast('Error', 'error');
             }
         }
         
@@ -895,28 +828,26 @@
                 equiposList = Array.isArray(data) ? data : [];
                 
                 if (equiposList.length === 0) {
-                    document.getElementById('equipos-table').innerHTML = '<div class="loading">No hay equipos registrados</div>';
+                    document.getElementById('equipos-table').innerHTML = '<div class="loading">No hay equipos</div>';
                     return;
                 }
                 
                 const html = `
-                    <button class="btn btn-primary" onclick="openModal('equipo')">+ Nuevo Equipo</button>
-                    <table style="width:100%; margin-top: 15px; border-collapse: collapse;">
-                        <thead>
-                            <tr style="background: #533483; color: white;">
-                                <th style="padding: 10px;">Equipo</th>
-                                <th style="padding: 10px;">Grupo</th>
-                                <th style="padding: 10px;">Acciones</th>
-                             </tr>
-                        </thead>
+                    <div style="margin-bottom: 10px;">
+                        <button class="btn btn-primary" onclick="openModal('equipo')">+ Nuevo Equipo</button>
+                    </div>
+                    <table>
+                        <thead><tr><th>Equipo</th><th>Grupo</th><th>Acciones</th></tr></thead>
                         <tbody>
                             ${equiposList.map(e => `
-                                <tr style="border-bottom: 1px solid #ddd;">
-                                    <td style="padding: 10px;"><strong>${e.nombre}</strong></td>
-                                    <td style="padding: 10px;">${e.grupo_nombre || 'Sin grupo'}</td>
-                                    <td style="padding: 10px;">
-                                        <button class="btn btn-warning" onclick="editarEquipo(${e.id})">✏️ Editar</button>
-                                        <button class="btn btn-danger" onclick="eliminarEquipo(${e.id})">🗑️ Eliminar</button>
+                                <tr>
+                                    <td><strong>${e.nombre}</strong></td>
+                                    <td>${e.grupo_nombre || 'Sin grupo'}</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button class="btn btn-warning" onclick="editarEquipo(${e.id})">✏️ Editar</button>
+                                            <button class="btn btn-danger" onclick="eliminarEquipo(${e.id})">🗑️ Eliminar</button>
+                                        </div>
                                     </td>
                                 </tr>
                             `).join('')}
@@ -925,8 +856,7 @@
                 `;
                 document.getElementById('equipos-table').innerHTML = html;
             } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('equipos-table').innerHTML = '<div class="loading">Error al cargar equipos</div>';
+                document.getElementById('equipos-table').innerHTML = '<div class="loading">Error</div>';
             }
         }
         
@@ -939,23 +869,19 @@
         }
         
         async function eliminarEquipo(id) {
-            if (!confirm('¿Estás seguro de eliminar este equipo? Se eliminarán todos los partidos asociados.')) return;
-            
+            if (!confirm('¿Eliminar este equipo?')) return;
             try {
                 const response = await fetch(`${API_URL}/api/admin/equipos?id=${id}`, { method: 'DELETE' });
-                const data = await response.json();
-                
                 if (response.ok) {
-                    mostrarToast('Equipo eliminado correctamente', 'success');
+                    mostrarToast('Equipo eliminado', 'success');
                     await cargarEquipos();
                     await cargarPartidos();
-                    await cargarResultados();
-                    await cargarEstadisticas();
                 } else {
-                    mostrarToast(data.error || 'Error al eliminar', 'error');
+                    const data = await response.json();
+                    mostrarToast(data.error || 'Error', 'error');
                 }
             } catch (error) {
-                mostrarToast('Error de conexión', 'error');
+                mostrarToast('Error', 'error');
             }
         }
         
@@ -968,34 +894,29 @@
                 const partidos = Array.isArray(data) ? data : [];
                 
                 if (partidos.length === 0) {
-                    document.getElementById('partidos-table').innerHTML = '<div class="loading">No hay partidos registrados</div>';
+                    document.getElementById('partidos-table').innerHTML = '<div class="loading">No hay partidos</div>';
                     return;
                 }
                 
                 const html = `
-                    <button class="btn btn-primary" onclick="openModal('partido')">+ Nuevo Partido</button>
-                    <table style="width:100%; margin-top: 15px; border-collapse: collapse;">
-                        <thead>
-                            <tr style="background: #533483; color: white;">
-                                <th style="padding: 10px;">Local</th>
-                                <th style="padding: 10px;">Visitante</th>
-                                <th style="padding: 10px;">Grupo</th>
-                                <th style="padding: 10px;">Fecha</th>
-                                <th style="padding: 10px;">Estado</th>
-                                <th style="padding: 10px;">Acciones</th>
-                             </table>
-                        </thead>
+                    <div style="margin-bottom: 10px;">
+                        <button class="btn btn-primary" onclick="openModal('partido')">+ Nuevo Partido</button>
+                    </div>
+                    <table>
+                        <thead><tr><th>Local</th><th>Visitante</th><th>Grupo</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead>
                         <tbody>
                             ${partidos.map(p => `
-                                <tr style="border-bottom: 1px solid #ddd;">
-                                    <td style="padding: 10px;">${p.equipo_local_nombre}</td>
-                                    <td style="padding: 10px;">${p.equipo_visitante_nombre}</td>
-                                    <td style="padding: 10px;">${p.grupo_nombre || '-'}</td>
-                                    <td style="padding: 10px;">${new Date(p.fecha_partido).toLocaleString()}</td>
-                                    <td style="padding: 10px;">${p.finalizado ? '✅ Finalizado' : '⏳ Pendiente'}</td>
-                                    <td style="padding: 10px;">
-                                        <button class="btn btn-warning" onclick="editarPartido(${p.id})">✏️ Editar</button>
-                                        ${!p.finalizado ? `<button class="btn btn-danger" onclick="eliminarPartido(${p.id})">🗑️ Eliminar</button>` : ''}
+                                <tr>
+                                    <td>${p.equipo_local_nombre}</td>
+                                    <td>${p.equipo_visitante_nombre}</td>
+                                    <td>${p.grupo_nombre || '-'}</td>
+                                    <td>${new Date(p.fecha_partido).toLocaleString()}</td>
+                                    <td>${p.finalizado ? '✅ Finalizado' : '⏳ Pendiente'}</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <button class="btn btn-warning" onclick="editarPartido(${p.id})">✏️ Editar</button>
+                                            ${!p.finalizado ? `<button class="btn btn-danger" onclick="eliminarPartido(${p.id})">🗑️ Eliminar</button>` : ''}
+                                        </div>
                                     </td>
                                 </tr>
                             `).join('')}
@@ -1004,8 +925,7 @@
                 `;
                 document.getElementById('partidos-table').innerHTML = html;
             } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('partidos-table').innerHTML = '<div class="loading">Error al cargar partidos</div>';
+                document.getElementById('partidos-table').innerHTML = '<div class="loading">Error</div>';
             }
         }
         
@@ -1014,7 +934,6 @@
             const data = await response.json();
             const partidos = Array.isArray(data) ? data : [];
             const partido = partidos.find(p => p.id === id);
-            
             if (partido) {
                 currentEditId = id;
                 openModal('partido', partido);
@@ -1022,22 +941,19 @@
         }
         
         async function eliminarPartido(id) {
-            if (!confirm('¿Estás seguro de eliminar este partido? Se eliminarán todas las apuestas asociadas.')) return;
-            
+            if (!confirm('¿Eliminar este partido?')) return;
             try {
                 const response = await fetch(`${API_URL}/api/admin/partidos?id=${id}`, { method: 'DELETE' });
-                const data = await response.json();
-                
                 if (response.ok) {
-                    mostrarToast('Partido eliminado correctamente', 'success');
+                    mostrarToast('Partido eliminado', 'success');
                     await cargarPartidos();
                     await cargarResultados();
-                    await cargarEstadisticas();
                 } else {
-                    mostrarToast(data.error || 'Error al eliminar', 'error');
+                    const data = await response.json();
+                    mostrarToast(data.error || 'Error', 'error');
                 }
             } catch (error) {
-                mostrarToast('Error de conexión', 'error');
+                mostrarToast('Error', 'error');
             }
         }
         
@@ -1050,7 +966,7 @@
                 const resultados = Array.isArray(data) ? data : [];
                 
                 if (resultados.length === 0) {
-                    document.getElementById('resultados-container').innerHTML = '<div class="loading">No hay partidos registrados</div>';
+                    document.getElementById('resultados-container').innerHTML = '<div class="loading">No hay partidos</div>';
                     return;
                 }
                 
@@ -1059,65 +975,48 @@
                         <strong>📌 Instrucciones:</strong>
                         <ul style="margin-top: 10px; margin-left: 20px;">
                             <li><span style="color: #28a745;">●</span> <strong>Cargar</strong> - Para partidos pendientes</li>
-                            <li><span style="color: #ffc107;">●</span> <strong>Editar</strong> - Para modificar un resultado ya cargado</li>
-                            <li><span style="color: #dc3545;">●</span> <strong>Eliminar</strong> - Para volver a estado pendiente</li>
+                            <li><span style="color: #ffc107;">●</span> <strong>Editar</strong> - Para modificar resultado</li>
+                            <li><span style="color: #dc3545;">●</span> <strong>Eliminar</strong> - Volver a pendiente</li>
                         </ul>
                     </div>
-                    <div id="resultados-lista">
-                        ${resultados.map(r => `
-                            <div class="resultado-card ${r.finalizado ? '' : 'pendiente'}" id="resultado-${r.id}">
-                                <div class="resultado-equipos">
-                                    ${r.local} vs ${r.visitante}
+                    ${resultados.map(r => `
+                        <div class="resultado-card ${r.finalizado ? '' : 'pendiente'}">
+                            <div class="resultado-equipos">${r.local} vs ${r.visitante}</div>
+                            <div class="resultado-info">
+                                <div class="resultado-valor">
+                                    ${r.finalizado ? 
+                                        `<span style="background: #28a745; color: white; padding: 5px 12px; border-radius: 20px;">${r.resultado_local} - ${r.resultado_visitante}</span>` : 
+                                        '<span style="background: #ffc107; color: #333; padding: 5px 12px; border-radius: 20px;">⏳ Pendiente</span>'
+                                    }
                                 </div>
-                                <div class="resultado-info">
-                                    <div class="resultado-valor">
-                                        ${r.finalizado ? 
-                                            `<span style="background: #28a745; color: white; padding: 5px 12px; border-radius: 20px;">${r.resultado_local} - ${r.resultado_visitante}</span>` : 
-                                            '<span style="background: #ffc107; color: #333; padding: 5px 12px; border-radius: 20px;">⏳ Pendiente</span>'
-                                        }
-                                    </div>
-                                    <div class="resultado-fecha">
-                                        📅 ${new Date(r.fecha_partido).toLocaleString()}
-                                    </div>
-                                    <div>
-                                        ${!r.finalizado ? 
-                                            `<button class="btn btn-success" onclick="abrirCargarResultado(${r.id}, '${r.local}', '${r.visitante}')">➕ Cargar Resultado</button>` :
-                                            `
-                                                <button class="btn btn-warning" onclick="abrirEditarResultado(${r.id}, ${r.resultado_local}, ${r.resultado_visitante}, '${r.local}', '${r.visitante}')">✏️ Editar</button>
-                                                <button class="btn btn-danger" onclick="eliminarResultado(${r.id})">🗑️ Eliminar</button>
-                                            `
-                                        }
-                                    </div>
+                                <div class="resultado-fecha">📅 ${new Date(r.fecha_partido).toLocaleString()}</div>
+                                <div class="btn-group">
+                                    ${!r.finalizado ? 
+                                        `<button class="btn btn-success" onclick="abrirCargarResultado(${r.id}, '${r.local}', '${r.visitante}')">➕ Cargar</button>` :
+                                        `
+                                            <button class="btn btn-warning" onclick="abrirEditarResultado(${r.id}, ${r.resultado_local}, ${r.resultado_visitante}, '${r.local}', '${r.visitante}')">✏️ Editar</button>
+                                            <button class="btn btn-danger" onclick="eliminarResultado(${r.id})">🗑️ Eliminar</button>
+                                        `
+                                    }
                                 </div>
                             </div>
-                        `).join('')}
-                    </div>
+                        </div>
+                    `).join('')}
                 `;
                 document.getElementById('resultados-container').innerHTML = html;
             } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('resultados-container').innerHTML = '<div class="loading">Error al cargar resultados</div>';
+                document.getElementById('resultados-container').innerHTML = '<div class="loading">Error</div>';
             }
         }
         
         function abrirCargarResultado(partidoId, local, visitante) {
             currentModalType = 'cargar-resultado';
             currentEditId = partidoId;
-            
             const modal = document.getElementById('modal');
-            const title = document.getElementById('modal-title');
-            const body = document.getElementById('modal-body');
-            
-            title.textContent = `Cargar Resultado: ${local} vs ${visitante}`;
-            body.innerHTML = `
-                <div class="form-group">
-                    <label>Goles ${local}</label>
-                    <input type="number" id="resultado_local" placeholder="0" min="0" style="font-size: 18px; text-align: center;">
-                </div>
-                <div class="form-group">
-                    <label>Goles ${visitante}</label>
-                    <input type="number" id="resultado_visitante" placeholder="0" min="0" style="font-size: 18px; text-align: center;">
-                </div>
+            document.getElementById('modal-title').textContent = `Cargar Resultado: ${local} vs ${visitante}`;
+            document.getElementById('modal-body').innerHTML = `
+                <div class="form-group"><label>Goles ${local}</label><input type="number" id="resultado_local" placeholder="0" min="0"></div>
+                <div class="form-group"><label>Goles ${visitante}</label><input type="number" id="resultado_visitante" placeholder="0" min="0"></div>
             `;
             modal.style.display = 'flex';
         }
@@ -1125,45 +1024,31 @@
         function abrirEditarResultado(partidoId, resultadoLocal, resultadoVisitante, local, visitante) {
             currentModalType = 'editar-resultado';
             currentEditId = partidoId;
-            
             const modal = document.getElementById('modal');
-            const title = document.getElementById('modal-title');
-            const body = document.getElementById('modal-body');
-            
-            title.textContent = `Editar Resultado: ${local} vs ${visitante}`;
-            body.innerHTML = `
-                <div class="form-group">
-                    <label>Goles ${local}</label>
-                    <input type="number" id="resultado_local" value="${resultadoLocal}" min="0" style="font-size: 18px; text-align: center;">
-                </div>
-                <div class="form-group">
-                    <label>Goles ${visitante}</label>
-                    <input type="number" id="resultado_visitante" value="${resultadoVisitante}" min="0" style="font-size: 18px; text-align: center;">
-                </div>
-                <p style="color: #ffc107; margin-top: 10px;">⚠️ Al editar, se recalcularán los puntos automáticamente.</p>
+            document.getElementById('modal-title').textContent = `Editar Resultado: ${local} vs ${visitante}`;
+            document.getElementById('modal-body').innerHTML = `
+                <div class="form-group"><label>Goles ${local}</label><input type="number" id="resultado_local" value="${resultadoLocal}" min="0"></div>
+                <div class="form-group"><label>Goles ${visitante}</label><input type="number" id="resultado_visitante" value="${resultadoVisitante}" min="0"></div>
+                <p style="color: #ffc107;">⚠️ Al editar, se recalcularán los puntos.</p>
             `;
             modal.style.display = 'flex';
         }
         
         async function eliminarResultado(partidoId) {
-            if (!confirm('¿Estás seguro de eliminar este resultado? El partido volverá a estado pendiente y se perderán los puntos de los usuarios para este partido.')) return;
-            
+            if (!confirm('¿Eliminar este resultado?')) return;
             try {
                 const response = await fetch(`${API_URL}/api/admin/eliminar-resultado?id=${partidoId}`, { method: 'DELETE' });
-                const data = await response.json();
-                
                 if (response.ok) {
-                    mostrarToast(data.message || 'Resultado eliminado correctamente', 'success');
+                    mostrarToast('Resultado eliminado', 'success');
                     await cargarResultados();
                     await cargarApuestas();
                     await cargarPartidos();
                     await cargarEstadisticas();
-                    await cargarUsuarios();
                 } else {
-                    mostrarToast(data.error || 'Error al eliminar', 'error');
+                    mostrarToast('Error', 'error');
                 }
             } catch (error) {
-                mostrarToast('Error de conexión', 'error');
+                mostrarToast('Error', 'error');
             }
         }
         
@@ -1176,33 +1061,22 @@
                 const usuarios = Array.isArray(data) ? data : [];
                 
                 if (usuarios.length === 0) {
-                    document.getElementById('usuarios-table').innerHTML = '<div class="loading">No hay usuarios registrados</div>';
+                    document.getElementById('usuarios-table').innerHTML = '<div class="loading">No hay usuarios</div>';
                     return;
                 }
                 
                 const html = `
-                    <table style="width:100%; border-collapse: collapse;">
-                        <thead>
-                            <tr style="background: #533483; color: white;">
-                                <th style="padding: 10px;">Nombre</th>
-                                <th style="padding: 10px;">Cédula</th>
-                                <th style="padding: 10px;">Teléfono</th>
-                                <th style="padding: 10px;">Ciudad</th>
-                                <th style="padding: 10px;">Puntos</th>
-                                <th style="padding: 10px;">Acciones</th>
-                              </tr>
-                        </thead>
+                    <table>
+                        <thead><tr><th>Nombre</th><th>Cédula</th><th>Teléfono</th><th>Ciudad</th><th>Puntos</th><th>Acciones</th></tr></thead>
                         <tbody>
                             ${usuarios.map(u => `
-                                <tr style="border-bottom: 1px solid #ddd;">
-                                    <td style="padding: 10px;"><strong>${u.nombre}</strong></td>
-                                    <td style="padding: 10px;">${u.cedula || '-'}</td>
-                                    <td style="padding: 10px;">${u.telefono || '-'}</td>
-                                    <td style="padding: 10px;">${u.ciudad || '-'}</td>
-                                    <td style="padding: 10px;"><span style="font-size: 1.2em; font-weight: bold; color: #e94560;">${u.total_puntos || 0}</span></td>
-                                    <td style="padding: 10px;">
-                                        <button class="btn btn-danger" onclick="eliminarUsuario(${u.id})">🗑️ Eliminar</button>
-                                    </td>
+                                <tr>
+                                    <td>${u.number || u.nombre || '?'}</td>
+                                    <td>${u.cedula || '-'}</td>
+                                    <td>${u.telefono || '-'}</td>
+                                    <td>${u.ciudad || '-'}</td>
+                                    <td><strong>${u.total_puntos || 0}</strong></td>
+                                    <td><button class="btn btn-danger" onclick="eliminarUsuario(${u.id})">🗑️ Eliminar</button></td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -1210,32 +1084,27 @@
                 `;
                 document.getElementById('usuarios-table').innerHTML = html;
             } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('usuarios-table').innerHTML = '<div class="loading">Error al cargar usuarios</div>';
+                document.getElementById('usuarios-table').innerHTML = '<div class="loading">Error</div>';
             }
         }
         
         async function eliminarUsuario(id) {
-            if (!confirm('¿Estás seguro de eliminar este usuario? Se eliminarán todas sus apuestas.')) return;
-            
+            if (!confirm('¿Eliminar este usuario?')) return;
             try {
                 const response = await fetch(`${API_URL}/api/admin/usuarios?id=${id}`, { method: 'DELETE' });
-                const data = await response.json();
-                
                 if (response.ok) {
-                    mostrarToast('Usuario eliminado correctamente', 'success');
+                    mostrarToast('Usuario eliminado', 'success');
                     await cargarUsuarios();
                     await cargarApuestas();
-                    await cargarEstadisticas();
                 } else {
-                    mostrarToast(data.error || 'Error al eliminar', 'error');
+                    mostrarToast('Error', 'error');
                 }
             } catch (error) {
-                mostrarToast('Error de conexión', 'error');
+                mostrarToast('Error', 'error');
             }
         }
         
-        // ==================== REINICIO DE BASE DE DATOS ====================
+        // ==================== REINICIO ====================
         
         function mostrarModalReinicio() {
             document.getElementById('reinicioPassword').value = '';
@@ -1251,21 +1120,19 @@
         async function ejecutarReinicio() {
             const password = document.getElementById('reinicioPassword').value;
             const confirmar = document.getElementById('reinicioConfirmar').value;
-            const messageDiv = document.getElementById('reinicioMessage');
+            const msgDiv = document.getElementById('reinicioMessage');
             
             if (!password) {
-                messageDiv.innerHTML = '❌ Ingresa la contraseña';
-                messageDiv.style.background = '#fee2e2';
-                messageDiv.style.color = '#991b1b';
-                messageDiv.style.display = 'block';
+                msgDiv.innerHTML = '❌ Ingresa la contraseña';
+                msgDiv.style.background = '#fee2e2';
+                msgDiv.style.display = 'block';
                 return;
             }
             
             if (confirmar !== 'REINICIAR') {
-                messageDiv.innerHTML = '❌ Debes escribir REINICIAR para confirmar';
-                messageDiv.style.background = '#fee2e2';
-                messageDiv.style.color = '#991b1b';
-                messageDiv.style.display = 'block';
+                msgDiv.innerHTML = '❌ Escribe REINICIAR para confirmar';
+                msgDiv.style.background = '#fee2e2';
+                msgDiv.style.display = 'block';
                 return;
             }
             
@@ -1279,27 +1146,22 @@
                 const data = await response.json();
                 
                 if (response.ok) {
-                    messageDiv.innerHTML = '✅ ' + data.message;
-                    messageDiv.style.background = '#d1fae5';
-                    messageDiv.style.color = '#065f46';
-                    messageDiv.style.display = 'block';
-                    
+                    msgDiv.innerHTML = '✅ ' + data.message;
+                    msgDiv.style.background = '#d1fae5';
+                    msgDiv.style.display = 'block';
                     setTimeout(() => {
                         cerrarModalReinicio();
                         cargarTodo();
-                        mostrarToast('Base de datos reiniciada correctamente', 'success');
                     }, 2000);
                 } else {
-                    messageDiv.innerHTML = '❌ ' + (data.error || 'Error al reiniciar');
-                    messageDiv.style.background = '#fee2e2';
-                    messageDiv.style.color = '#991b1b';
-                    messageDiv.style.display = 'block';
+                    msgDiv.innerHTML = '❌ ' + (data.error || 'Error');
+                    msgDiv.style.background = '#fee2e2';
+                    msgDiv.style.display = 'block';
                 }
             } catch (error) {
-                messageDiv.innerHTML = '❌ Error de conexión: ' + error.message;
-                messageDiv.style.background = '#fee2e2';
-                messageDiv.style.color = '#991b1b';
-                messageDiv.style.display = 'block';
+                msgDiv.innerHTML = '❌ Error de conexión';
+                msgDiv.style.background = '#fee2e2';
+                msgDiv.style.display = 'block';
             }
         }
         
@@ -1313,64 +1175,23 @@
             
             if (type === 'grupo') {
                 title.textContent = data ? 'Editar Grupo' : 'Nuevo Grupo';
-                body.innerHTML = `
-                    <div class="form-group">
-                        <label>Nombre del Grupo (Ej: A, B, C)</label>
-                        <input type="text" id="grupo_nombre" value="${data?.nombre || ''}" placeholder="A" maxlength="1" style="text-transform: uppercase;">
-                    </div>
-                `;
+                body.innerHTML = `<div class="form-group"><label>Nombre del Grupo</label><input type="text" id="grupo_nombre" value="${data?.nombre || ''}" placeholder="A" maxlength="1"></div>`;
             } else if (type === 'equipo') {
                 title.textContent = data ? 'Editar Equipo' : 'Nuevo Equipo';
                 body.innerHTML = `
-                    <div class="form-group">
-                        <label>Nombre del Equipo</label>
-                        <input type="text" id="equipo_nombre" value="${data?.nombre || ''}" placeholder="Ej: Argentina">
-                    </div>
-                    <div class="form-group">
-                        <label>Grupo</label>
-                        <select id="equipo_grupo_id">
-                            <option value="">Sin grupo</option>
-                            ${gruposList.map(g => `<option value="${g.id}" ${data?.grupo_id === g.id ? 'selected' : ''}>Grupo ${g.nombre}</option>`).join('')}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>URL Bandera (opcional)</label>
-                        <input type="text" id="equipo_bandera" value="${data?.bandera_url || ''}" placeholder="https://...">
-                    </div>
+                    <div class="form-group"><label>Nombre del Equipo</label><input type="text" id="equipo_nombre" value="${data?.nombre || ''}" placeholder="Ej: Argentina"></div>
+                    <div class="form-group"><label>Grupo</label><select id="equipo_grupo_id"><option value="">Sin grupo</option>${gruposList.map(g => `<option value="${g.id}" ${data?.grupo_id === g.id ? 'selected' : ''}>Grupo ${g.nombre}</option>`).join('')}</select></div>
                 `;
             } else if (type === 'partido') {
                 title.textContent = data ? 'Editar Partido' : 'Nuevo Partido';
                 body.innerHTML = `
-                    <div class="form-group">
-                        <label>Equipo Local</label>
-                        <select id="partido_local">
-                            ${equiposList.map(e => `<option value="${e.id}" ${data?.equipo_local_id === e.id ? 'selected' : ''}>${e.nombre}</option>`).join('')}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Equipo Visitante</label>
-                        <select id="partido_visitante">
-                            ${equiposList.map(e => `<option value="${e.id}" ${data?.equipo_visitante_id === e.id ? 'selected' : ''}>${e.nombre}</option>`).join('')}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Grupo</label>
-                        <select id="partido_grupo">
-                            <option value="">Sin grupo</option>
-                            ${gruposList.map(g => `<option value="${g.id}" ${data?.grupo_id === g.id ? 'selected' : ''}>Grupo ${g.nombre}</option>`).join('')}
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Fecha y Hora</label>
-                        <input type="datetime-local" id="partido_fecha" value="${data?.fecha_partido?.slice(0, 16) || ''}">
-                    </div>
-                    <div class="form-group">
-                        <label>Jornada</label>
-                        <input type="number" id="partido_jornada" value="${data?.jornada || '1'}">
-                    </div>
+                    <div class="form-group"><label>Equipo Local</label><select id="partido_local">${equiposList.map(e => `<option value="${e.id}" ${data?.equipo_local_id === e.id ? 'selected' : ''}>${e.nombre}</option>`).join('')}</select></div>
+                    <div class="form-group"><label>Equipo Visitante</label><select id="partido_visitante">${equiposList.map(e => `<option value="${e.id}" ${data?.equipo_visitante_id === e.id ? 'selected' : ''}>${e.nombre}</option>`).join('')}</select></div>
+                    <div class="form-group"><label>Grupo</label><select id="partido_grupo"><option value="">Sin grupo</option>${gruposList.map(g => `<option value="${g.id}" ${data?.grupo_id === g.id ? 'selected' : ''}>Grupo ${g.nombre}</option>`).join('')}</select></div>
+                    <div class="form-group"><label>Fecha y Hora</label><input type="datetime-local" id="partido_fecha" value="${data?.fecha_partido?.slice(0, 16) || ''}"></div>
+                    <div class="form-group"><label>Jornada</label><input type="number" id="partido_jornada" value="${data?.jornada || '1'}"></div>
                 `;
             }
-            
             modal.style.display = 'flex';
         }
         
@@ -1395,28 +1216,21 @@
                     const response = await fetch(`${API_URL}${endpoint}`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            partido_id: currentEditId,
-                            resultado_local: parseInt(golesLocal),
-                            resultado_visitante: parseInt(golesVisitante)
-                        })
+                        body: JSON.stringify({ partido_id: currentEditId, resultado_local: parseInt(golesLocal), resultado_visitante: parseInt(golesVisitante) })
                     });
                     
-                    const data = await response.json();
-                    
                     if (response.ok) {
-                        mostrarToast(data.message || 'Resultado guardado correctamente', 'success');
+                        mostrarToast('Resultado guardado', 'success');
                         await cargarResultados();
                         await cargarApuestas();
                         await cargarPartidos();
                         await cargarEstadisticas();
-                        await cargarUsuarios();
                         closeModal();
                     } else {
-                        mostrarToast(data.error || 'Error al guardar', 'error');
+                        mostrarToast('Error', 'error');
                     }
                 } catch (error) {
-                    mostrarToast('Error de conexión', 'error');
+                    mostrarToast('Error', 'error');
                 }
                 return;
             }
@@ -1424,10 +1238,7 @@
             try {
                 if (currentModalType === 'grupo') {
                     const nombre = document.getElementById('grupo_nombre').value.trim().toUpperCase();
-                    if (!nombre) {
-                        mostrarToast('Ingresa el nombre del grupo', 'error');
-                        return;
-                    }
+                    if (!nombre) { mostrarToast('Ingresa el nombre', 'error'); return; }
                     
                     const response = await fetch(`${API_URL}/api/admin/grupos`, {
                         method: currentEditId ? 'PUT' : 'POST',
@@ -1440,26 +1251,17 @@
                         await cargarGrupos();
                         await cargarEquipos();
                         closeModal();
-                    } else {
-                        const error = await response.json();
-                        mostrarToast(error.error || 'Error', 'error');
                     }
                 } else if (currentModalType === 'equipo') {
                     const nombre = document.getElementById('equipo_nombre').value.trim();
                     const grupo_id = document.getElementById('equipo_grupo_id').value;
-                    const bandera_url = document.getElementById('equipo_bandera').value;
                     
-                    if (!nombre) {
-                        mostrarToast('Ingresa el nombre del equipo', 'error');
-                        return;
-                    }
+                    if (!nombre) { mostrarToast('Ingresa el nombre', 'error'); return; }
                     
                     const response = await fetch(`${API_URL}/api/admin/equipos`, {
                         method: currentEditId ? 'PUT' : 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(currentEditId ? 
-                            { id: currentEditId, nombre, grupo_id: grupo_id ? parseInt(grupo_id) : null, bandera_url } : 
-                            { nombre, grupo_id: grupo_id ? parseInt(grupo_id) : null, bandera_url })
+                        body: JSON.stringify(currentEditId ? { id: currentEditId, nombre, grupo_id: grupo_id ? parseInt(grupo_id) : null } : { nombre, grupo_id: grupo_id ? parseInt(grupo_id) : null })
                     });
                     
                     if (response.ok) {
@@ -1467,9 +1269,6 @@
                         await cargarEquipos();
                         await cargarPartidos();
                         closeModal();
-                    } else {
-                        const error = await response.json();
-                        mostrarToast(error.error || 'Error', 'error');
                     }
                 } else if (currentModalType === 'partido') {
                     const equipo_local_id = document.getElementById('partido_local').value;
@@ -1479,7 +1278,7 @@
                     const jornada = document.getElementById('partido_jornada').value;
                     
                     if (!equipo_local_id || !equipo_visitante_id || !fecha_partido) {
-                        mostrarToast('Completa todos los campos requeridos', 'error');
+                        mostrarToast('Completa todos los campos', 'error');
                         return;
                     }
                     
@@ -1496,13 +1295,10 @@
                         await cargarPartidos();
                         await cargarResultados();
                         closeModal();
-                    } else {
-                        const error = await response.json();
-                        mostrarToast(error.error || 'Error', 'error');
                     }
                 }
             } catch (error) {
-                mostrarToast('Error de conexión: ' + error.message, 'error');
+                mostrarToast('Error de conexión', 'error');
             }
         }
         
@@ -1512,7 +1308,6 @@
             document.getElementById(`panel-${panel}`).classList.add('active');
             if (event && event.target) event.target.classList.add('active');
             
-            // Recargar el panel activo
             if (panel === 'apuestas') cargarApuestas();
             else if (panel === 'grupos') cargarGrupos();
             else if (panel === 'equipos') cargarEquipos();
@@ -1528,12 +1323,8 @@
             setTimeout(() => {
                 toast.style.display = 'none';
                 toast.className = 'toast';
-            }, 4000);
+            }, 3000);
         }
-        
-        // ============================================
-        // INICIALIZACIÓN
-        // ============================================
         
         checkSession();
     </script>
