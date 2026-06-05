@@ -90,6 +90,8 @@
         table {
             width: 100%;
             border-collapse: collapse;
+            overflow-x: auto;
+            display: block;
         }
         
         th, td {
@@ -186,10 +188,15 @@
             display: block;
         }
         
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        
         @media (max-width: 768px) {
             .admin-container { padding: 10px; }
-            table { font-size: 12px; }
-            th, td { padding: 8px; }
+            th, td { padding: 8px; font-size: 12px; }
         }
     </style>
 </head>
@@ -221,31 +228,31 @@
             
             <div id="panel-apuestas" class="panel active">
                 <h3>Apuestas de Usuarios</h3>
-                <div id="apuestas-table"></div>
+                <div id="apuestas-table"><div class="loading">Cargando apuestas...</div></div>
             </div>
             
             <div id="panel-equipos" class="panel">
                 <button class="btn btn-primary" onclick="openModal('equipo')">+ Agregar Equipo</button>
-                <div id="equipos-table"></div>
+                <div id="equipos-table"><div class="loading">Cargando equipos...</div></div>
             </div>
             
             <div id="panel-grupos" class="panel">
                 <button class="btn btn-primary" onclick="openModal('grupo')">+ Agregar Grupo</button>
-                <div id="grupos-table"></div>
+                <div id="grupos-table"><div class="loading">Cargando grupos...</div></div>
             </div>
             
             <div id="panel-partidos" class="panel">
                 <button class="btn btn-primary" onclick="openModal('partido')">+ Agregar Partido</button>
-                <div id="partidos-table"></div>
+                <div id="partidos-table"><div class="loading">Cargando partidos...</div></div>
             </div>
             
             <div id="panel-resultados" class="panel">
                 <h3>Cargar Resultados</h3>
-                <div id="resultados-partidos"></div>
+                <div id="resultados-partidos"><div class="loading">Cargando partidos pendientes...</div></div>
             </div>
             
             <div id="panel-usuarios" class="panel">
-                <div id="usuarios-table"></div>
+                <div id="usuarios-table"><div class="loading">Cargando usuarios...</div></div>
             </div>
         </div>
     </div>
@@ -262,13 +269,23 @@
     <div id="toast" class="toast"></div>
     
     <script>
+        // CAMBIA ESTA URL POR LA DE TU WORKER
         const API_URL = 'https://quiniela-mundial.thecrow859.workers.dev';
-        let currentModalType = '';
+        
         let equiposList = [];
         let gruposList = [];
         
         async function verificarAdmin() {
             const password = document.getElementById('adminPass').value;
+            const loginError = document.getElementById('loginError');
+            
+            if (!password) {
+                loginError.textContent = 'Ingresa la contraseña';
+                return;
+            }
+            
+            loginError.textContent = '';
+            
             try {
                 const response = await fetch(`${API_URL}/api/admin/verificar`, {
                     method: 'POST',
@@ -281,10 +298,11 @@
                     document.getElementById('adminPanel').style.display = 'block';
                     cargarTodo();
                 } else {
-                    document.getElementById('loginError').textContent = 'Contraseña incorrecta';
+                    const error = await response.json();
+                    loginError.textContent = error.error || 'Contraseña incorrecta';
                 }
             } catch (error) {
-                document.getElementById('loginError').textContent = 'Error de conexión';
+                loginError.textContent = 'Error de conexión: ' + error.message;
             }
         }
         
@@ -302,36 +320,53 @@
             try {
                 const response = await fetch(`${API_URL}/api/admin/estadisticas`);
                 const stats = await response.json();
+                
                 document.getElementById('stats').innerHTML = `
-                    <div class="stat-card"><div class="stat-number">${stats.total_usuarios}</div><div>Usuarios</div></div>
-                    <div class="stat-card"><div class="stat-number">${stats.total_apuestas}</div><div>Apuestas</div></div>
-                    <div class="stat-card"><div class="stat-number">${stats.partidos_finalizados}/${stats.total_partidos}</div><div>Partidos</div></div>
-                    <div class="stat-card"><div class="stat-number">${stats.porcentaje_finalizado}%</div><div>Completado</div></div>
+                    <div class="stat-card"><div class="stat-number">${stats.total_usuarios || 0}</div><div>Usuarios</div></div>
+                    <div class="stat-card"><div class="stat-number">${stats.total_apuestas || 0}</div><div>Apuestas</div></div>
+                    <div class="stat-card"><div class="stat-number">${stats.partidos_finalizados || 0}/${stats.total_partidos || 0}</div><div>Partidos</div></div>
+                    <div class="stat-card"><div class="stat-number">${stats.porcentaje_finalizado || 0}%</div><div>Completado</div></div>
                 `;
             } catch (error) {
-                console.error('Error:', error);
+                console.error('Error cargando estadísticas:', error);
+                document.getElementById('stats').innerHTML = '<div class="stat-card">Error al cargar</div>';
             }
         }
         
         async function cargarApuestas() {
             try {
                 const response = await fetch(`${API_URL}/api/admin/apuestas`);
-                const apuestas = await response.json();
+                const data = await response.json();
+                
+                // Validar que sea un array
+                const apuestas = Array.isArray(data) ? data : [];
+                
+                if (apuestas.length === 0) {
+                    document.getElementById('apuestas-table').innerHTML = '<div class="loading">No hay apuestas registradas</div>';
+                    return;
+                }
                 
                 const html = `
-                    <table>
+                    <table style="width:100%; border-collapse: collapse;">
                         <thead>
-                            <tr><th>Usuario</th><th>Partido</th><th>Apuesta</th><th>Resultado Real</th><th>Puntos</th><th>Fecha</th></tr>
+                            <tr style="background: #533483; color: white;">
+                                <th style="padding: 10px;">Usuario</th>
+                                <th style="padding: 10px;">Partido</th>
+                                <th style="padding: 10px;">Apuesta</th>
+                                <th style="padding: 10px;">Resultado Real</th>
+                                <th style="padding: 10px;">Puntos</th>
+                                <th style="padding: 10px;">Fecha</th>
+                            </tr>
                         </thead>
                         <tbody>
                             ${apuestas.map(a => `
-                                <tr>
-                                    <td>${a.usuario_nombre}<br><small>${a.email}</small></td>
-                                    <td>${a.equipo_local} vs ${a.equipo_visitante}</td>
-                                    <td><strong>${a.goles_local} - ${a.goles_visitante}</strong></td>
-                                    <td>${a.finalizado ? `${a.resultado_local} - ${a.resultado_visitante}` : 'Pendiente'}</td>
-                                    <td style="color: ${a.puntos_obtenidos > 0 ? 'green' : 'red'}; font-weight: bold;">${a.puntos_obtenidos}</td>
-                                    <td>${new Date(a.fecha_apuesta).toLocaleDateString()}</td>
+                                <tr style="border-bottom: 1px solid #ddd;">
+                                    <td style="padding: 10px;">${a.usuario_nombre || '?'}<br><small>${a.email || ''}</small></td>
+                                    <td style="padding: 10px;">${a.equipo_local || '?'} vs ${a.equipo_visitante || '?'}</td>
+                                    <td style="padding: 10px;"><strong>${a.goles_local || 0} - ${a.goles_visitante || 0}</strong></td>
+                                    <td style="padding: 10px;">${a.finalizado ? `${a.resultado_local || 0} - ${a.resultado_visitante || 0}` : 'Pendiente'}</td>
+                                    <td style="padding: 10px; color: ${(a.puntos_obtenidos || 0) > 0 ? 'green' : 'red'}; font-weight: bold;">${a.puntos_obtenidos || 0}</td>
+                                    <td style="padding: 10px;">${a.fecha_apuesta ? new Date(a.fecha_apuesta).toLocaleDateString() : '-'}</td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -340,25 +375,41 @@
                 document.getElementById('apuestas-table').innerHTML = html;
             } catch (error) {
                 console.error('Error:', error);
+                document.getElementById('apuestas-table').innerHTML = '<div class="loading">Error al cargar apuestas</div>';
             }
         }
         
         async function cargarEquipos() {
             try {
                 const response = await fetch(`${API_URL}/api/admin/equipos`);
-                equiposList = await response.json();
+                const data = await response.json();
+                
+                // Validar que sea un array
+                equiposList = Array.isArray(data) ? data : [];
+                
+                if (equiposList.length === 0) {
+                    document.getElementById('equipos-table').innerHTML = '<div class="loading">No hay equipos registrados</div>';
+                    return;
+                }
                 
                 const html = `
                     <button class="btn btn-primary" onclick="openModal('equipo')">+ Nuevo Equipo</button>
-                    <table style="margin-top: 15px;">
-                        <thead><tr><th>ID</th><th>Equipo</th><th>Grupo</th><th>Acciones</th></tr></thead>
+                    <table style="width:100%; margin-top: 15px; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #533483; color: white;">
+                                <th style="padding: 10px;">ID</th>
+                                <th style="padding: 10px;">Equipo</th>
+                                <th style="padding: 10px;">Grupo</th>
+                                <th style="padding: 10px;">Acciones</th>
+                            </tr>
+                        </thead>
                         <tbody>
                             ${equiposList.map(e => `
-                                <tr>
-                                    <td>${e.id}</td>
-                                    <td>${e.nombre}</td>
-                                    <td>${e.grupo_nombre || '-'}</td>
-                                    <td>
+                                <tr style="border-bottom: 1px solid #ddd;">
+                                    <td style="padding: 10px;">${e.id || '?'}</td>
+                                    <td style="padding: 10px;">${e.nombre || '?'}</td>
+                                    <td style="padding: 10px;">${e.grupo_nombre || '-'}</td>
+                                    <td style="padding: 10px;">
                                         <button class="btn btn-primary" onclick="editarEquipo(${e.id})">✏️</button>
                                         <button class="btn btn-danger" onclick="eliminarEquipo(${e.id})">🗑️</button>
                                     </td>
@@ -370,21 +421,38 @@
                 document.getElementById('equipos-table').innerHTML = html;
             } catch (error) {
                 console.error('Error:', error);
+                document.getElementById('equipos-table').innerHTML = '<div class="loading">Error al cargar equipos</div>';
             }
         }
         
         async function cargarGrupos() {
             try {
                 const response = await fetch(`${API_URL}/api/admin/grupos`);
-                gruposList = await response.json();
+                const data = await response.json();
+                
+                // Validar que sea un array
+                gruposList = Array.isArray(data) ? data : [];
+                
+                if (gruposList.length === 0) {
+                    document.getElementById('grupos-table').innerHTML = '<div class="loading">No hay grupos registrados</div>';
+                    return;
+                }
                 
                 const html = `
                     <button class="btn btn-primary" onclick="openModal('grupo')">+ Nuevo Grupo</button>
-                    <table style="margin-top: 15px;">
-                        <thead><tr><th>ID</th><th>Grupo</th></tr></thead>
+                    <table style="width:100%; margin-top: 15px; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #533483; color: white;">
+                                <th style="padding: 10px;">ID</th>
+                                <th style="padding: 10px;">Grupo</th>
+                            </tr>
+                        </thead>
                         <tbody>
                             ${gruposList.map(g => `
-                                <tr><td>${g.id}</td><td>Grupo ${g.nombre}</td></tr>
+                                <tr style="border-bottom: 1px solid #ddd;">
+                                    <td style="padding: 10px;">${g.id || '?'}</td>
+                                    <td style="padding: 10px;">Grupo ${g.nombre || '?'}</td>
+                                </tr>
                             `).join('')}
                         </tbody>
                     </table>
@@ -392,27 +460,45 @@
                 document.getElementById('grupos-table').innerHTML = html;
             } catch (error) {
                 console.error('Error:', error);
+                document.getElementById('grupos-table').innerHTML = '<div class="loading">Error al cargar grupos</div>';
             }
         }
         
         async function cargarPartidos() {
             try {
                 const response = await fetch(`${API_URL}/api/admin/partidos`);
-                const partidos = await response.json();
+                const data = await response.json();
+                
+                // Validar que sea un array
+                const partidos = Array.isArray(data) ? data : [];
+                
+                if (partidos.length === 0) {
+                    document.getElementById('partidos-table').innerHTML = '<div class="loading">No hay partidos registrados</div>';
+                    return;
+                }
                 
                 const html = `
                     <button class="btn btn-primary" onclick="openModal('partido')">+ Nuevo Partido</button>
-                    <table style="margin-top: 15px;">
-                        <thead><tr><th>Local</th><th>Visitante</th><th>Grupo</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead>
+                    <table style="width:100%; margin-top: 15px; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #533483; color: white;">
+                                <th style="padding: 10px;">Local</th>
+                                <th style="padding: 10px;">Visitante</th>
+                                <th style="padding: 10px;">Grupo</th>
+                                <th style="padding: 10px;">Fecha</th>
+                                <th style="padding: 10px;">Estado</th>
+                                <th style="padding: 10px;">Acciones</th>
+                            </tr>
+                        </thead>
                         <tbody>
                             ${partidos.map(p => `
-                                <tr>
-                                    <td>${p.equipo_local_nombre}</td>
-                                    <td>${p.equipo_visitante_nombre}</td>
-                                    <td>${p.grupo_nombre || '-'}</td>
-                                    <td>${new Date(p.fecha_partido).toLocaleString()}</td>
-                                    <td>${p.finalizado ? '✅ Finalizado' : '⏳ Pendiente'}</td>
-                                    <td>
+                                <tr style="border-bottom: 1px solid #ddd;">
+                                    <td style="padding: 10px;">${p.equipo_local_nombre || '?'}</td>
+                                    <td style="padding: 10px;">${p.equipo_visitante_nombre || '?'}</td>
+                                    <td style="padding: 10px;">${p.grupo_nombre || '-'}</td>
+                                    <td style="padding: 10px;">${p.fecha_partido ? new Date(p.fecha_partido).toLocaleString() : '-'}</td>
+                                    <td style="padding: 10px;">${p.finalizado ? '✅ Finalizado' : '⏳ Pendiente'}</td>
+                                    <td style="padding: 10px;">
                                         <button class="btn btn-primary" onclick="editarPartido(${p.id})">✏️</button>
                                     </td>
                                 </tr>
@@ -423,29 +509,46 @@
                 document.getElementById('partidos-table').innerHTML = html;
             } catch (error) {
                 console.error('Error:', error);
+                document.getElementById('partidos-table').innerHTML = '<div class="loading">Error al cargar partidos</div>';
             }
         }
         
         async function cargarResultadosPendientes() {
             try {
                 const response = await fetch(`${API_URL}/api/admin/partidos`);
-                const partidos = await response.json();
+                const data = await response.json();
+                
+                // Validar que sea un array
+                const partidos = Array.isArray(data) ? data : [];
                 const pendientes = partidos.filter(p => !p.finalizado);
                 
+                if (pendientes.length === 0) {
+                    document.getElementById('resultados-partidos').innerHTML = '<div class="loading">Todos los partidos ya están finalizados</div>';
+                    return;
+                }
+                
                 const html = `
-                    <table>
-                        <thead><tr><th>Local</th><th>Visitante</th><th>Fecha</th><th>Resultado</th><th>Acción</th></tr></thead>
+                    <table style="width:100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #533483; color: white;">
+                                <th style="padding: 10px;">Local</th>
+                                <th style="padding: 10px;">Visitante</th>
+                                <th style="padding: 10px;">Fecha</th>
+                                <th style="padding: 10px;">Resultado</th>
+                                <th style="padding: 10px;">Acción</th>
+                            </tr>
+                        </thead>
                         <tbody>
                             ${pendientes.map(p => `
-                                <tr>
-                                    <td>${p.equipo_local_nombre}</td>
-                                    <td>${p.equipo_visitante_nombre}</td>
-                                    <td>${new Date(p.fecha_partido).toLocaleString()}</td>
-                                    <td>
+                                <tr style="border-bottom: 1px solid #ddd;">
+                                    <td style="padding: 10px;">${p.equipo_local_nombre || '?'}</td>
+                                    <td style="padding: 10px;">${p.equipo_visitante_nombre || '?'}</td>
+                                    <td style="padding: 10px;">${p.fecha_partido ? new Date(p.fecha_partido).toLocaleString() : '-'}</td>
+                                    <td style="padding: 10px;">
                                         <input type="number" id="res_local_${p.id}" placeholder="0" style="width: 60px;"> -
                                         <input type="number" id="res_visit_${p.id}" placeholder="0" style="width: 60px;">
                                     </td>
-                                    <td>
+                                    <td style="padding: 10px;">
                                         <button class="btn btn-success" onclick="cargarResultado(${p.id})">Cargar</button>
                                     </td>
                                 </tr>
@@ -453,28 +556,45 @@
                         </tbody>
                     </table>
                 `;
-                document.getElementById('resultados-partidos').innerHTML = html || '<p>Todos los partidos ya están finalizados</p>';
+                document.getElementById('resultados-partidos').innerHTML = html;
             } catch (error) {
                 console.error('Error:', error);
+                document.getElementById('resultados-partidos').innerHTML = '<div class="loading">Error al cargar partidos</div>';
             }
         }
         
         async function cargarUsuarios() {
             try {
                 const response = await fetch(`${API_URL}/api/ranking`);
-                const usuarios = await response.json();
+                const data = await response.json();
+                
+                // Validar que sea un array
+                const usuarios = Array.isArray(data) ? data : [];
+                
+                if (usuarios.length === 0) {
+                    document.getElementById('usuarios-table').innerHTML = '<div class="loading">No hay usuarios registrados</div>';
+                    return;
+                }
                 
                 const html = `
-                    <table>
-                        <thead><tr><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Ciudad</th><th>Puntos</th></tr></thead>
+                    <table style="width:100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #533483; color: white;">
+                                <th style="padding: 10px;">Nombre</th>
+                                <th style="padding: 10px;">Email</th>
+                                <th style="padding: 10px;">Teléfono</th>
+                                <th style="padding: 10px;">Ciudad</th>
+                                <th style="padding: 10px;">Puntos</th>
+                            </tr>
+                        </thead>
                         <tbody>
                             ${usuarios.map(u => `
-                                <tr>
-                                    <td>${u.nombre}</td>
-                                    <td>${u.email}</td>
-                                    <td>${u.telefono || '-'}</td>
-                                    <td>${u.ciudad || '-'}</td>
-                                    <td><strong>${u.total_puntos}</strong></td>
+                                <tr style="border-bottom: 1px solid #ddd;">
+                                    <td style="padding: 10px;">${u.nombre || '?'}</td>
+                                    <td style="padding: 10px;">${u.email || '-'}</td>
+                                    <td style="padding: 10px;">${u.telefono || '-'}</td>
+                                    <td style="padding: 10px;">${u.ciudad || '-'}</td>
+                                    <td style="padding: 10px;"><strong>${u.total_puntos || 0}</strong></td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -483,6 +603,7 @@
                 document.getElementById('usuarios-table').innerHTML = html;
             } catch (error) {
                 console.error('Error:', error);
+                document.getElementById('usuarios-table').innerHTML = '<div class="loading">Error al cargar usuarios</div>';
             }
         }
         
@@ -512,9 +633,12 @@
                     await cargarApuestas();
                     await cargarPartidos();
                     await cargarEstadisticas();
+                } else {
+                    const error = await response.json();
+                    mostrarToast(error.error || 'Error al cargar resultado', 'error');
                 }
             } catch (error) {
-                mostrarToast('Error al cargar resultado', 'error');
+                mostrarToast('Error de conexión', 'error');
             }
         }
         
@@ -558,6 +682,11 @@
                 const grupo_id = document.getElementById('equipo_grupo_id').value;
                 const bandera_url = document.getElementById('equipo_bandera').value;
                 
+                if (!nombre) {
+                    mostrarToast('Ingresa el nombre del equipo', 'error');
+                    return;
+                }
+                
                 await fetch(`${API_URL}/api/admin/equipos`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -566,6 +695,12 @@
                 mostrarToast('Equipo agregado', 'success');
             } else if (currentModalType === 'grupo') {
                 const nombre = document.getElementById('grupo_nombre').value;
+                
+                if (!nombre) {
+                    mostrarToast('Ingresa el nombre del grupo', 'error');
+                    return;
+                }
+                
                 await fetch(`${API_URL}/api/admin/grupos`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -578,6 +713,11 @@
                 const grupo_id = document.getElementById('partido_grupo').value;
                 const fecha_partido = document.getElementById('partido_fecha').value;
                 const jornada = document.getElementById('partido_jornada').value;
+                
+                if (!equipo_local_id || !equipo_visitante_id || !fecha_partido) {
+                    mostrarToast('Completa todos los campos requeridos', 'error');
+                    return;
+                }
                 
                 await fetch(`${API_URL}/api/admin/partidos`, {
                     method: 'POST',
@@ -603,7 +743,7 @@
             document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(`panel-${panel}`).classList.add('active');
-            event.target.classList.add('active');
+            if (event && event.target) event.target.classList.add('active');
         }
         
         function mostrarToast(msg, tipo) {
@@ -615,6 +755,26 @@
                 toast.className = 'toast';
             }, 3000);
         }
+        
+        // Funciones placeholder para evitar errores
+        function editarEquipo(id) {
+            const equipo = equiposList.find(e => e.id === id);
+            if (equipo) openModal('equipo', equipo);
+        }
+        
+        function eliminarEquipo(id) {
+            if (confirm('¿Eliminar este equipo?')) {
+                // Implementar eliminación
+                mostrarToast('Función en desarrollo', 'error');
+            }
+        }
+        
+        function editarPartido(id) {
+            // Implementar edición
+            mostrarToast('Función en desarrollo', 'error');
+        }
+        
+        let currentModalType = '';
     </script>
 </body>
 </html>
