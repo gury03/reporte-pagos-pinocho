@@ -44,6 +44,30 @@
             gap: 15px;
         }
         
+        .proveedor-selector {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .proveedor-selector select {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: none;
+            background: #533483;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .proveedor-selector select option {
+            background: white;
+            color: #333;
+        }
+        
         .auto-refresh-status {
             background: rgba(255,255,255,0.2);
             padding: 5px 12px;
@@ -364,6 +388,16 @@
                         <p>Gestiona grupos, equipos, partidos, resultados y apuestas</p>
                     </div>
                     <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <div class="proveedor-selector">
+                            <i class="fas fa-building"></i>
+                            <span>Proveedor:</span>
+                            <select id="selectProveedor" onchange="cambiarProveedor()">
+                                <option value="adjuntas">📡 Adjuntas</option>
+                                <option value="fiberconnect">🔌 FiberConnect</option>
+                                <option value="fibex">🌐 Fibex</option>
+                                <option value="all">📊 Todos (Global)</option>
+                            </select>
+                        </div>
                         <div class="auto-refresh-status active" id="autoRefreshStatus">
                             <i class="fas fa-sync-alt fa-fw"></i>
                             <span>Auto-refresh: 30s</span>
@@ -398,7 +432,7 @@
             
             <div id="panel-apuestas" class="panel active">
                 <div class="panel-header">
-                    <h3>📊 Apuestas de Usuarios</h3>
+                    <h3>📊 Apuestas de Usuarios <span id="proveedorBadge" style="background:#e94560; padding:2px 10px; border-radius:20px; font-size:12px;"></span></h3>
                 </div>
                 <div class="table-responsive">
                     <div id="apuestas-table"><div class="loading">Cargando apuestas...</div></div>
@@ -445,7 +479,7 @@
             
             <div id="panel-usuarios" class="panel">
                 <div class="panel-header">
-                    <h3>👥 Usuarios Registrados</h3>
+                    <h3>👥 Usuarios Registrados <span id="usuariosProveedorBadge" style="background:#e94560; padding:2px 10px; border-radius:20px; font-size:12px;"></span></h3>
                 </div>
                 <div class="table-responsive">
                     <div id="usuarios-table"><div class="loading">Cargando usuarios...</div></div>
@@ -464,6 +498,15 @@
                 ⚠️ Esta acción ELIMINARÁ usuarios, apuestas y puntajes.<br>
                 Los grupos, equipos y partidos NO se verán afectados.
             </p>
+            <div class="form-group">
+                <label>Proveedor a reiniciar</label>
+                <select id="reinicioProveedor">
+                    <option value="adjuntas">Adjuntas</option>
+                    <option value="fiberconnect">FiberConnect</option>
+                    <option value="fibex">Fibex</option>
+                    <option value="all">Todos (Global)</option>
+                </select>
+            </div>
             <div class="form-group">
                 <label>Contraseña</label>
                 <input type="password" id="reinicioPassword" placeholder="Contraseña">
@@ -498,8 +541,8 @@
         // ============================================
         // CONFIGURACIÓN
         // ============================================
-        const API_URL = 'https://quiniela-mundial.thecrow859.workers.dev';
-        
+        const API_URL = 'https://tuquinielaisp.net';
+        let proveedorActual = 'adjuntas';
         let equiposList = [];
         let gruposList = [];
         let currentModalType = '';
@@ -507,19 +550,47 @@
         let autoRefreshInterval = null;
         let ultimosConteos = { usuarios: 0, apuestas: 0, partidosFinalizados: 0 };
         
+        // Función para obtener URL con proveedor
+        function getApiUrl(endpoint) {
+            if (proveedorActual === 'all') {
+                return `${API_URL}/api/admin${endpoint}?proveedor=all`;
+            }
+            return `${API_URL}/${proveedorActual}${endpoint}`;
+        }
+        
+        // Función para obtener estadísticas según proveedor
+        async function fetchStats() {
+            if (proveedorActual === 'all') {
+                const response = await fetch(`${API_URL}/api/admin/estadisticas?proveedor=all`);
+                return await response.json();
+            } else {
+                const response = await fetch(`${API_URL}/api/admin/estadisticas?proveedor=${proveedorActual}`);
+                return await response.json();
+            }
+        }
+        
         // Función segura para obtener datos de API
         async function fetchAPI(endpoint, options = {}) {
             try {
-                const response = await fetch(`${API_URL}${endpoint}`, options);
+                const url = getApiUrl(endpoint);
+                const response = await fetch(url, options);
                 if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    throw new Error(`HTTP ${response.status}`);
                 }
-                const data = await response.json();
-                return Array.isArray(data) ? data : (data.results || []);
+                return await response.json();
             } catch (error) {
                 console.error(`Error en ${endpoint}:`, error);
                 return [];
             }
+        }
+        
+        // Cambiar proveedor
+        async function cambiarProveedor() {
+            proveedorActual = document.getElementById('selectProveedor').value;
+            document.getElementById('proveedorBadge').innerHTML = proveedorActual === 'all' ? '📊 Todos los proveedores' : `📡 ${proveedorActual.toUpperCase()}`;
+            document.getElementById('usuariosProveedorBadge').innerHTML = proveedorActual === 'all' ? '📊 Todos los proveedores' : `📡 ${proveedorActual.toUpperCase()}`;
+            await cargarTodo();
+            mostrarToast(`✅ Cambiado a proveedor: ${proveedorActual === 'all' ? 'Todos' : proveedorActual}`, 'success');
         }
         
         // ============================================
@@ -549,8 +620,7 @@
         
         async function verificarCambios() {
             try {
-                const response = await fetch(`${API_URL}/api/admin/estadisticas`);
-                const stats = await response.json();
+                const stats = await fetchStats();
                 const nuevosConteos = {
                     usuarios: stats.total_usuarios || 0,
                     apuestas: stats.total_apuestas || 0,
@@ -591,7 +661,7 @@
         async function sincronizarMundial() {
             const password = localStorage.getItem('admin_password');
             if (!password) { mostrarToast('No hay sesión activa', 'error'); return; }
-            if (!confirm('⚠️ ¿Sincronizar datos del Mundial?\n\nSe cargarán grupos, países participantes y partidos.')) return;
+            if (!confirm('⚠️ ¿Sincronizar datos del Mundial?\n\nSe cargarán grupos, países participantes y partidos.\n\nEsta acción es GLOBAL y afecta a todos los proveedores.')) return;
             mostrarToast('🌍 Sincronizando...', 'info');
             
             try {
@@ -663,21 +733,17 @@
             await cargarResultados();
             await cargarUsuarios();
             
-            try {
-                const response = await fetch(`${API_URL}/api/admin/estadisticas`);
-                const stats = await response.json();
-                ultimosConteos = {
-                    usuarios: stats.total_usuarios || 0,
-                    apuestas: stats.total_apuestas || 0,
-                    partidosFinalizados: stats.partidos_finalizados || 0
-                };
-            } catch(e) { console.error(e); }
+            const stats = await fetchStats();
+            ultimosConteos = {
+                usuarios: stats.total_usuarios || 0,
+                apuestas: stats.total_apuestas || 0,
+                partidosFinalizados: stats.partidos_finalizados || 0
+            };
         }
         
         async function cargarEstadisticas() {
             try {
-                const response = await fetch(`${API_URL}/api/admin/estadisticas`);
-                const stats = await response.json();
+                const stats = await fetchStats();
                 document.getElementById('stats').innerHTML = `
                     <div class="stat-card"><div class="stat-number">${stats.total_usuarios || 0}</div><div>Usuarios</div></div>
                     <div class="stat-card"><div class="stat-number">${stats.total_apuestas || 0}</div><div>Apuestas</div></div>
@@ -734,7 +800,8 @@
         
         async function cargarGrupos() {
             try {
-                gruposList = await fetchAPI('/api/admin/grupos');
+                const response = await fetch(`${API_URL}/api/admin/grupos`);
+                gruposList = await response.json();
                 const container = document.getElementById('grupos-table');
                 
                 if (!gruposList || gruposList.length === 0) {
@@ -751,10 +818,7 @@
                                 <tr>
                                     <td>${g.id}</td>
                                     <td><strong>Grupo ${g.nombre}</strong></td>
-                                    <td><div class="btn-group">
-                                        <button class="btn btn-warning" onclick="editarGrupo(${g.id})">✏️ Editar</button>
-                                        <button class="btn btn-danger" onclick="eliminarGrupo(${g.id})">🗑️ Eliminar</button>
-                                    </div></td>
+                                    <td><div class="btn-group"><button class="btn btn-warning" onclick="editarGrupo(${g.id})">✏️ Editar</button><button class="btn btn-danger" onclick="eliminarGrupo(${g.id})">🗑️ Eliminar</button></div></td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -783,7 +847,8 @@
         
         async function cargarEquipos() {
             try {
-                equiposList = await fetchAPI('/api/admin/equipos');
+                const response = await fetch(`${API_URL}/api/admin/equipos`);
+                equiposList = await response.json();
                 const container = document.getElementById('equipos-table');
                 
                 if (!equiposList || equiposList.length === 0) {
@@ -800,10 +865,7 @@
                                 <tr>
                                     <td><strong>${e.nombre}</strong></td>
                                     <td>${e.grupo_nombre || 'Sin grupo'}</td>
-                                    <td><div class="btn-group">
-                                        <button class="btn btn-warning" onclick="editarEquipo(${e.id})">✏️ Editar</button>
-                                        <button class="btn btn-danger" onclick="eliminarEquipo(${e.id})">🗑️ Eliminar</button>
-                                    </div></td>
+                                    <td><div class="btn-group"><button class="btn btn-warning" onclick="editarEquipo(${e.id})">✏️ Editar</button><button class="btn btn-danger" onclick="eliminarEquipo(${e.id})">🗑️ Eliminar</button></div></td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -832,7 +894,8 @@
         
         async function cargarPartidos() {
             try {
-                const partidos = await fetchAPI('/api/admin/partidos');
+                const response = await fetch(`${API_URL}/api/admin/partidos`);
+                const partidos = await response.json();
                 const container = document.getElementById('partidos-table');
                 
                 if (!partidos || partidos.length === 0) {
@@ -852,10 +915,7 @@
                                     <td>${p.grupo_nombre || '-'}</td>
                                     <td>${new Date(p.fecha_partido).toLocaleString()}</td>
                                     <td>${p.finalizado ? '✅ Finalizado' : '⏳ Pendiente'}</td>
-                                    <td><div class="btn-group">
-                                        <button class="btn btn-warning" onclick="editarPartido(${p.id})">✏️ Editar</button>
-                                        ${!p.finalizado ? `<button class="btn btn-danger" onclick="eliminarPartido(${p.id})">🗑️ Eliminar</button>` : ''}
-                                    </div></td>
+                                    <td><div class="btn-group"><button class="btn btn-warning" onclick="editarPartido(${p.id})">✏️ Editar</button>${!p.finalizado ? `<button class="btn btn-danger" onclick="eliminarPartido(${p.id})">🗑️ Eliminar</button>` : ''}</div></td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -867,7 +927,8 @@
         }
         
         async function editarPartido(id) {
-            const partidos = await fetchAPI('/api/admin/partidos');
+            const response = await fetch(`${API_URL}/api/admin/partidos`);
+            const partidos = await response.json();
             const p = partidos.find(p => p.id === id);
             if (p) { currentEditId = id; openModal('partido', p); }
         }
@@ -885,7 +946,8 @@
         
         async function cargarResultados() {
             try {
-                const resultados = await fetchAPI('/api/admin/todos-resultados');
+                const response = await fetch(`${API_URL}/api/admin/todos-resultados`);
+                const resultados = await response.json();
                 const container = document.getElementById('resultados-container');
                 
                 if (!resultados || resultados.length === 0) {
@@ -1004,7 +1066,7 @@
         
         async function cargarUsuarios() {
             try {
-                const usuarios = await fetchAPI('/api/ranking');
+                const usuarios = await fetchAPI('/api/admin/usuarios');
                 const container = document.getElementById('usuarios-table');
                 
                 if (!usuarios || usuarios.length === 0) {
@@ -1037,7 +1099,7 @@
         async function eliminarUsuario(id) {
             if (!confirm('¿Eliminar este usuario?')) return;
             try {
-                const response = await fetch(`${API_URL}/api/admin/usuarios?id=${id}`, { method: 'DELETE' });
+                const response = await fetch(`${getApiUrl('/api/admin/usuarios')}?id=${id}&proveedor=${proveedorActual}`, { method: 'DELETE' });
                 if (response.ok) { mostrarToast('Usuario eliminado', 'success'); await cargarUsuarios(); await cargarApuestas(); }
                 else { const data = await response.json(); mostrarToast(data.error || 'Error', 'error'); }
             } catch (error) { mostrarToast('Error', 'error'); }
@@ -1057,7 +1119,9 @@
         async function ejecutarReinicio() {
             const password = document.getElementById('reinicioPassword').value;
             const confirmar = document.getElementById('reinicioConfirmar').value;
+            const proveedor = document.getElementById('reinicioProveedor').value;
             const msgDiv = document.getElementById('reinicioMessage');
+            
             if (!password) { msgDiv.innerHTML = '❌ Ingresa la contraseña'; msgDiv.style.background = '#fee2e2'; msgDiv.style.display = 'block'; return; }
             if (confirmar !== 'REINICIAR') { msgDiv.innerHTML = '❌ Escribe REINICIAR para confirmar'; msgDiv.style.background = '#fee2e2'; msgDiv.style.display = 'block'; return; }
             
@@ -1065,7 +1129,7 @@
                 const response = await fetch(`${API_URL}/api/admin/reiniciar`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ password, confirmar })
+                    body: JSON.stringify({ password, confirmar, proveedor })
                 });
                 const data = await response.json();
                 if (response.ok) {
