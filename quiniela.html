@@ -5,358 +5,88 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quiniela Mundial 2026</title>
     
-    <!-- ============================================ -->
-    <!-- PROTECCIÓN DE ACCESO - VERIFICAR ORIGEN       -->
-    <!-- ============================================ -->
     <script>
         (function verificarAcceso() {
-            const dominiosPermitidos = [
-                'pagos1.robertsystems.org',
-                'robertsystems.org',
-                'localhost',
-                '127.0.0.1'
-            ];
-            
+            const dominiosPermitidos = ['pagos1.robertsystems.org', 'robertsystems.org', 'localhost', '127.0.0.1'];
             const referer = document.referrer;
-            
             if (!referer) {
                 window.location.href = 'https://pagos1.robertsystems.org';
                 return;
             }
-            
             let origenPermitido = false;
             for (const dominio of dominiosPermitidos) {
-                if (referer.includes(dominio)) {
-                    origenPermitido = true;
-                    break;
-                }
+                if (referer.includes(dominio)) { origenPermitido = true; break; }
             }
-            
-            if (!origenPermitido) {
-                window.location.href = 'https://pagos1.robertsystems.org';
-            }
+            if (!origenPermitido) { window.location.href = 'https://pagos1.robertsystems.org'; }
         })();
     </script>
-    <!-- ============================================ -->
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            min-height: 100vh;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .header {
-            text-align: center;
-            color: white;
-            padding: 40px 20px;
-            background: linear-gradient(135deg, #e94560 0%, #533483 100%);
-            border-radius: 20px;
-            margin-bottom: 30px;
-        }
-        
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        .header { text-align: center; color: white; padding: 40px 20px; background: linear-gradient(135deg, #e94560 0%, #533483 100%); border-radius: 20px; margin-bottom: 30px; }
         .header h1 { font-size: 2.5em; margin-bottom: 10px; }
-        
-        .tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-        
-        .tab {
-            background: rgba(255,255,255,0.1);
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-        
-        .tab.active {
-            background: #e94560;
-        }
-        
+        .tabs { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; justify-content: center; }
+        .tab { background: rgba(255,255,255,0.1); color: white; padding: 12px 24px; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; transition: all 0.3s; }
+        .tab.active { background: #e94560; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         
-        .user-form {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-        }
+        .user-form { background: white; padding: 25px; border-radius: 15px; margin-bottom: 30px; }
+        .user-info-card { background: linear-gradient(135deg, #e8f4f8 0%, #d1e7f0 100%); border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 4px solid #e94560; }
+        .user-info-row { display: flex; margin-bottom: 10px; padding: 8px; background: white; border-radius: 8px; }
+        .user-info-label { font-weight: bold; width: 120px; color: #533483; }
+        .user-info-value { color: #333; flex: 1; }
+        .user-info-note { font-size: 12px; color: #666; margin-top: 10px; text-align: center; font-style: italic; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { margin-bottom: 5px; font-weight: bold; color: #333; }
+        .form-group input { padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; }
+        .form-group input:focus { outline: none; border-color: #e94560; }
         
-        .user-info-card {
-            background: linear-gradient(135deg, #e8f4f8 0%, #d1e7f0 100%);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-left: 4px solid #e94560;
-        }
-        
-        .user-info-card h3 {
-            color: #e94560;
-            margin-bottom: 15px;
-            font-size: 1.1em;
-        }
-        
-        .user-info-row {
-            display: flex;
-            margin-bottom: 10px;
-            padding: 8px;
-            background: white;
-            border-radius: 8px;
-        }
-        
-        .user-info-label {
-            font-weight: bold;
-            width: 120px;
-            color: #533483;
-        }
-        
-        .user-info-value {
-            color: #333;
-            flex: 1;
-        }
-        
-        .user-info-note {
-            font-size: 12px;
-            color: #666;
-            margin-top: 10px;
-            text-align: center;
-            font-style: italic;
-        }
-        
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-        }
-        
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .form-group label {
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #333;
-        }
-        
-        .form-group input {
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-        
-        .form-group input:focus {
-            outline: none;
-            border-color: #e94560;
-        }
-        
-        .grupo { margin-bottom: 30px; }
-        
-        .grupo h3 {
-            background: #533483;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .partidos-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 15px;
-        }
-        
-        .partido-card {
-            background: white;
-            border-radius: 12px;
-            padding: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-        }
-        
+        .grupo { margin-bottom: 40px; }
+        .grupo h3 { background: #533483; color: white; padding: 10px 15px; border-radius: 10px; margin-bottom: 15px; }
+        .partidos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); gap: 20px; }
+        .partido-card { background: white; border-radius: 12px; padding: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: transform 0.2s; }
         .partido-card:hover { transform: translateY(-3px); }
-        
-        .equipos {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            font-weight: bold;
-        }
-        
+        .equipos { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: bold; padding-bottom: 10px; border-bottom: 1px solid #eee; }
         .equipo { flex: 1; text-align: center; font-size: 1.1em; }
         .vs { margin: 0 10px; color: #999; }
         
-        .apuesta-inputs {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-            margin: 15px 0;
-        }
-        
-        .apuesta-inputs input {
-            width: 80px;
-            padding: 10px;
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-        }
-        
-        .apuesta-inputs input:focus {
-            border-color: #e94560;
-            outline: none;
-        }
-        
-        .apuesta-inputs input:disabled {
-            background: #f0f0f0;
-            color: #999;
-        }
-        
-        .apuesta-inputs span {
-            font-size: 20px;
-            font-weight: bold;
-        }
+        .apuesta-inputs { background: #f8f9fa; padding: 10px; border-radius: 8px; margin: 10px 0; }
+        .apuesta-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 10px; }
+        .apuesta-label { font-size: 13px; font-weight: bold; color: #533483; min-width: 100px; }
+        .apuesta-fields { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .apuesta-fields input { width: 70px; padding: 8px; text-align: center; font-size: 16px; font-weight: bold; border: 2px solid #ddd; border-radius: 8px; }
+        .apuesta-fields select { padding: 8px; border: 2px solid #ddd; border-radius: 8px; }
         
         .fecha { text-align: center; font-size: 12px; color: #999; margin-top: 10px; }
+        .resultado-real { text-align: center; font-size: 13px; margin-top: 10px; padding: 8px; border-radius: 5px; background: #d4edda; color: #155724; }
         
-        .resultado-real {
-            text-align: center;
-            font-size: 13px;
-            margin-top: 10px;
-            padding: 5px;
-            border-radius: 5px;
-            background: #d4edda;
-            color: #155724;
-        }
+        .btn-apostar { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border: none; padding: 15px 30px; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 30px; transition: all 0.3s; }
+        .btn-apostar:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(40, 167, 69, 0.3); }
+        .btn-apostar:disabled { opacity: 0.6; cursor: not-allowed; }
         
-        .btn-apostar {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 30px;
-            transition: all 0.3s;
-        }
+        .ranking-table, .resultados-table { background: white; border-radius: 15px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #533483; color: white; }
         
-        .btn-apostar:hover { 
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(40, 167, 69, 0.3);
-        }
+        .toast { position: fixed; bottom: 20px; right: 20px; padding: 15px 25px; border-radius: 10px; display: none; z-index: 1000; animation: slideIn 0.3s ease; }
+        .toast.success { background: #28a745; color: white; display: block; }
+        .toast.error { background: #dc3545; color: white; display: block; }
+        .toast.warning { background: #ffc107; color: #333; display: block; }
         
-        .btn-apostar:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .ranking-table, .resultados-table {
-            background: white;
-            border-radius: 15px;
-            overflow-x: auto;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-        
-        th {
-            background: #533483;
-            color: white;
-        }
-        
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 15px 25px;
-            border-radius: 10px;
-            display: none;
-            z-index: 1000;
-            animation: slideIn 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        
-        .toast.success { 
-            background: #28a745; 
-            color: white; 
-            display: block;
-        }
-        
-        .toast.error { 
-            background: #dc3545; 
-            color: white; 
-            display: block;
-        }
-        
-        .toast.warning { 
-            background: #ffc107; 
-            color: #333; 
-            display: block;
-        }
-        
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        
-        .loading { 
-            text-align: center; 
-            padding: 40px; 
-            color: white;
-            font-size: 1.2em;
-        }
-        
-        .spinner {
-            border: 3px solid rgba(255,255,255,0.3);
-            border-top: 3px solid white;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .loading { text-align: center; padding: 40px; color: white; font-size: 1.2em; }
+        .spinner { border: 3px solid rgba(255,255,255,0.3); border-top: 3px solid white; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 15px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
         @media (max-width: 768px) {
             .header h1 { font-size: 1.8em; }
             .partidos-grid { grid-template-columns: 1fr; }
-            .equipo { font-size: 0.9em; }
+            .apuesta-row { flex-direction: column; align-items: flex-start; }
             .user-info-row { flex-direction: column; }
             .user-info-label { width: 100%; margin-bottom: 5px; }
         }
@@ -366,7 +96,7 @@
     <div class="container">
         <div class="header">
             <h1>🏆 QUINIELA MUNDIAL 2026</h1>
-            <p>¡Pronostica los resultados y gana increíbles premios!</p>
+            <p>¡Pronostica resultados, tarjetas y penales para ganar más puntos!</p>
         </div>
         
         <div class="tabs">
@@ -375,449 +105,267 @@
             <button class="tab" onclick="showTab('resultados')">📊 Resultados</button>
         </div>
         
-        <!-- Tab Apostar -->
         <div id="tab-apostar" class="tab-content active">
-            <!-- Información del usuario (cargada automática, no editable) -->
             <div class="user-form">
                 <div class="user-info-card">
                     <h3>📋 Información del Usuario</h3>
-                    <div class="user-info-row">
-                        <div class="user-info-label">Nombre completo:</div>
-                        <div class="user-info-value" id="display-nombre">-</div>
-                    </div>
-                    <div class="user-info-row">
-                        <div class="user-info-label">Cédula / PPPoE:</div>
-                        <div class="user-info-value" id="display-cedula">-</div>
-                    </div>
-                    <div class="user-info-note">
-                        ⚠️ Esta información se ha cargado automáticamente desde tu cuenta. No es modificable.
-                    </div>
+                    <div class="user-info-row"><div class="user-info-label">Nombre completo:</div><div class="user-info-value" id="display-nombre">-</div></div>
+                    <div class="user-info-row"><div class="user-info-label">Cédula / PPPoE:</div><div class="user-info-value" id="display-cedula">-</div></div>
+                    <div class="user-info-note">⚠️ Esta información se ha cargado automáticamente desde tu cuenta. No es modificable.</div>
                 </div>
-                
-                <!-- Campos ocultos que se enviarán al servidor -->
-                <input type="hidden" id="nombre" value="">
-                <input type="hidden" id="cedula" value="">
-                
-                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #ddd;">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>📱 Teléfono (opcional)</label>
-                            <input type="tel" id="telefono" placeholder="Ej: 0412-1234567">
-                        </div>
-                        <div class="form-group">
-                            <label>🏙️ Ciudad (opcional)</label>
-                            <input type="text" id="ciudad" placeholder="Ej: Caracas">
-                        </div>
-                    </div>
+                <input type="hidden" id="nombre" value=""><input type="hidden" id="cedula" value="">
+                <div class="form-grid">
+                    <div class="form-group"><label>📱 Teléfono (opcional)</label><input type="tel" id="telefono" placeholder="Ej: 0412-1234567"></div>
+                    <div class="form-group"><label>🏙️ Ciudad (opcional)</label><input type="text" id="ciudad" placeholder="Ej: Caracas"></div>
                 </div>
             </div>
-            
-            <div id="partidos-container">
-                <div class="loading">
-                    <div class="spinner"></div>
-                    Cargando partidos...
-                </div>
-            </div>
-            
-            <button class="btn-apostar" id="btnEnviar" onclick="enviarApuestas()">
-                🚀 ENVIAR MIS PRONÓSTICOS
-            </button>
+            <div id="partidos-container"><div class="loading"><div class="spinner"></div>Cargando partidos...</div></div>
+            <button class="btn-apostar" id="btnEnviar" onclick="enviarApuestas()">🚀 ENVIAR MIS PRONÓSTICOS</button>
         </div>
         
-        <!-- Tab Ranking -->
         <div id="tab-ranking" class="tab-content">
-            <div class="ranking-table" id="ranking-container">
-                <div class="loading">
-                    <div class="spinner"></div>
-                    Cargando ranking...
-                </div>
-            </div>
+            <div class="ranking-table" id="ranking-container"><div class="loading"><div class="spinner"></div>Cargando ranking...</div></div>
         </div>
         
-        <!-- Tab Resultados -->
         <div id="tab-resultados" class="tab-content">
-            <div class="resultados-table" id="resultados-container">
-                <div class="loading">
-                    <div class="spinner"></div>
-                    Cargando resultados...
-                </div>
-            </div>
+            <div class="resultados-table" id="resultados-container"><div class="loading"><div class="spinner"></div>Cargando resultados...</div></div>
         </div>
     </div>
     
     <div id="toast" class="toast"></div>
     
     <script>
-        // ============================================
-        // CONFIGURACIÓN
-        // ============================================
         const API_URL = 'https://quiniela-mundial.thecrow859.workers.dev';
-        
         let partidos = [];
-        let usuarioData = {
-            nombre: '',
-            cedula: ''
-        };
+        let usuarioData = { nombre: '', cedula: '' };
         
-        // ============================================
-        // CARGAR DATOS DEL USUARIO DESDE URL
-        // ============================================
         function cargarDatosUsuario() {
-            console.log('📋 Cargando datos del usuario desde URL...');
-            
-            // Obtener parámetros de la URL
             const urlParams = new URLSearchParams(window.location.search);
             let nombre = urlParams.get('nombre');
             let cedula = urlParams.get('cedula');
-            
-            // Decodificar si es necesario
             if (nombre) nombre = decodeURIComponent(nombre);
             if (cedula) cedula = decodeURIComponent(cedula);
             
             if (nombre && cedula) {
                 usuarioData.nombre = nombre;
                 usuarioData.cedula = cedula;
-                
-                // Mostrar en la interfaz
                 document.getElementById('display-nombre').textContent = nombre;
                 document.getElementById('display-cedula').textContent = cedula;
                 document.getElementById('nombre').value = nombre;
                 document.getElementById('cedula').value = cedula;
-                
-                console.log('✅ Usuario cargado correctamente:', usuarioData);
                 return true;
             } else {
-                // No hay datos, mostrar error
-                console.warn('⚠️ No se encontraron datos de usuario en la URL');
                 document.getElementById('display-nombre').innerHTML = '<span style="color: red;">❌ No se pudo cargar</span>';
                 document.getElementById('display-cedula').innerHTML = '<span style="color: red;">❌ No se pudo cargar</span>';
-                mostrarToast('⚠️ No se pudieron cargar tus datos. Por favor, accede desde el dashboard.', 'warning');
-                
-                // Deshabilitar el botón de envío
-                const btn = document.getElementById('btnEnviar');
-                btn.disabled = true;
-                btn.style.opacity = '0.5';
-                btn.style.cursor = 'not-allowed';
+                mostrarToast('No se pudieron cargar tus datos', 'error');
+                document.getElementById('btnEnviar').disabled = true;
                 return false;
             }
         }
         
-        // ============================================
-        // INICIALIZACIÓN
-        // ============================================
         window.onload = () => {
-            console.log('🚀 Página de Quiniela cargada');
-            
-            // Primero cargar datos del usuario
-            const datosCargados = cargarDatosUsuario();
-            
-            // Si hay datos, cargar el resto
-            if (datosCargados) {
+            if (cargarDatosUsuario()) {
                 cargarPartidos();
                 cargarRanking();
                 cargarResultados();
             }
         };
         
-        // ============================================
-        // CARGAR PARTIDOS
-        // ============================================
         async function cargarPartidos() {
-            console.log('📡 Cargando partidos...');
             try {
                 const response = await fetch(`${API_URL}/api/partidos`);
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
                 partidos = await response.json();
-                console.log(`✅ Partidos cargados: ${partidos.length}`);
-                
-                if (partidos.length === 0) {
-                    document.getElementById('partidos-container').innerHTML = 
-                        '<div class="loading">⚠️ No hay partidos disponibles. Contacta al administrador.</div>';
-                    return;
-                }
-                
                 mostrarPartidos();
             } catch (error) {
-                console.error('❌ Error al cargar partidos:', error);
-                document.getElementById('partidos-container').innerHTML = 
-                    '<div class="loading" style="color: #ff6b6b;">❌ Error al cargar los partidos. Intenta de nuevo más tarde.</div>';
-                mostrarToast('Error al cargar los partidos', 'error');
+                document.getElementById('partidos-container').innerHTML = '<div class="loading">Error al cargar partidos</div>';
             }
         }
         
-        // ============================================
-        // MOSTRAR PARTIDOS
-        // ============================================
         function mostrarPartidos() {
             const container = document.getElementById('partidos-container');
             container.innerHTML = '';
             
-            // Agrupar por grupo
             const grupos = {};
-            partidos.forEach(p => {
-                const grupoNombre = p.grupo_nombre || 'Sin grupo';
-                if (!grupos[grupoNombre]) grupos[grupoNombre] = [];
-                grupos[grupoNombre].push(p);
-            });
+            partidos.forEach(p => { const grupo = p.grupo_nombre || 'Sin grupo'; if (!grupos[grupo]) grupos[grupo] = []; grupos[grupo].push(p); });
             
             for (const [grupo, partidosGrupo] of Object.entries(grupos)) {
-                const grupoDiv = document.createElement('div');
-                grupoDiv.className = 'grupo';
+                const grupoDiv = document.createElement('div'); grupoDiv.className = 'grupo';
                 grupoDiv.innerHTML = `<h3>📌 Grupo ${grupo}</h3>`;
-                
-                const gridDiv = document.createElement('div');
-                gridDiv.className = 'partidos-grid';
+                const gridDiv = document.createElement('div'); gridDiv.className = 'partidos-grid';
                 
                 partidosGrupo.forEach(partido => {
                     const finalizado = partido.finalizado === 1 || partido.finalizado === true;
-                    const card = document.createElement('div');
-                    card.className = 'partido-card';
-                    
+                    const card = document.createElement('div'); card.className = 'partido-card';
                     card.innerHTML = `
-                        <div class="equipos">
-                            <div class="equipo">${partido.equipo_local_nombre || '?'}</div>
-                            <div class="vs">VS</div>
-                            <div class="equipo">${partido.equipo_visitante_nombre || '?'}</div>
-                        </div>
+                        <div class="equipos"><div class="equipo">${partido.equipo_local_nombre}</div><div class="vs">VS</div><div class="equipo">${partido.equipo_visitante_nombre}</div></div>
+                        
                         <div class="apuesta-inputs">
-                            <input type="number" id="local_${partido.id}" placeholder="0" min="0" step="1" ${finalizado ? 'disabled' : ''}>
-                            <span>-</span>
-                            <input type="number" id="visit_${partido.id}" placeholder="0" min="0" step="1" ${finalizado ? 'disabled' : ''}>
+                            <div class="apuesta-row"><div class="apuesta-label">📊 Resultado:</div><div class="apuesta-fields">
+                                <input type="number" id="local_${partido.id}" placeholder="0" min="0" step="1" ${finalizado ? 'disabled' : ''}> -
+                                <input type="number" id="visit_${partido.id}" placeholder="0" min="0" step="1" ${finalizado ? 'disabled' : ''}>
+                            </div></div>
+                            
+                            <div class="apuesta-row"><div class="apuesta-label">🟨 Tarjetas Amarillas:</div><div class="apuesta-fields">
+                                <input type="number" id="amarillas_${partido.id}" placeholder="0" min="0" step="1" ${finalizado ? 'disabled' : ''}>
+                            </div></div>
+                            
+                            <div class="apuesta-row"><div class="apuesta-label">🟥 Tarjetas Rojas:</div><div class="apuesta-fields">
+                                <input type="number" id="rojas_${partido.id}" placeholder="0" min="0" step="1" ${finalizado ? 'disabled' : ''}>
+                            </div></div>
+                            
+                            <div class="apuesta-row"><div class="apuesta-label">⚽ ¿Habrá penales?</div><div class="apuesta-fields">
+                                <select id="penales_${partido.id}" ${finalizado ? 'disabled' : ''}>
+                                    <option value="false">No</option>
+                                    <option value="true">Sí</option>
+                                </select>
+                            </div></div>
+                            
+                            <div class="apuesta-row" id="penales_goles_${partido.id}" style="display: none;"><div class="apuesta-label">🎯 Goles en penales:</div><div class="apuesta-fields">
+                                <input type="number" id="penales_local_${partido.id}" placeholder="0" min="0" step="1" ${finalizado ? 'disabled' : ''}> -
+                                <input type="number" id="penales_visit_${partido.id}" placeholder="0" min="0" step="1" ${finalizado ? 'disabled' : ''}>
+                            </div></div>
                         </div>
-                        <div class="fecha">📅 ${partido.fecha_partido ? new Date(partido.fecha_partido).toLocaleString() : 'Fecha no disponible'}</div>
+                        <div class="fecha">📅 ${new Date(partido.fecha_partido).toLocaleString()}</div>
                         ${finalizado ? `<div class="resultado-real">✅ Final: ${partido.resultado_local || 0} - ${partido.resultado_visitante || 0}</div>` : ''}
                     `;
+                    
+                    // Mostrar/ocultar campos de penales según selección
+                    const selectPenales = card.querySelector(`#penales_${partido.id}`);
+                    const divPenales = card.querySelector(`#penales_goles_${partido.id}`);
+                    if (selectPenales && divPenales) {
+                        selectPenales.addEventListener('change', () => {
+                            divPenales.style.display = selectPenales.value === 'true' ? 'flex' : 'none';
+                        });
+                    }
+                    
                     gridDiv.appendChild(card);
                 });
                 
                 grupoDiv.appendChild(gridDiv);
                 container.appendChild(grupoDiv);
             }
-            
-            console.log('✅ Partidos renderizados correctamente');
         }
         
-        // ============================================
-        // ENVIAR PRONÓSTICOS
-        // ============================================
         async function enviarApuestas() {
-            console.log('📤 Iniciando envío de pronósticos...');
-            
-            // Validar que los datos del usuario estén cargados
             const nombre = document.getElementById('nombre').value;
             const cedula = document.getElementById('cedula').value;
+            if (!nombre || !cedula) { mostrarToast('No se encontraron tus datos', 'error'); return; }
             
-            if (!nombre || !cedula) {
-                mostrarToast('❌ No se encontraron tus datos. Por favor, accede desde el dashboard.', 'error');
-                return;
-            }
-            
-            // Recoger TODOS los pronósticos
             const apuestas = [];
-            const inputsLocales = document.querySelectorAll('[id^="local_"]');
-            
-            console.log(`🔍 Encontrados ${inputsLocales.length} inputs locales`);
-            
-            for (const inputLocal of inputsLocales) {
-                const partidoId = parseInt(inputLocal.id.replace('local_', ''));
-                const inputVisitante = document.getElementById(`visit_${partidoId}`);
-                
-                if (!inputVisitante) continue;
-                
-                const golesLocal = inputLocal.value;
-                const golesVisitante = inputVisitante.value;
-                
-                if (golesLocal !== '' && golesLocal !== null && 
-                    golesVisitante !== '' && golesVisitante !== null) {
+            for (const partido of partidos) {
+                if (!partido.finalizado) {
+                    const golesLocal = document.getElementById(`local_${partido.id}`)?.value;
+                    const golesVisitante = document.getElementById(`visit_${partido.id}`)?.value;
+                    const tarjetasAmarillas = document.getElementById(`amarillas_${partido.id}`)?.value;
+                    const tarjetasRojas = document.getElementById(`rojas_${partido.id}`)?.value;
+                    const huboPenales = document.getElementById(`penales_${partido.id}`)?.value === 'true';
+                    const golesPenalesLocal = document.getElementById(`penales_local_${partido.id}`)?.value;
+                    const golesPenalesVisitante = document.getElementById(`penales_visit_${partido.id}`)?.value;
                     
-                    const golesLocalNum = parseInt(golesLocal);
-                    const golesVisitanteNum = parseInt(golesVisitante);
-                    
-                    if (!isNaN(golesLocalNum) && !isNaN(golesVisitanteNum)) {
+                    if (golesLocal !== '' && golesLocal !== null && golesLocal !== undefined &&
+                        golesVisitante !== '' && golesVisitante !== null && golesVisitante !== undefined) {
                         apuestas.push({
-                            partidoId: partidoId,
-                            golesLocal: golesLocalNum,
-                            golesVisitante: golesVisitanteNum
+                            partidoId: partido.id,
+                            golesLocal: parseInt(golesLocal),
+                            golesVisitante: parseInt(golesVisitante),
+                            tarjetasAmarillas: parseInt(tarjetasAmarillas) || 0,
+                            tarjetasRojas: parseInt(tarjetasRojas) || 0,
+                            huboPenales: huboPenales,
+                            golesPenalesLocal: huboPenales ? (parseInt(golesPenalesLocal) || 0) : 0,
+                            golesPenalesVisitante: huboPenales ? (parseInt(golesPenalesVisitante) || 0) : 0
                         });
-                        console.log(`✅ Pronóstico agregado: ${golesLocalNum} - ${golesVisitanteNum}`);
                     }
                 }
             }
             
-            console.log(`📊 Total pronósticos encontrados: ${apuestas.length}`);
+            if (apuestas.length === 0) { mostrarToast('Ingresa al menos un pronóstico', 'error'); return; }
             
-            if (apuestas.length === 0) {
-                mostrarToast('⚠️ Ingresa al menos un resultado (local y visitante)', 'error');
-                return;
-            }
-            
-            // Deshabilitar botón mientras se envía
             const btn = document.getElementById('btnEnviar');
             const btnText = btn.innerHTML;
             btn.innerHTML = '⏳ Enviando...';
             btn.disabled = true;
             
             try {
-                const telefono = document.getElementById('telefono').value;
-                const ciudad = document.getElementById('ciudad').value;
-                
-                const dataToSend = {
-                    nombre: nombre,
-                    cedula: cedula,
-                    telefono: telefono || null,
-                    ciudad: ciudad || null,
-                    apuestas: apuestas
-                };
-                
-                console.log('📡 Enviando a:', `${API_URL}/api/apostar`);
-                
                 const response = await fetch(`${API_URL}/api/apostar`, {
                     method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(dataToSend)
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        nombre, cedula,
+                        telefono: document.getElementById('telefono').value,
+                        ciudad: document.getElementById('ciudad').value,
+                        apuestas
+                    })
                 });
-                
                 const data = await response.json();
-                
-                if (response.ok && data.success) {
-                    mostrarToast('✅ ¡Tus pronósticos se guardaron correctamente!', 'success');
-                    
-                    // Limpiar los pronósticos
-                    apuestas.forEach(apuesta => {
-                        const inputLocal = document.getElementById(`local_${apuesta.partidoId}`);
-                        const inputVisit = document.getElementById(`visit_${apuesta.partidoId}`);
-                        if (inputLocal) inputLocal.value = '';
-                        if (inputVisit) inputVisit.value = '';
+                if (response.ok) {
+                    mostrarToast('✅ Pronósticos guardados', 'success');
+                    apuestas.forEach(a => {
+                        document.getElementById(`local_${a.partidoId}`).value = '';
+                        document.getElementById(`visit_${a.partidoId}`).value = '';
+                        document.getElementById(`amarillas_${a.partidoId}`).value = '';
+                        document.getElementById(`rojas_${a.partidoId}`).value = '';
+                        document.getElementById(`penales_${a.partidoId}`).value = 'false';
+                        if (document.getElementById(`penales_local_${a.partidoId}`)) {
+                            document.getElementById(`penales_local_${a.partidoId}`).value = '';
+                            document.getElementById(`penales_visit_${a.partidoId}`).value = '';
+                        }
                     });
-                    
                     cargarRanking();
                 } else {
-                    mostrarToast(data.error || '❌ Error al guardar los pronósticos', 'error');
+                    mostrarToast(data.error || 'Error', 'error');
                 }
             } catch (error) {
-                console.error('❌ Error de conexión:', error);
-                mostrarToast('❌ Error de conexión. Verifica que el Worker esté activo.', 'error');
+                mostrarToast('Error de conexión', 'error');
             } finally {
                 btn.innerHTML = btnText;
                 btn.disabled = false;
             }
         }
         
-        // ============================================
-        // CARGAR RANKING
-        // ============================================
         async function cargarRanking() {
-            console.log('📊 Cargando ranking...');
             try {
                 const response = await fetch(`${API_URL}/api/ranking`);
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const ranking = await response.json();
-                
                 const container = document.getElementById('ranking-container');
-                if (!ranking || ranking.length === 0) {
-                    container.innerHTML = '<div class="loading">🏆 Aún no hay participantes</div>';
-                    return;
-                }
+                if (!ranking || ranking.length === 0) { container.innerHTML = '<div class="loading">Aún no hay participantes</div>'; return; }
                 
                 container.innerHTML = `
-                    <table style="width:100%;">
-                        <thead>
-                            <tr>
-                                <th style="padding: 12px;">#</th>
-                                <th style="padding: 12px;">Participante</th>
-                                <th style="padding: 12px;">Puntos</th>
-                                <th style="padding: 12px;">Exactos</th>
-                                <th style="padding: 12px;">Ganador</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${ranking.map((r, i) => `
-                                <tr style="border-bottom: 1px solid #eee;">
-                                    <td style="padding: 12px;"><strong>${i + 1}</strong></td>
-                                    <td style="padding: 12px;">${r.nombre || '?'}</td>
-                                    <td style="padding: 12px;"><span style="font-size: 1.2em; font-weight: bold; color: #e94560;">${r.total_puntos || 0}</span></td>
-                                    <td style="padding: 12px;">${r.aciertos_exactos || 0}</td>
-                                    <td style="padding: 12px;">${r.aciertos_ganador || 0}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
+                    <table><thead><tr><th>#</th><th>Participante</th><th>Puntos</th><th>Exactos</th><th>Ganador</th><th>Tarjetas</th><th>Penales</th></tr></thead><tbody>
+                    ${ranking.map((r, i) => `<tr><td><strong>${i+1}</strong></td><td>${r.nombre}</td><td><span style="font-size:1.2em;font-weight:bold;color:#e94560;">${r.total_puntos || 0}</span></td><td>${r.aciertos_exactos || 0}</td><td>${r.aciertos_ganador || 0}</td><td>${(r.aciertos_amarillas || 0) + (r.aciertos_rojas || 0)}</td><td>${r.aciertos_penales_exactos || 0}</td></tr>`).join('')}
+                    </tbody></table>
                 `;
-            } catch (error) {
-                console.error('❌ Error al cargar ranking:', error);
-                document.getElementById('ranking-container').innerHTML = '<div class="loading">Error al cargar el ranking</div>';
-            }
+            } catch (error) { console.error(error); }
         }
         
-        // ============================================
-        // CARGAR RESULTADOS
-        // ============================================
         async function cargarResultados() {
-            console.log('📊 Cargando resultados...');
             try {
                 const response = await fetch(`${API_URL}/api/resultados`);
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const resultados = await response.json();
-                
                 const container = document.getElementById('resultados-container');
-                if (!resultados || resultados.length === 0) {
-                    container.innerHTML = '<div class="loading">📅 Aún no hay resultados disponibles</div>';
-                    return;
-                }
+                if (!resultados || resultados.length === 0) { container.innerHTML = '<div class="loading">Aún no hay resultados</div>'; return; }
                 
                 container.innerHTML = `
-                    <table style="width:100%;">
-                        <thead>
-                            <tr>
-                                <th style="padding: 12px;">Partido</th>
-                                <th style="padding: 12px;">Resultado</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${resultados.map(r => `
-                                <tr style="border-bottom: 1px solid #eee;">
-                                    <td style="padding: 12px;">${r.local || '?'} vs ${r.visitante || '?'}</td>
-                                    <td style="padding: 12px;"><strong style="font-size: 1.1em;">${r.resultado_local || 0} - ${r.resultado_visitante || 0}</strong></td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
+                    <table><thead><tr><th>Partido</th><th>Resultado</th><th>Amarillas</th><th>Rojas</th><th>Penales</th></tr></thead><tbody>
+                    ${resultados.map(r => `<tr><td>${r.local} vs ${r.visitante}</td><td><strong>${r.resultado_local || 0} - ${r.resultado_visitante || 0}</strong></td><td>${r.tarjetas_amarillas_real || 0}</td><td>${r.tarjetas_rojas_real || 0}</td><td>${r.hubo_penales_real ? `${r.goles_penales_local_real || 0} - ${r.goles_penales_visitante_real || 0}` : 'No'}</td></tr>`).join('')}
+                    </tbody></table>
                 `;
-            } catch (error) {
-                console.error('❌ Error al cargar resultados:', error);
-                document.getElementById('resultados-container').innerHTML = '<div class="loading">Error al cargar los resultados</div>';
-            }
+            } catch (error) { console.error(error); }
         }
         
-        // ============================================
-        // CAMBIAR PESTAÑA
-        // ============================================
         function showTab(tab) {
-            console.log(`🔄 Cambiando a pestaña: ${tab}`);
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.getElementById(`tab-${tab}`).classList.add('active');
-            if (event && event.target) event.target.classList.add('active');
-            
+            event.target.classList.add('active');
             if (tab === 'ranking') cargarRanking();
             if (tab === 'resultados') cargarResultados();
         }
         
-        // ============================================
-        // MOSTRAR MENSAJE
-        // ============================================
         function mostrarToast(msg, tipo) {
             const toast = document.getElementById('toast');
             toast.textContent = msg;
             toast.className = `toast ${tipo}`;
-            setTimeout(() => {
-                toast.style.display = 'none';
-                toast.className = 'toast';
-            }, 4000);
+            setTimeout(() => { toast.style.display = 'none'; toast.className = 'toast'; }, 4000);
         }
     </script>
 </body>
