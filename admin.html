@@ -161,6 +161,11 @@
             color: white;
         }
         
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+        
         .btn-danger {
             background: #dc3545;
             color: white;
@@ -212,15 +217,15 @@
         <div class="admin-container">
             <div class="header">
                 <h1>⚽ Panel de Administración</h1>
-                <p>Gestiona equipos, partidos, resultados y apuestas</p>
+                <p>Gestiona grupos, equipos, partidos, resultados y apuestas</p>
             </div>
             
             <div class="stats-grid" id="stats"></div>
             
             <div class="nav-tabs">
                 <button class="nav-btn active" onclick="showPanel('apuestas')">📊 Apuestas</button>
-                <button class="nav-btn" onclick="showPanel('equipos')">⚽ Equipos</button>
                 <button class="nav-btn" onclick="showPanel('grupos')">📁 Grupos</button>
+                <button class="nav-btn" onclick="showPanel('equipos')">⚽ Equipos</button>
                 <button class="nav-btn" onclick="showPanel('partidos')">📅 Partidos</button>
                 <button class="nav-btn" onclick="showPanel('resultados')">🎯 Resultados</button>
                 <button class="nav-btn" onclick="showPanel('usuarios')">👥 Usuarios</button>
@@ -231,18 +236,18 @@
                 <div id="apuestas-table"><div class="loading">Cargando apuestas...</div></div>
             </div>
             
-            <div id="panel-equipos" class="panel">
-                <button class="btn btn-primary" onclick="openModal('equipo')">+ Agregar Equipo</button>
-                <div id="equipos-table"><div class="loading">Cargando equipos...</div></div>
-            </div>
-            
             <div id="panel-grupos" class="panel">
-                <button class="btn btn-primary" onclick="openModal('grupo')">+ Agregar Grupo</button>
+                <button class="btn btn-primary" onclick="openModal('grupo')">+ Nuevo Grupo</button>
                 <div id="grupos-table"><div class="loading">Cargando grupos...</div></div>
             </div>
             
+            <div id="panel-equipos" class="panel">
+                <button class="btn btn-primary" onclick="openModal('equipo')">+ Nuevo Equipo</button>
+                <div id="equipos-table"><div class="loading">Cargando equipos...</div></div>
+            </div>
+            
             <div id="panel-partidos" class="panel">
-                <button class="btn btn-primary" onclick="openModal('partido')">+ Agregar Partido</button>
+                <button class="btn btn-primary" onclick="openModal('partido')">+ Nuevo Partido</button>
                 <div id="partidos-table"><div class="loading">Cargando partidos...</div></div>
             </div>
             
@@ -274,6 +279,8 @@
         
         let equiposList = [];
         let gruposList = [];
+        let currentModalType = '';
+        let currentEditId = null;
         
         async function verificarAdmin() {
             const password = document.getElementById('adminPass').value;
@@ -309,8 +316,8 @@
         async function cargarTodo() {
             await cargarEstadisticas();
             await cargarApuestas();
-            await cargarEquipos();
             await cargarGrupos();
+            await cargarEquipos();
             await cargarPartidos();
             await cargarResultadosPendientes();
             await cargarUsuarios();
@@ -328,63 +335,87 @@
                     <div class="stat-card"><div class="stat-number">${stats.porcentaje_finalizado || 0}%</div><div>Completado</div></div>
                 `;
             } catch (error) {
-                console.error('Error cargando estadísticas:', error);
-                document.getElementById('stats').innerHTML = '<div class="stat-card">Error al cargar</div>';
+                console.error('Error:', error);
             }
         }
         
-        async function cargarApuestas() {
+        // ==================== GRUPOS ====================
+        
+        async function cargarGrupos() {
             try {
-                const response = await fetch(`${API_URL}/api/admin/apuestas`);
+                const response = await fetch(`${API_URL}/api/admin/grupos`);
                 const data = await response.json();
+                gruposList = Array.isArray(data) ? data : [];
                 
-                // Validar que sea un array
-                const apuestas = Array.isArray(data) ? data : [];
-                
-                if (apuestas.length === 0) {
-                    document.getElementById('apuestas-table').innerHTML = '<div class="loading">No hay apuestas registradas</div>';
+                if (gruposList.length === 0) {
+                    document.getElementById('grupos-table').innerHTML = '<div class="loading">No hay grupos registrados</div>';
                     return;
                 }
                 
                 const html = `
-                    <table style="width:100%; border-collapse: collapse;">
+                    <table style="width:100%; margin-top: 15px; border-collapse: collapse;">
                         <thead>
                             <tr style="background: #533483; color: white;">
-                                <th style="padding: 10px;">Usuario</th>
-                                <th style="padding: 10px;">Partido</th>
-                                <th style="padding: 10px;">Apuesta</th>
-                                <th style="padding: 10px;">Resultado Real</th>
-                                <th style="padding: 10px;">Puntos</th>
-                                <th style="padding: 10px;">Fecha</th>
+                                <th style="padding: 10px;">ID</th>
+                                <th style="padding: 10px;">Grupo</th>
+                                <th style="padding: 10px;">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
-                            ${apuestas.map(a => `
+                            ${gruposList.map(g => `
                                 <tr style="border-bottom: 1px solid #ddd;">
-                                    <td style="padding: 10px;">${a.usuario_nombre || '?'}<br><small>${a.email || ''}</small></td>
-                                    <td style="padding: 10px;">${a.equipo_local || '?'} vs ${a.equipo_visitante || '?'}</td>
-                                    <td style="padding: 10px;"><strong>${a.goles_local || 0} - ${a.goles_visitante || 0}</strong></td>
-                                    <td style="padding: 10px;">${a.finalizado ? `${a.resultado_local || 0} - ${a.resultado_visitante || 0}` : 'Pendiente'}</td>
-                                    <td style="padding: 10px; color: ${(a.puntos_obtenidos || 0) > 0 ? 'green' : 'red'}; font-weight: bold;">${a.puntos_obtenidos || 0}</td>
-                                    <td style="padding: 10px;">${a.fecha_apuesta ? new Date(a.fecha_apuesta).toLocaleDateString() : '-'}</td>
+                                    <td style="padding: 10px;">${g.id}</td>
+                                    <td style="padding: 10px;"><strong>Grupo ${g.nombre}</strong></td>
+                                    <td style="padding: 10px;">
+                                        <button class="btn btn-warning" onclick="editarGrupo(${g.id})">✏️ Editar</button>
+                                        <button class="btn btn-danger" onclick="eliminarGrupo(${g.id})">🗑️ Eliminar</button>
+                                    </td>
                                 </tr>
                             `).join('')}
                         </tbody>
                     </table>
                 `;
-                document.getElementById('apuestas-table').innerHTML = html;
+                document.getElementById('grupos-table').innerHTML = html;
             } catch (error) {
                 console.error('Error:', error);
-                document.getElementById('apuestas-table').innerHTML = '<div class="loading">Error al cargar apuestas</div>';
+                document.getElementById('grupos-table').innerHTML = '<div class="loading">Error al cargar grupos</div>';
             }
         }
+        
+        async function editarGrupo(id) {
+            const grupo = gruposList.find(g => g.id === id);
+            if (grupo) {
+                currentEditId = id;
+                openModal('grupo', grupo);
+            }
+        }
+        
+        async function eliminarGrupo(id) {
+            if (!confirm('¿Estás seguro de eliminar este grupo? Se eliminarán todos los equipos asociados.')) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/api/admin/grupos?id=${id}`, { method: 'DELETE' });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    mostrarToast('Grupo eliminado correctamente', 'success');
+                    await cargarGrupos();
+                    await cargarEquipos();
+                    await cargarEstadisticas();
+                } else {
+                    mostrarToast(data.error || 'Error al eliminar', 'error');
+                }
+            } catch (error) {
+                mostrarToast('Error de conexión', 'error');
+            }
+        }
+        
+        // ==================== EQUIPOS ====================
         
         async function cargarEquipos() {
             try {
                 const response = await fetch(`${API_URL}/api/admin/equipos`);
                 const data = await response.json();
-                
-                // Validar que sea un array
                 equiposList = Array.isArray(data) ? data : [];
                 
                 if (equiposList.length === 0) {
@@ -393,11 +424,9 @@
                 }
                 
                 const html = `
-                    <button class="btn btn-primary" onclick="openModal('equipo')">+ Nuevo Equipo</button>
                     <table style="width:100%; margin-top: 15px; border-collapse: collapse;">
                         <thead>
                             <tr style="background: #533483; color: white;">
-                                <th style="padding: 10px;">ID</th>
                                 <th style="padding: 10px;">Equipo</th>
                                 <th style="padding: 10px;">Grupo</th>
                                 <th style="padding: 10px;">Acciones</th>
@@ -406,12 +435,11 @@
                         <tbody>
                             ${equiposList.map(e => `
                                 <tr style="border-bottom: 1px solid #ddd;">
-                                    <td style="padding: 10px;">${e.id || '?'}</td>
-                                    <td style="padding: 10px;">${e.nombre || '?'}</td>
-                                    <td style="padding: 10px;">${e.grupo_nombre || '-'}</td>
+                                    <td style="padding: 10px;"><strong>${e.nombre}</strong></td>
+                                    <td style="padding: 10px;">${e.grupo_nombre || 'Sin grupo'}</td>
                                     <td style="padding: 10px;">
-                                        <button class="btn btn-primary" onclick="editarEquipo(${e.id})">✏️</button>
-                                        <button class="btn btn-danger" onclick="eliminarEquipo(${e.id})">🗑️</button>
+                                        <button class="btn btn-warning" onclick="editarEquipo(${e.id})">✏️ Editar</button>
+                                        <button class="btn btn-danger" onclick="eliminarEquipo(${e.id})">🗑️ Eliminar</button>
                                     </td>
                                 </tr>
                             `).join('')}
@@ -425,51 +453,40 @@
             }
         }
         
-        async function cargarGrupos() {
-            try {
-                const response = await fetch(`${API_URL}/api/admin/grupos`);
-                const data = await response.json();
-                
-                // Validar que sea un array
-                gruposList = Array.isArray(data) ? data : [];
-                
-                if (gruposList.length === 0) {
-                    document.getElementById('grupos-table').innerHTML = '<div class="loading">No hay grupos registrados</div>';
-                    return;
-                }
-                
-                const html = `
-                    <button class="btn btn-primary" onclick="openModal('grupo')">+ Nuevo Grupo</button>
-                    <table style="width:100%; margin-top: 15px; border-collapse: collapse;">
-                        <thead>
-                            <tr style="background: #533483; color: white;">
-                                <th style="padding: 10px;">ID</th>
-                                <th style="padding: 10px;">Grupo</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${gruposList.map(g => `
-                                <tr style="border-bottom: 1px solid #ddd;">
-                                    <td style="padding: 10px;">${g.id || '?'}</td>
-                                    <td style="padding: 10px;">Grupo ${g.nombre || '?'}</td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                `;
-                document.getElementById('grupos-table').innerHTML = html;
-            } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('grupos-table').innerHTML = '<div class="loading">Error al cargar grupos</div>';
+        async function editarEquipo(id) {
+            const equipo = equiposList.find(e => e.id === id);
+            if (equipo) {
+                currentEditId = id;
+                openModal('equipo', equipo);
             }
         }
+        
+        async function eliminarEquipo(id) {
+            if (!confirm('¿Estás seguro de eliminar este equipo? Se eliminarán todos los partidos asociados.')) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/api/admin/equipos?id=${id}`, { method: 'DELETE' });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    mostrarToast('Equipo eliminado correctamente', 'success');
+                    await cargarEquipos();
+                    await cargarPartidos();
+                    await cargarEstadisticas();
+                } else {
+                    mostrarToast(data.error || 'Error al eliminar', 'error');
+                }
+            } catch (error) {
+                mostrarToast('Error de conexión', 'error');
+            }
+        }
+        
+        // ==================== PARTIDOS ====================
         
         async function cargarPartidos() {
             try {
                 const response = await fetch(`${API_URL}/api/admin/partidos`);
                 const data = await response.json();
-                
-                // Validar que sea un array
                 const partidos = Array.isArray(data) ? data : [];
                 
                 if (partidos.length === 0) {
@@ -478,7 +495,6 @@
                 }
                 
                 const html = `
-                    <button class="btn btn-primary" onclick="openModal('partido')">+ Nuevo Partido</button>
                     <table style="width:100%; margin-top: 15px; border-collapse: collapse;">
                         <thead>
                             <tr style="background: #533483; color: white;">
@@ -493,13 +509,14 @@
                         <tbody>
                             ${partidos.map(p => `
                                 <tr style="border-bottom: 1px solid #ddd;">
-                                    <td style="padding: 10px;">${p.equipo_local_nombre || '?'}</td>
-                                    <td style="padding: 10px;">${p.equipo_visitante_nombre || '?'}</td>
+                                    <td style="padding: 10px;">${p.equipo_local_nombre}</td>
+                                    <td style="padding: 10px;">${p.equipo_visitante_nombre}</td>
                                     <td style="padding: 10px;">${p.grupo_nombre || '-'}</td>
-                                    <td style="padding: 10px;">${p.fecha_partido ? new Date(p.fecha_partido).toLocaleString() : '-'}</td>
+                                    <td style="padding: 10px;">${new Date(p.fecha_partido).toLocaleString()}</td>
                                     <td style="padding: 10px;">${p.finalizado ? '✅ Finalizado' : '⏳ Pendiente'}</td>
                                     <td style="padding: 10px;">
-                                        <button class="btn btn-primary" onclick="editarPartido(${p.id})">✏️</button>
+                                        <button class="btn btn-warning" onclick="editarPartido(${p.id})">✏️ Editar</button>
+                                        ${!p.finalizado ? `<button class="btn btn-danger" onclick="eliminarPartido(${p.id})">🗑️ Eliminar</button>` : ''}
                                     </td>
                                 </tr>
                             `).join('')}
@@ -513,12 +530,44 @@
             }
         }
         
+        async function editarPartido(id) {
+            const response = await fetch(`${API_URL}/api/admin/partidos`);
+            const data = await response.json();
+            const partidos = Array.isArray(data) ? data : [];
+            const partido = partidos.find(p => p.id === id);
+            
+            if (partido) {
+                currentEditId = id;
+                openModal('partido', partido);
+            }
+        }
+        
+        async function eliminarPartido(id) {
+            if (!confirm('¿Estás seguro de eliminar este partido? Se eliminarán todas las apuestas asociadas.')) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/api/admin/partidos?id=${id}`, { method: 'DELETE' });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    mostrarToast('Partido eliminado correctamente', 'success');
+                    await cargarPartidos();
+                    await cargarResultadosPendientes();
+                    await cargarEstadisticas();
+                } else {
+                    mostrarToast(data.error || 'Error al eliminar', 'error');
+                }
+            } catch (error) {
+                mostrarToast('Error de conexión', 'error');
+            }
+        }
+        
+        // ==================== RESULTADOS ====================
+        
         async function cargarResultadosPendientes() {
             try {
                 const response = await fetch(`${API_URL}/api/admin/partidos`);
                 const data = await response.json();
-                
-                // Validar que sea un array
                 const partidos = Array.isArray(data) ? data : [];
                 const pendientes = partidos.filter(p => !p.finalizado);
                 
@@ -541,9 +590,9 @@
                         <tbody>
                             ${pendientes.map(p => `
                                 <tr style="border-bottom: 1px solid #ddd;">
-                                    <td style="padding: 10px;">${p.equipo_local_nombre || '?'}</td>
-                                    <td style="padding: 10px;">${p.equipo_visitante_nombre || '?'}</td>
-                                    <td style="padding: 10px;">${p.fecha_partido ? new Date(p.fecha_partido).toLocaleString() : '-'}</td>
+                                    <td style="padding: 10px;">${p.equipo_local_nombre}</td>
+                                    <td style="padding: 10px;">${p.equipo_visitante_nombre}</td>
+                                    <td style="padding: 10px;">${new Date(p.fecha_partido).toLocaleString()}</td>
                                     <td style="padding: 10px;">
                                         <input type="number" id="res_local_${p.id}" placeholder="0" style="width: 60px;"> -
                                         <input type="number" id="res_visit_${p.id}" placeholder="0" style="width: 60px;">
@@ -560,50 +609,6 @@
             } catch (error) {
                 console.error('Error:', error);
                 document.getElementById('resultados-partidos').innerHTML = '<div class="loading">Error al cargar partidos</div>';
-            }
-        }
-        
-        async function cargarUsuarios() {
-            try {
-                const response = await fetch(`${API_URL}/api/ranking`);
-                const data = await response.json();
-                
-                // Validar que sea un array
-                const usuarios = Array.isArray(data) ? data : [];
-                
-                if (usuarios.length === 0) {
-                    document.getElementById('usuarios-table').innerHTML = '<div class="loading">No hay usuarios registrados</div>';
-                    return;
-                }
-                
-                const html = `
-                    <table style="width:100%; border-collapse: collapse;">
-                        <thead>
-                            <tr style="background: #533483; color: white;">
-                                <th style="padding: 10px;">Nombre</th>
-                                <th style="padding: 10px;">Email</th>
-                                <th style="padding: 10px;">Teléfono</th>
-                                <th style="padding: 10px;">Ciudad</th>
-                                <th style="padding: 10px;">Puntos</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${usuarios.map(u => `
-                                <tr style="border-bottom: 1px solid #ddd;">
-                                    <td style="padding: 10px;">${u.nombre || '?'}</td>
-                                    <td style="padding: 10px;">${u.email || '-'}</td>
-                                    <td style="padding: 10px;">${u.telefono || '-'}</td>
-                                    <td style="padding: 10px;">${u.ciudad || '-'}</td>
-                                    <td style="padding: 10px;"><strong>${u.total_puntos || 0}</strong></td>
-                                </tr>
-                            `).join('')}
-                        </tbody>
-                    </table>
-                `;
-                document.getElementById('usuarios-table').innerHTML = html;
-            } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('usuarios-table').innerHTML = '<div class="loading">Error al cargar usuarios</div>';
             }
         }
         
@@ -642,30 +647,185 @@
             }
         }
         
+        // ==================== APUESTAS ====================
+        
+        async function cargarApuestas() {
+            try {
+                const response = await fetch(`${API_URL}/api/admin/apuestas`);
+                const data = await response.json();
+                const apuestas = Array.isArray(data) ? data : [];
+                
+                if (apuestas.length === 0) {
+                    document.getElementById('apuestas-table').innerHTML = '<div class="loading">No hay apuestas registradas</div>';
+                    return;
+                }
+                
+                const html = `
+                    <table style="width:100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #533483; color: white;">
+                                <th style="padding: 10px;">Usuario</th>
+                                <th style="padding: 10px;">Partido</th>
+                                <th style="padding: 10px;">Apuesta</th>
+                                <th style="padding: 10px;">Resultado Real</th>
+                                <th style="padding: 10px;">Puntos</th>
+                                <th style="padding: 10px;">Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${apuestas.map(a => `
+                                <tr style="border-bottom: 1px solid #ddd;">
+                                    <td style="padding: 10px;">${a.usuario_nombre}<br><small>${a.email}</small></td>
+                                    <td style="padding: 10px;">${a.equipo_local} vs ${a.equipo_visitante}</td>
+                                    <td style="padding: 10px;"><strong>${a.goles_local} - ${a.goles_visitante}</strong></td>
+                                    <td style="padding: 10px;">${a.finalizado ? `${a.resultado_local} - ${a.resultado_visitante}` : 'Pendiente'}</td>
+                                    <td style="padding: 10px; color: ${(a.puntos_obtenidos || 0) > 0 ? 'green' : 'red'}; font-weight: bold;">${a.puntos_obtenidos || 0}</td>
+                                    <td style="padding: 10px;">${new Date(a.fecha_apuesta).toLocaleDateString()}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                document.getElementById('apuestas-table').innerHTML = html;
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('apuestas-table').innerHTML = '<div class="loading">Error al cargar apuestas</div>';
+            }
+        }
+        
+        // ==================== USUARIOS ====================
+        
+        async function cargarUsuarios() {
+            try {
+                const response = await fetch(`${API_URL}/api/ranking`);
+                const data = await response.json();
+                const usuarios = Array.isArray(data) ? data : [];
+                
+                if (usuarios.length === 0) {
+                    document.getElementById('usuarios-table').innerHTML = '<div class="loading">No hay usuarios registrados</div>';
+                    return;
+                }
+                
+                const html = `
+                    <table style="width:100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: #533483; color: white;">
+                                <th style="padding: 10px;">Nombre</th>
+                                <th style="padding: 10px;">Email</th>
+                                <th style="padding: 10px;">Teléfono</th>
+                                <th style="padding: 10px;">Ciudad</th>
+                                <th style="padding: 10px;">Puntos</th>
+                                <th style="padding: 10px;">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${usuarios.map(u => `
+                                <tr style="border-bottom: 1px solid #ddd;">
+                                    <td style="padding: 10px;">${u.nombre}</td>
+                                    <td style="padding: 10px;">${u.email}</td>
+                                    <td style="padding: 10px;">${u.telefono || '-'}</td>
+                                    <td style="padding: 10px;">${u.ciudad || '-'}</td>
+                                    <td style="padding: 10px;"><strong>${u.total_puntos || 0}</strong></td>
+                                    <td style="padding: 10px;">
+                                        <button class="btn btn-danger" onclick="eliminarUsuario(${u.id})">🗑️ Eliminar</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+                document.getElementById('usuarios-table').innerHTML = html;
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('usuarios-table').innerHTML = '<div class="loading">Error al cargar usuarios</div>';
+            }
+        }
+        
+        async function eliminarUsuario(id) {
+            if (!confirm('¿Estás seguro de eliminar este usuario? Se eliminarán todas sus apuestas.')) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/api/admin/usuarios?id=${id}`, { method: 'DELETE' });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    mostrarToast('Usuario eliminado correctamente', 'success');
+                    await cargarUsuarios();
+                    await cargarApuestas();
+                    await cargarEstadisticas();
+                } else {
+                    mostrarToast(data.error || 'Error al eliminar', 'error');
+                }
+            } catch (error) {
+                mostrarToast('Error de conexión', 'error');
+            }
+        }
+        
+        // ==================== MODALES ====================
+        
         function openModal(type, data = null) {
             currentModalType = type;
             const modal = document.getElementById('modal');
             const title = document.getElementById('modal-title');
             const body = document.getElementById('modal-body');
             
-            if (type === 'equipo') {
+            if (type === 'grupo') {
+                title.textContent = data ? 'Editar Grupo' : 'Nuevo Grupo';
+                body.innerHTML = `
+                    <div class="form-group">
+                        <label>Nombre del Grupo (Ej: A, B, C)</label>
+                        <input type="text" id="grupo_nombre" value="${data?.nombre || ''}" placeholder="A" maxlength="1" style="text-transform: uppercase;">
+                    </div>
+                `;
+            } else if (type === 'equipo') {
                 title.textContent = data ? 'Editar Equipo' : 'Nuevo Equipo';
                 body.innerHTML = `
-                    <div class="form-group"><label>Nombre del Equipo</label><input type="text" id="equipo_nombre" value="${data?.nombre || ''}"></div>
-                    <div class="form-group"><label>Grupo</label><select id="equipo_grupo_id">${gruposList.map(g => `<option value="${g.id}" ${data?.grupo_id === g.id ? 'selected' : ''}>Grupo ${g.nombre}</option>`).join('')}</select></div>
-                    <div class="form-group"><label>URL Bandera (opcional)</label><input type="text" id="equipo_bandera" value="${data?.bandera_url || ''}"></div>
+                    <div class="form-group">
+                        <label>Nombre del Equipo</label>
+                        <input type="text" id="equipo_nombre" value="${data?.nombre || ''}" placeholder="Ej: Argentina">
+                    </div>
+                    <div class="form-group">
+                        <label>Grupo</label>
+                        <select id="equipo_grupo_id">
+                            <option value="">Sin grupo</option>
+                            ${gruposList.map(g => `<option value="${g.id}" ${data?.grupo_id === g.id ? 'selected' : ''}>Grupo ${g.nombre}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>URL Bandera (opcional)</label>
+                        <input type="text" id="equipo_bandera" value="${data?.bandera_url || ''}" placeholder="https://...">
+                    </div>
                 `;
-            } else if (type === 'grupo') {
-                title.textContent = 'Nuevo Grupo';
-                body.innerHTML = `<div class="form-group"><label>Nombre del Grupo (Ej: A, B, C)</label><input type="text" id="grupo_nombre" placeholder="A"></div>`;
             } else if (type === 'partido') {
                 title.textContent = data ? 'Editar Partido' : 'Nuevo Partido';
                 body.innerHTML = `
-                    <div class="form-group"><label>Equipo Local</label><select id="partido_local">${equiposList.map(e => `<option value="${e.id}" ${data?.equipo_local_id === e.id ? 'selected' : ''}>${e.nombre}</option>`).join('')}</select></div>
-                    <div class="form-group"><label>Equipo Visitante</label><select id="partido_visitante">${equiposList.map(e => `<option value="${e.id}" ${data?.equipo_visitante_id === e.id ? 'selected' : ''}>${e.nombre}</option>`).join('')}</select></div>
-                    <div class="form-group"><label>Grupo</label><select id="partido_grupo"><option value="">Sin grupo</option>${gruposList.map(g => `<option value="${g.id}" ${data?.grupo_id === g.id ? 'selected' : ''}>Grupo ${g.nombre}</option>`).join('')}</select></div>
-                    <div class="form-group"><label>Fecha y Hora</label><input type="datetime-local" id="partido_fecha" value="${data?.fecha_partido?.slice(0, 16) || ''}"></div>
-                    <div class="form-group"><label>Jornada</label><input type="number" id="partido_jornada" value="${data?.jornada || '1'}"></div>
+                    <div class="form-group">
+                        <label>Equipo Local</label>
+                        <select id="partido_local">
+                            ${equiposList.map(e => `<option value="${e.id}" ${data?.equipo_local_id === e.id ? 'selected' : ''}>${e.nombre}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Equipo Visitante</label>
+                        <select id="partido_visitante">
+                            ${equiposList.map(e => `<option value="${e.id}" ${data?.equipo_visitante_id === e.id ? 'selected' : ''}>${e.nombre}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Grupo</label>
+                        <select id="partido_grupo">
+                            <option value="">Sin grupo</option>
+                            ${gruposList.map(g => `<option value="${g.id}" ${data?.grupo_id === g.id ? 'selected' : ''}>Grupo ${g.nombre}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha y Hora</label>
+                        <input type="datetime-local" id="partido_fecha" value="${data?.fecha_partido?.slice(0, 16) || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label>Jornada</label>
+                        <input type="number" id="partido_jornada" value="${data?.jornada || '1'}">
+                    </div>
                 `;
             }
             
@@ -674,69 +834,100 @@
         
         function closeModal() {
             document.getElementById('modal').style.display = 'none';
+            currentEditId = null;
         }
         
         async function guardarModal() {
-            if (currentModalType === 'equipo') {
-                const nombre = document.getElementById('equipo_nombre').value;
-                const grupo_id = document.getElementById('equipo_grupo_id').value;
-                const bandera_url = document.getElementById('equipo_bandera').value;
-                
-                if (!nombre) {
-                    mostrarToast('Ingresa el nombre del equipo', 'error');
-                    return;
+            try {
+                if (currentModalType === 'grupo') {
+                    const nombre = document.getElementById('grupo_nombre').value.trim().toUpperCase();
+                    if (!nombre) {
+                        mostrarToast('Ingresa el nombre del grupo', 'error');
+                        return;
+                    }
+                    
+                    const url = `${API_URL}/api/admin/grupos`;
+                    const method = currentEditId ? 'PUT' : 'POST';
+                    const body = currentEditId ? { id: currentEditId, nombre } : { nombre };
+                    
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(body)
+                    });
+                    
+                    if (response.ok) {
+                        mostrarToast(currentEditId ? 'Grupo actualizado' : 'Grupo creado', 'success');
+                        await cargarGrupos();
+                        await cargarEquipos();
+                    } else {
+                        const error = await response.json();
+                        mostrarToast(error.error || 'Error', 'error');
+                    }
+                } else if (currentModalType === 'equipo') {
+                    const nombre = document.getElementById('equipo_nombre').value.trim();
+                    const grupo_id = document.getElementById('equipo_grupo_id').value;
+                    const bandera_url = document.getElementById('equipo_bandera').value;
+                    
+                    if (!nombre) {
+                        mostrarToast('Ingresa el nombre del equipo', 'error');
+                        return;
+                    }
+                    
+                    const url = `${API_URL}/api/admin/equipos`;
+                    const method = currentEditId ? 'PUT' : 'POST';
+                    const body = currentEditId ? { id: currentEditId, nombre, grupo_id: grupo_id ? parseInt(grupo_id) : null, bandera_url } : { nombre, grupo_id: grupo_id ? parseInt(grupo_id) : null, bandera_url };
+                    
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(body)
+                    });
+                    
+                    if (response.ok) {
+                        mostrarToast(currentEditId ? 'Equipo actualizado' : 'Equipo creado', 'success');
+                        await cargarEquipos();
+                        await cargarPartidos();
+                    } else {
+                        const error = await response.json();
+                        mostrarToast(error.error || 'Error', 'error');
+                    }
+                } else if (currentModalType === 'partido') {
+                    const equipo_local_id = document.getElementById('partido_local').value;
+                    const equipo_visitante_id = document.getElementById('partido_visitante').value;
+                    const grupo_id = document.getElementById('partido_grupo').value;
+                    const fecha_partido = document.getElementById('partido_fecha').value;
+                    const jornada = document.getElementById('partido_jornada').value;
+                    
+                    if (!equipo_local_id || !equipo_visitante_id || !fecha_partido) {
+                        mostrarToast('Completa todos los campos requeridos', 'error');
+                        return;
+                    }
+                    
+                    const url = `${API_URL}/api/admin/partidos`;
+                    const method = currentEditId ? 'PUT' : 'POST';
+                    const body = currentEditId ? { id: currentEditId, equipo_local_id: parseInt(equipo_local_id), equipo_visitante_id: parseInt(equipo_visitante_id), grupo_id: grupo_id ? parseInt(grupo_id) : null, fecha_partido, jornada: parseInt(jornada) } : { equipo_local_id: parseInt(equipo_local_id), equipo_visitante_id: parseInt(equipo_visitante_id), grupo_id: grupo_id ? parseInt(grupo_id) : null, fecha_partido, jornada: parseInt(jornada) };
+                    
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(body)
+                    });
+                    
+                    if (response.ok) {
+                        mostrarToast(currentEditId ? 'Partido actualizado' : 'Partido creado', 'success');
+                        await cargarPartidos();
+                        await cargarResultadosPendientes();
+                    } else {
+                        const error = await response.json();
+                        mostrarToast(error.error || 'Error', 'error');
+                    }
                 }
                 
-                await fetch(`${API_URL}/api/admin/equipos`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nombre, grupo_id: parseInt(grupo_id), bandera_url })
-                });
-                mostrarToast('Equipo agregado', 'success');
-            } else if (currentModalType === 'grupo') {
-                const nombre = document.getElementById('grupo_nombre').value;
-                
-                if (!nombre) {
-                    mostrarToast('Ingresa el nombre del grupo', 'error');
-                    return;
-                }
-                
-                await fetch(`${API_URL}/api/admin/grupos`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nombre })
-                });
-                mostrarToast('Grupo agregado', 'success');
-            } else if (currentModalType === 'partido') {
-                const equipo_local_id = document.getElementById('partido_local').value;
-                const equipo_visitante_id = document.getElementById('partido_visitante').value;
-                const grupo_id = document.getElementById('partido_grupo').value;
-                const fecha_partido = document.getElementById('partido_fecha').value;
-                const jornada = document.getElementById('partido_jornada').value;
-                
-                if (!equipo_local_id || !equipo_visitante_id || !fecha_partido) {
-                    mostrarToast('Completa todos los campos requeridos', 'error');
-                    return;
-                }
-                
-                await fetch(`${API_URL}/api/admin/partidos`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        equipo_local_id: parseInt(equipo_local_id),
-                        equipo_visitante_id: parseInt(equipo_visitante_id),
-                        grupo_id: grupo_id ? parseInt(grupo_id) : null,
-                        fecha_partido,
-                        jornada: parseInt(jornada)
-                    })
-                });
-                mostrarToast('Partido agregado', 'success');
+                closeModal();
+            } catch (error) {
+                mostrarToast('Error de conexión: ' + error.message, 'error');
             }
-            
-            closeModal();
-            await cargarEquipos();
-            await cargarGrupos();
-            await cargarPartidos();
         }
         
         function showPanel(panel) {
@@ -755,26 +946,6 @@
                 toast.className = 'toast';
             }, 3000);
         }
-        
-        // Funciones placeholder para evitar errores
-        function editarEquipo(id) {
-            const equipo = equiposList.find(e => e.id === id);
-            if (equipo) openModal('equipo', equipo);
-        }
-        
-        function eliminarEquipo(id) {
-            if (confirm('¿Eliminar este equipo?')) {
-                // Implementar eliminación
-                mostrarToast('Función en desarrollo', 'error');
-            }
-        }
-        
-        function editarPartido(id) {
-            // Implementar edición
-            mostrarToast('Función en desarrollo', 'error');
-        }
-        
-        let currentModalType = '';
     </script>
 </body>
 </html>
