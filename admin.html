@@ -800,37 +800,80 @@
             ultimosConteos = { usuarios_validos: stats.total_usuarios_validos || 0, apuestas: stats.total_apuestas || 0, partidosFinalizados: stats.partidos_finalizados || 0 };
         }
         
-        // ==================== ESTADÍSTICAS CORREGIDAS ====================
-        async function cargarEstadisticas() {
-        try {
-            const stats = await fetchStats();
-            
-            console.log('📊 Estadísticas recibidas:', stats);
-            
-            // Mostrar estadísticas
-            document.getElementById('stats').innerHTML = `
-                <div class="stat-card">
-                    <div class="stat-number">${stats.total_usuarios_validos || 0}</div>
-                    <div>Usuarios Autorizados</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${stats.total_apuestas || 0}</div>
-                    <div>Apuestas</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${stats.partidos_finalizados || 0}/${stats.total_partidos || 0}</div>
-                    <div>Partidos</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${stats.porcentaje_finalizado || 0}%</div>
-                    <div>Completado</div>
-                </div>
-            `;
-        } catch (error) { 
-            console.error('Error cargando estadísticas:', error);
-            document.getElementById('stats').innerHTML = '<div class="stat-card error-message">Error cargando estadísticas</div>';
+        // ==================== FUNCIONES DE ESTADÍSTICAS ====================
+        async function fetchStats() {
+            if (proveedorActual === 'all') {
+                // Para "Todos", sumar manualmente los 3 proveedores
+                const proveedores = ['adjuntas', 'rio_chiquito_esperanza', 'caucagua'];
+                let totalUsuariosValidos = 0;
+                let totalApuestas = 0;
+                let partidosFinalizados = 0;
+                let totalPartidos = 0;
+                
+                for (const prov of proveedores) {
+                    try {
+                        const url = `${API_URL}/api/admin/estadisticas?proveedor=${prov}`;
+                        const response = await fetch(url);
+                        const data = await response.json();
+                        
+                        totalUsuariosValidos += data.total_usuarios_validos || 0;
+                        totalApuestas += data.total_apuestas || 0;
+                        
+                        // Partidos (son los mismos para todos, solo tomar una vez)
+                        if (partidosFinalizados === 0) {
+                            partidosFinalizados = data.partidos_finalizados || 0;
+                            totalPartidos = data.total_partidos || 0;
+                        }
+                    } catch (e) {
+                        console.error(`Error obteniendo estadísticas de ${prov}:`, e);
+                    }
+                }
+                
+                const porcentaje = totalPartidos > 0 ? ((partidosFinalizados / totalPartidos) * 100).toFixed(1) : 0;
+                
+                console.log('📊 Suma de usuarios por proveedor:', { totalUsuariosValidos, totalApuestas });
+                
+                return {
+                    total_usuarios_validos: totalUsuariosValidos,
+                    total_apuestas: totalApuestas,
+                    partidos_finalizados: partidosFinalizados,
+                    total_partidos: totalPartidos,
+                    porcentaje_finalizado: porcentaje
+                };
+            } else {
+                const url = getApiUrl('/api/admin/estadisticas');
+                const response = await fetch(url);
+                return await response.json();
+            }
         }
-    }
+        
+        async function cargarEstadisticas() {
+            try {
+                const stats = await fetchStats();
+                
+                document.getElementById('stats').innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-number">${stats.total_usuarios_validos || 0}</div>
+                        <div>Usuarios Autorizados</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${stats.total_apuestas || 0}</div>
+                        <div>Apuestas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${stats.partidos_finalizados || 0}/${stats.total_partidos || 0}</div>
+                        <div>Partidos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">${stats.porcentaje_finalizado || 0}%</div>
+                        <div>Completado</div>
+                    </div>
+                `;
+            } catch (error) { 
+                console.error('Error cargando estadísticas:', error);
+                document.getElementById('stats').innerHTML = '<div class="stat-card error-message">Error cargando estadísticas</div>';
+            }
+        }
         
         // ==================== APUESTAS ====================
         async function cargarApuestas() {
