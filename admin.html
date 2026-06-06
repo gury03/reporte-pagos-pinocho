@@ -672,8 +672,11 @@
         
         async function fetchStats() {
             const url = getApiUrl('/api/admin/estadisticas');
+            console.log('🔍 Solicitando estadísticas a:', url);
             const response = await fetch(url);
-            return await response.json();
+            const data = await response.json();
+            console.log('📊 Respuesta de estadísticas:', data);
+            return data;
         }
         
         async function fetchAPI(endpoint, options = {}) {
@@ -799,21 +802,35 @@
         
         // ==================== ESTADÍSTICAS CORREGIDAS ====================
         async function cargarEstadisticas() {
-            try {
-                const stats = await fetchStats();
-                
-                // Las estadísticas ya vienen sumadas del Worker cuando proveedor=all
-                document.getElementById('stats').innerHTML = `
-                    <div class="stat-card"><div class="stat-number">${stats.total_usuarios_validos || 0}</div><div>Usuarios Autorizados</div></div>
-                    <div class="stat-card"><div class="stat-number">${stats.total_apuestas || 0}</div><div>Apuestas</div></div>
-                    <div class="stat-card"><div class="stat-number">${stats.partidos_finalizados || 0}/${stats.total_partidos || 0}</div><div>Partidos</div></div>
-                    <div class="stat-card"><div class="stat-number">${stats.porcentaje_finalizado || 0}%</div><div>Completado</div></div>
-                `;
-            } catch (error) { 
-                console.error('Error cargando estadísticas:', error);
-                document.getElementById('stats').innerHTML = '<div class="stat-card error-message">Error cargando estadísticas</div>';
-            }
+        try {
+            const stats = await fetchStats();
+            
+            console.log('📊 Estadísticas recibidas:', stats);
+            
+            // Mostrar estadísticas
+            document.getElementById('stats').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-number">${stats.total_usuarios_validos || 0}</div>
+                    <div>Usuarios Autorizados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.total_apuestas || 0}</div>
+                    <div>Apuestas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.partidos_finalizados || 0}/${stats.total_partidos || 0}</div>
+                    <div>Partidos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">${stats.porcentaje_finalizado || 0}%</div>
+                    <div>Completado</div>
+                </div>
+            `;
+        } catch (error) { 
+            console.error('Error cargando estadísticas:', error);
+            document.getElementById('stats').innerHTML = '<div class="stat-card error-message">Error cargando estadísticas</div>';
         }
+    }
         
         // ==================== APUESTAS ====================
         async function cargarApuestas() {
