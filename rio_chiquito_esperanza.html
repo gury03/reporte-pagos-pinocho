@@ -3,15 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiniela Mundial 2026 - Fico</title>
+    <title>Quiniela Mundial 2026 - Rio Chiquito Esperanza</title>
     <style>
-        /* Mismo estilo que quiniela.html */
+        /* Mismo estilo que adjuntas.html */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; }
         .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
         .header { text-align: center; color: white; padding: 40px 20px; background: linear-gradient(135deg, #e94560 0%, #533483 100%); border-radius: 20px; margin-bottom: 30px; }
         .header h1 { font-size: 2.5em; margin-bottom: 10px; }
-        .header p { font-size: 1.1em; opacity: 0.9; }
+        
+        .login-section { max-width: 500px; margin: 0 auto; background: white; border-radius: 15px; padding: 40px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .login-section h2 { color: #e94560; margin-bottom: 20px; }
+        .login-section input { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; text-align: center; }
+        .login-section button { background: linear-gradient(135deg, #e94560, #533483); color: white; border: none; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; transition: all 0.3s; }
+        .login-section button:hover { transform: translateY(-2px); }
+        .login-error { color: #dc3545; margin-top: 15px; font-size: 14px; }
+        .login-info { color: #666; font-size: 12px; margin-top: 20px; }
+        
         .tabs { display: flex; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; justify-content: center; }
         .tab { background: rgba(255,255,255,0.1); color: white; padding: 12px 24px; border: none; border-radius: 10px; cursor: pointer; font-size: 16px; transition: all 0.3s; }
         .tab.active { background: #e94560; }
@@ -19,21 +27,16 @@
         .tab-content.active { display: block; }
         
         .user-form { background: white; padding: 25px; border-radius: 15px; margin-bottom: 30px; }
-        .user-info-card { background: linear-gradient(135deg, #e8f4f8 0%, #d1e7f0 100%); border-radius: 12px; padding: 20px; margin-bottom: 20px; border-left: 4px solid #e94560; }
+        .user-info-card { background: linear-gradient(135deg, #e8f4f8 0%, #d1e7f0 100%); border-radius: 12px; padding: 20px; border-left: 4px solid #e94560; }
         .user-info-row { display: flex; margin-bottom: 10px; padding: 8px; background: white; border-radius: 8px; }
         .user-info-label { font-weight: bold; width: 120px; color: #533483; }
         .user-info-value { color: #333; flex: 1; }
-        .user-info-note { font-size: 12px; color: #666; margin-top: 10px; text-align: center; font-style: italic; }
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
-        .form-group { display: flex; flex-direction: column; }
-        .form-group label { margin-bottom: 5px; font-weight: bold; color: #333; }
-        .form-group input { padding: 10px; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; }
+        .logout-btn { background: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-top: 10px; }
         
         .grupo { margin-bottom: 40px; }
         .grupo h3 { background: #533483; color: white; padding: 10px 15px; border-radius: 10px; margin-bottom: 15px; }
         .partidos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); gap: 20px; }
         .partido-card { background: white; border-radius: 12px; padding: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: transform 0.2s; }
-        .partido-card:hover { transform: translateY(-3px); }
         .partido-card.disabled { opacity: 0.8; background: #f5f5f5; }
         
         .equipos { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: bold; padding-bottom: 10px; border-bottom: 1px solid #eee; }
@@ -57,6 +60,7 @@
         
         .btn-apostar { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white; border: none; padding: 15px 30px; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 30px; transition: all 0.3s; }
         .btn-apostar:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(40, 167, 69, 0.3); }
+        .btn-apostar:disabled { opacity: 0.6; cursor: not-allowed; }
         
         .ranking-table, .resultados-table { background: white; border-radius: 15px; overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; }
@@ -86,94 +90,161 @@
     <div class="container">
         <div class="header">
             <h1>🏆 QUINIELA MUNDIAL 2026</h1>
-            <p>Fico - ¡Pronostica resultados, tarjetas y penales para ganar increíbles premios!</p>
+            <p>Rio Chiquito Esperanza - ¡Pronostica resultados, tarjetas y penales para ganar increíbles premios!</p>
         </div>
         
-        <div class="tabs">
-            <button class="tab active" onclick="showTab('apostar')">📝 Apostar</button>
-            <button class="tab" onclick="showTab('ranking')">🏅 Ranking</button>
-            <button class="tab" onclick="showTab('resultados')">📊 Resultados</button>
-        </div>
-        
-        <div id="tab-apostar" class="tab-content active">
-            <div class="user-form">
-                <div class="user-info-card">
-                    <h3>📋 Información del Usuario</h3>
-                    <div class="user-info-row"><div class="user-info-label">Nombre completo:</div><div class="user-info-value" id="display-nombre">-</div></div>
-                    <div class="user-info-row"><div class="user-info-label">Cédula / PPPoE:</div><div class="user-info-value" id="display-cedula">-</div></div>
-                    <div class="user-info-note">⚠️ Esta información se ha cargado automáticamente desde tu cuenta. No es modificable.</div>
-                </div>
-                <input type="hidden" id="nombre" value=""><input type="hidden" id="cedula" value="">
-                <div class="form-grid">
-                    <div class="form-group"><label>📱 Teléfono (opcional)</label><input type="tel" id="telefono" placeholder="Ej: 0412-1234567"></div>
-                    <div class="form-group"><label>🏙️ Ciudad (opcional)</label><input type="text" id="ciudad" placeholder="Ej: Fico"></div>
-                </div>
+        <div id="loginContainer" class="login-section">
+            <h2>🔐 Acceso a la Quiniela</h2>
+            <p style="margin-bottom: 20px; color: #666;">Ingresa tu número de cédula para participar</p>
+            <input type="text" id="cedulaInput" placeholder="Ej: 12345678" maxlength="10" autocomplete="off">
+            <button onclick="verificarUsuario()">Ingresar</button>
+            <div id="loginError" class="login-error"></div>
+            <div class="login-info">
+                <i class="fas fa-info-circle"></i> Solo usuarios autorizados pueden participar
             </div>
-            <div id="partidos-container"><div class="loading"><div class="spinner"></div>Cargando partidos...</div></div>
-            <button class="btn-apostar" id="btnEnviar" onclick="enviarApuestas()">🚀 ENVIAR MIS PRONÓSTICOS</button>
         </div>
         
-        <div id="tab-ranking" class="tab-content">
-            <div class="ranking-table" id="ranking-container"><div class="loading"><div class="spinner"></div>Cargando ranking...</div></div>
-        </div>
-        
-        <div id="tab-resultados" class="tab-content">
-            <div class="resultados-table" id="resultados-container"><div class="loading"><div class="spinner"></div>Cargando resultados...</div></div>
+        <div id="mainContent" style="display: none;">
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('apostar')">📝 Apostar</button>
+                <button class="tab" onclick="showTab('ranking')">🏅 Ranking</button>
+                <button class="tab" onclick="showTab('resultados')">📊 Resultados</button>
+            </div>
+            
+            <div id="tab-apostar" class="tab-content active">
+                <div class="user-form">
+                    <div class="user-info-card">
+                        <h3>📋 Información del Usuario</h3>
+                        <div class="user-info-row"><div class="user-info-label">Nombre completo:</div><div class="user-info-value" id="display-nombre">-</div></div>
+                        <div class="user-info-row"><div class="user-info-label">Cédula:</div><div class="user-info-value" id="display-cedula">-</div></div>
+                        <div class="user-info-row"><div class="user-info-label">Teléfono:</div><div class="user-info-value" id="display-telefono">-</div></div>
+                        <div class="user-info-row"><div class="user-info-label">Ciudad:</div><div class="user-info-value" id="display-ciudad">-</div></div>
+                        <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
+                    </div>
+                </div>
+                <div id="partidos-container"><div class="loading"><div class="spinner"></div>Cargando partidos...</div></div>
+                <button class="btn-apostar" id="btnEnviar" onclick="enviarApuestas()">🚀 ENVIAR MIS PRONÓSTICOS</button>
+            </div>
+            
+            <div id="tab-ranking" class="tab-content">
+                <div class="ranking-table" id="ranking-container"><div class="loading"><div class="spinner"></div>Cargando ranking...</div></div>
+            </div>
+            
+            <div id="tab-resultados" class="tab-content">
+                <div class="resultados-table" id="resultados-container"><div class="loading"><div class="spinner"></div>Cargando resultados...</div></div>
+            </div>
         </div>
     </div>
     
     <div id="toast" class="toast"></div>
     
     <script>
-        // Configuración específica para Fico
-        const API_URL = 'https://tuquinielaisp.net';
-        const PROVEEDOR = 'fiberconnect';
+        // ============================================
+        // CONFIGURACIÓN - RIO CHIQUITO ESPERANZA
+        // ============================================
+        const API_URL = 'https://quiniela-mundial.thecrow859.workers.dev';
+        const PROVEEDOR = 'rio_chiquito_esperanza';
         
+        let usuarioActual = null;
         let partidos = [];
-        let usuarioData = { nombre: '', cedula: '', id: null };
         let apuestasUsuario = {};
         
-        // Función para obtener la URL base con el proveedor
-        function getApiUrl(endpoint) {
-            return `${API_URL}/${PROVEEDOR}${endpoint}`;
-        }
-        
-        // Cargar apuestas del usuario desde BD
-        async function cargarApuestasUsuario() {
-            if (!usuarioData.cedula) return {};
+        async function verificarUsuario() {
+            const cedula = document.getElementById('cedulaInput').value.trim();
+            const loginError = document.getElementById('loginError');
+            
+            if (!cedula) {
+                loginError.textContent = 'Ingresa tu número de cédula';
+                return;
+            }
+            
+            if (cedula.length < 6) {
+                loginError.textContent = 'La cédula debe tener al menos 6 dígitos';
+                return;
+            }
+            
+            loginError.textContent = '';
             
             try {
-                console.log('🔍 Buscando apuestas del usuario:', usuarioData.cedula);
+                const response = await fetch(`${API_URL}/api/verificar-usuario`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cedula, proveedor: PROVEEDOR })
+                });
                 
-                const response = await fetch(getApiUrl('/api/ranking'));
-                const usuarios = await response.json();
-                const usuario = usuarios.find(u => u.cedula === usuarioData.cedula);
+                const data = await response.json();
                 
-                if (usuario) {
-                    usuarioData.id = usuario.id;
+                if (response.ok && data.success) {
+                    usuarioActual = data.usuario;
+                    sessionStorage.setItem(`usuario_${PROVEEDOR}`, JSON.stringify(usuarioActual));
                     
-                    const apuestasResponse = await fetch(getApiUrl('/api/admin/apuestas'));
-                    const todasApuestas = await apuestasResponse.json();
-                    const misApuestas = todasApuestas.filter(a => a.usuario_id === usuarioData.id);
+                    document.getElementById('loginContainer').style.display = 'none';
+                    document.getElementById('mainContent').style.display = 'block';
                     
-                    misApuestas.forEach(apuesta => {
-                        apuestasUsuario[apuesta.partido_id] = {
-                            golesLocal: apuesta.goles_local,
-                            golesVisitante: apuesta.goles_visitante,
-                            tarjetasAmarillas: apuesta.tarjetas_amarillas,
-                            tarjetasRojas: apuesta.tarjetas_rojas,
-                            huboPenales: apuesta.hubo_penales === 1,
-                            golesPenalesLocal: apuesta.goles_penales_local,
-                            golesPenalesVisitante: apuesta.goles_penales_visitante
-                        };
-                    });
+                    document.getElementById('display-nombre').textContent = usuarioActual.nombre;
+                    document.getElementById('display-cedula').textContent = usuarioActual.cedula;
+                    document.getElementById('display-telefono').textContent = usuarioActual.telefono || 'No registrado';
+                    document.getElementById('display-ciudad').textContent = usuarioActual.ciudad || 'No registrada';
                     
-                    console.log('📊 Apuestas cargadas:', Object.keys(apuestasUsuario).length);
+                    await cargarApuestasUsuario();
+                    await cargarPartidos();
+                    cargarRanking();
+                    cargarResultados();
+                    
+                    mostrarToast(`✅ Bienvenido ${usuarioActual.nombre}`, 'success');
+                } else {
+                    loginError.textContent = data.error || 'Cédula no encontrada. No estás autorizado para participar.';
                 }
             } catch (error) {
                 console.error('Error:', error);
+                loginError.textContent = 'Error de conexión. Intenta de nuevo.';
             }
-            return apuestasUsuario;
+        }
+        
+        function logout() {
+            sessionStorage.removeItem(`usuario_${PROVEEDOR}`);
+            usuarioActual = null;
+            document.getElementById('loginContainer').style.display = 'block';
+            document.getElementById('mainContent').style.display = 'none';
+            document.getElementById('cedulaInput').value = '';
+            mostrarToast('Sesión cerrada', 'success');
+        }
+        
+        function checkSession() {
+            const savedUser = sessionStorage.getItem(`usuario_${PROVEEDOR}`);
+            if (savedUser) {
+                usuarioActual = JSON.parse(savedUser);
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                document.getElementById('display-nombre').textContent = usuarioActual.nombre;
+                document.getElementById('display-cedula').textContent = usuarioActual.cedula;
+                document.getElementById('display-telefono').textContent = usuarioActual.telefono || 'No registrado';
+                document.getElementById('display-ciudad').textContent = usuarioActual.ciudad || 'No registrada';
+                cargarApuestasUsuario();
+                cargarPartidos();
+                cargarRanking();
+                cargarResultados();
+            }
+        }
+        
+        async function cargarApuestasUsuario() {
+            if (!usuarioActual) return;
+            try {
+                const response = await fetch(`${API_URL}/api/admin/apuestas?proveedor=${PROVEEDOR}`);
+                const todasApuestas = await response.json();
+                const misApuestas = todasApuestas.filter(a => a.usuario_cedula === usuarioActual.cedula);
+                misApuestas.forEach(apuesta => {
+                    apuestasUsuario[apuesta.partido_id] = {
+                        golesLocal: apuesta.goles_local,
+                        golesVisitante: apuesta.goles_visitante,
+                        tarjetasAmarillas: apuesta.tarjetas_amarillas,
+                        tarjetasRojas: apuesta.tarjetas_rojas,
+                        huboPenales: apuesta.hubo_penales === 1,
+                        golesPenalesLocal: apuesta.goles_penales_local,
+                        golesPenalesVisitante: apuesta.goles_penales_visitante
+                    };
+                });
+            } catch (error) { console.error('Error cargando apuestas:', error); }
         }
         
         function puedeApostar(fechaPartido) {
@@ -189,63 +260,26 @@
             const fecha = new Date(fechaPartido);
             const ahora = new Date();
             const limite = new Date(fecha.getTime() - 30 * 60 * 1000);
-            
             if (ahora >= limite) return '⏰ Plazo cerrado';
-            
             const diff = limite - ahora;
             const horas = Math.floor(diff / (1000 * 60 * 60));
             const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            
             if (horas > 0) return `⏳ Cierra en ${horas}h ${minutos}m`;
             if (minutos > 0) return `⏳ Cierra en ${minutos} minutos`;
             return `⏳ Cierra en menos de 1 minuto`;
         }
         
-        function cargarDatosUsuario() {
-            const urlParams = new URLSearchParams(window.location.search);
-            let nombre = urlParams.get('nombre');
-            let cedula = urlParams.get('cedula');
-            if (nombre) nombre = decodeURIComponent(nombre);
-            if (cedula) cedula = decodeURIComponent(cedula);
-            
-            if (nombre && cedula) {
-                usuarioData.nombre = nombre;
-                usuarioData.cedula = cedula;
-                document.getElementById('display-nombre').textContent = nombre;
-                document.getElementById('display-cedula').textContent = cedula;
-                document.getElementById('nombre').value = nombre;
-                document.getElementById('cedula').value = cedula;
-                return true;
-            } else {
-                document.getElementById('display-nombre').innerHTML = '<span style="color: red;">❌ No se pudo cargar</span>';
-                document.getElementById('display-cedula').innerHTML = '<span style="color: red;">❌ No se pudo cargar</span>';
-                return false;
-            }
-        }
-        
-        window.onload = async () => {
-            if (cargarDatosUsuario()) {
-                await cargarApuestasUsuario();
-                await cargarPartidos();
-                cargarRanking();
-                cargarResultados();
-            }
-        };
-        
         async function cargarPartidos() {
             try {
-                const response = await fetch(getApiUrl('/api/partidos'));
+                const response = await fetch(`${API_URL}/api/partidos`);
                 partidos = await response.json();
                 mostrarPartidos();
-            } catch (error) {
-                document.getElementById('partidos-container').innerHTML = '<div class="loading">Error al cargar partidos</div>';
-            }
+            } catch (error) { document.getElementById('partidos-container').innerHTML = '<div class="loading">Error al cargar partidos</div>'; }
         }
         
         function mostrarPartidos() {
             const container = document.getElementById('partidos-container');
             container.innerHTML = '';
-            
             const grupos = {};
             partidos.forEach(p => { const grupo = p.grupo_nombre || 'Sin grupo'; if (!grupos[grupo]) grupos[grupo] = []; grupos[grupo].push(p); });
             
@@ -303,9 +337,7 @@
         }
         
         async function enviarApuestas() {
-            const nombre = document.getElementById('nombre').value;
-            const cedula = document.getElementById('cedula').value;
-            if (!nombre || !cedula) { mostrarToast('No se encontraron tus datos', 'error'); return; }
+            if (!usuarioActual) { mostrarToast('Debes iniciar sesión primero', 'error'); return; }
             
             const apuestas = [];
             for (const partido of partidos) {
@@ -342,10 +374,16 @@
             btn.disabled = true;
             
             try {
-                const response = await fetch(getApiUrl('/api/apostar'), {
+                const response = await fetch(`${API_URL}/api/apostar`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nombre, cedula, telefono: document.getElementById('telefono').value, ciudad: document.getElementById('ciudad').value, apuestas })
+                    body: JSON.stringify({
+                        nombre: usuarioActual.nombre,
+                        cedula: usuarioActual.cedula,
+                        telefono: usuarioActual.telefono,
+                        ciudad: usuarioActual.ciudad,
+                        apuestas
+                    })
                 });
                 const data = await response.json();
                 if (response.ok && data.success) {
@@ -360,21 +398,21 @@
         
         async function cargarRanking() {
             try {
-                const response = await fetch(getApiUrl('/api/ranking'));
+                const response = await fetch(`${API_URL}/api/ranking?proveedor=${PROVEEDOR}`);
                 const ranking = await response.json();
                 const container = document.getElementById('ranking-container');
                 if (!ranking || ranking.length === 0) { container.innerHTML = '<div class="loading">Aún no hay participantes</div>'; return; }
-                container.innerHTML = `<table><thead><tr><th>#</th><th>Participante</th><th>Puntos</th><th>Exactos</th><th>Ganador</th><th>Tarjetas</th><th>Penales</th></tr></thead><tbody>${ranking.map((r, i) => `<tr><td><strong>${i+1}</strong></td><td>${r.nombre}</td><td><span style="font-size:1.2em;font-weight:bold;color:#e94560;">${r.total_puntos || 0}</span></td><td>${r.aciertos_exactos || 0}</td><td>${r.aciertos_ganador || 0}</td><td>${(r.aciertos_amarillas || 0) + (r.aciertos_rojas || 0)}</td><td>${r.aciertos_penales_exactos || 0}</td></tr>`).join('')}</tbody></table>`;
+                container.innerHTML = `<tr><thead><tr><th>#</th><th>Participante</th><th>Puntos</th><th>Exactos</th><th>Ganador</th><th>Tarjetas</th><th>Penales</th></tr></thead><tbody>${ranking.map((r, i) => `<tr><td style="padding:12px;"><strong>${i+1}</strong></td><td style="padding:12px;">${r.nombre}</td><td style="padding:12px;"><span style="font-size:1.2em;font-weight:bold;color:#e94560;">${r.total_puntos || 0}</span></td><td style="padding:12px;">${r.aciertos_exactos || 0}</td><td style="padding:12px;">${r.aciertos_ganador || 0}</td><td style="padding:12px;">${(r.aciertos_amarillas || 0) + (r.aciertos_rojas || 0)}</td><td style="padding:12px;">${r.aciertos_penales_exactos || 0}</td></tr>`).join('')}</tbody></table>`;
             } catch (error) { console.error(error); }
         }
         
         async function cargarResultados() {
             try {
-                const response = await fetch(getApiUrl('/api/resultados'));
+                const response = await fetch(`${API_URL}/api/resultados`);
                 const resultados = await response.json();
                 const container = document.getElementById('resultados-container');
                 if (!resultados || resultados.length === 0) { container.innerHTML = '<div class="loading">Aún no hay resultados</div>'; return; }
-                container.innerHTML = `<table><thead><tr><th>Partido</th><th>Resultado</th><th>Amarillas</th><th>Rojas</th><th>Penales</th></tr></thead><tbody>${resultados.map(r => `<tr><td>${r.local} vs ${r.visitante}</td><td><strong>${r.resultado_local || 0} - ${r.resultado_visitante || 0}</strong></td><td>${r.tarjetas_amarillas_real || 0}</td><td>${r.tarjetas_rojas_real || 0}</td><td>${r.hubo_penales_real ? (r.goles_penales_local_real || 0) + '-' + (r.goles_penales_visitante_real || 0) : 'No'}</td></tr>`).join('')}</tbody></table>`;
+                container.innerHTML = `<table><thead><tr><th>Partido</th><th>Resultado</th><th>Amarillas</th><th>Rojas</th><th>Penales</th></tr></thead><tbody>${resultados.map(r => `<tr><td style="padding:12px;">${r.local} vs ${r.visitante}</td><td style="padding:12px;"><strong>${r.resultado_local || 0} - ${r.resultado_visitante || 0}</strong></td><td style="padding:12px;">${r.tarjetas_amarillas_real || 0}</td><td style="padding:12px;">${r.tarjetas_rojas_real || 0}</td><td style="padding:12px;">${r.hubo_penales_real ? (r.goles_penales_local_real || 0) + '-' + (r.goles_penales_visitante_real || 0) : 'No'}</td></tr>`).join('')}</tbody></table>`;
             } catch (error) { console.error(error); }
         }
         
@@ -393,6 +431,8 @@
             toast.className = `toast ${tipo}`;
             setTimeout(() => { toast.style.display = 'none'; toast.className = 'toast'; }, 4000);
         }
+        
+        checkSession();
     </script>
 </body>
 </html>
