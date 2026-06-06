@@ -571,7 +571,7 @@
             
             <!-- Tabs -->
             <div class="tabs">
-                <button class="tab active" onclick="showTab('apostar')">🎯 Primera Jornada</button>
+                <button class="tab active" onclick="showTab('apostar')">🎯 Jornada Actual</button>
                 <button class="tab" onclick="showTab('mis-apuestas')">📋 Mis Apuestas</button>
                 <button class="tab" onclick="showTab('ranking')">🏅 Ranking</button>
                 <button class="tab" onclick="showTab('resultados')">📊 Resultados</button>
@@ -580,8 +580,8 @@
             <!-- Tab Apostar -->
             <div id="tab-apostar" class="tab-content active">
                 <div class="section-title">
-                    <i class="fas fa-futbol"></i>
-                    <span>Partidos de la Primera Jornada</span>
+                    <i class="fas fa-calendar-alt"></i>
+                    <span id="jornadaTitle">Cargando jornada...</span>
                 </div>
                 <div id="partidos-container"><div class="loading"><div class="spinner"></div>Cargando partidos...</div></div>
             </div>
@@ -631,13 +631,14 @@
         // ============================================
         const API_URL = 'https://quiniela-mundial.thecrow859.workers.dev';
         const PROVEEDOR = 'adjuntas';
-        const PRIMERA_JORNADA = 1;
         
         let usuarioActual = null;
+        let todosPartidos = [];
         let partidos = [];
         let apuestasUsuario = {};
         let fechaLimite = null;
         let puedeApostarGlobal = true;
+        let jornadaActual = 1;
         
         // ============================================
         // CARGAR CONFIGURACIÓN DE IMÁGENES
@@ -664,14 +665,78 @@
         }
         
         // ============================================
-        // FUNCIONES DE FECHAS
+        // FUNCIONES DE JORNADAS
         // ============================================
-        function obtenerPrimerPartidoFecha(partidosLista) {
-            if (!partidosLista || partidosLista.length === 0) return null;
-            const fechas = partidosLista.map(p => new Date(p.fecha_partido));
-            return new Date(Math.min(...fechas));
+        
+        function obtenerJornadasDisponibles(partidos) {
+            const jornadas = new Set();
+            partidos.forEach(p => {
+                if (p.jornada) jornadas.add(p.jornada);
+            });
+            return Array.from(jornadas).sort((a, b) => a - b);
         }
         
+        function obtenerJornadaActual(partidos) {
+            const ahora = new Date();
+            const jornadas = obtenerJornadasDisponibles(partidos);
+            
+            if (jornadas.length === 0) return 1;
+            
+            // Ordenar jornadas por fecha del primer partido
+            const jornadasConFecha = jornadas.map(jornada => {
+                const partidosJornada = partidos.filter(p => p.jornada === jornada);
+                const primeraFecha = new Date(Math.min(...partidosJornada.map(p => new Date(p.fecha_partido))));
+                return { jornada, primeraFecha };
+            });
+            
+            jornadasConFecha.sort((a, b) => a.primeraFecha - b.primeraFecha);
+            
+            // Encontrar la primera jornada que no ha pasado completamente
+            for (const j of jornadasConFecha) {
+                const partidosJornada = partidos.filter(p => p.jornada === j.jornada);
+                const hayPartidoFuturo = partidosJornada.some(p => new Date(p.fecha_partido) > ahora);
+                if (hayPartidoFuturo) {
+                    return j.jornada;
+                }
+            }
+            
+            // Si todas pasaron, devolver la última
+            return jornadas[jornadas.length - 1];
+        }
+        
+        async function puedeUsuarioApostar(usuarioCedula) {
+            if (!usuarioCedula || !todosPartidos || todosPartidos.length === 0) return true;
+            
+            try {
+                const response = await fetch(`${API_URL}/api/admin/apuestas?proveedor=${PROVEEDOR}`);
+                const todasApuestas = await response.json();
+                const apuestasUser = todasApuestas.filter(a => a.usuario_cedula === usuarioCedula);
+                
+                const jornadasApostadas = new Set();
+                for (const apuesta of apuestasUser) {
+                    const partido = todosPartidos.find(p => p.id === apuesta.partido_id);
+                    if (partido && partido.jornada) {
+                        jornadasApostadas.add(partido.jornada);
+                    }
+                }
+                
+                const todasJornadas = obtenerJornadasDisponibles(todosPartidos);
+                
+                for (const j of todasJornadas) {
+                    if (j < jornadaActual && !jornadasApostadas.has(j)) {
+                        return false;
+                    }
+                }
+                return true;
+            } catch (error) {
+                console.error('Error verificando participación:', error);
+                return true;
+            }
+        }
+        
+        // ============================================
+        // FUNCIONES DE FECHAS
+        // ============================================
         function verificarFechaLimite() {
             if (!fechaLimite) return true;
             const ahora = new Date();
@@ -681,7 +746,7 @@
             if (!puede) {
                 banner.innerHTML = `
                     <h3><i class="fas fa-lock"></i> ⏰ PLAZO DE APUESTAS CERRADO</h3>
-                    <p>El plazo para apostar en la primera jornada ha finalizado. ¡Gracias por participar!</p>
+                    <p>El plazo para apostar en la Jornada ${jornadaActual} ha finalizado.</p>
                 `;
                 banner.classList.add('warning');
             } else {
@@ -689,14 +754,25 @@
                 const horas = Math.floor(diff / (1000 * 60 * 60));
                 const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                 banner.innerHTML = `
-                    <h3><i class="fas fa-hourglass-half"></i> ⏰ PLAZO PARA APOSTAR</h3>
-                    <p>El plazo se cierra en ${horas} horas y ${minutos} minutos. ¡No esperes al último momento!</p>
+                    <h3><i class="fas fa-hourglass-half"></i> ⏰ Jornada ${jornadaActual}</h3>
+                    <p>Plazo para apostar: ${horas} horas y ${minutos} minutos. ¡No esperes!</p>
                 `;
                 banner.classList.remove('warning');
-                banner.classList.add('info');
             }
             
             return puede;
+        }
+        
+        function obtenerTiempoRestante(fechaLimitePartido) {
+            if (!fechaLimitePartido) return '';
+            const ahora = new Date();
+            const diff = fechaLimitePartido - ahora;
+            if (diff <= 0) return '⏰ Plazo cerrado';
+            const horas = Math.floor(diff / (1000 * 60 * 60));
+            const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            if (horas > 0) return `⏳ Cierra en ${horas}h ${minutos}m`;
+            if (minutos > 0) return `⏳ Cierra en ${minutos} minutos`;
+            return `⏳ Cierra en menos de 1 minuto`;
         }
         
         // ============================================
@@ -816,7 +892,7 @@
             const apuestasArray = Object.values(apuestasUsuario);
             
             if (apuestasArray.length === 0) {
-                container.innerHTML = '<div class="no-data"><i class="fas fa-inbox" style="font-size: 48px; opacity: 0.5; margin-bottom: 15px;"></i><p>Aún no has realizado ninguna apuesta en la primera jornada</p></div>';
+                container.innerHTML = '<div class="no-data"><i class="fas fa-inbox" style="font-size: 48px; opacity: 0.5; margin-bottom: 15px;"></i><p>Aún no has realizado ninguna apuesta</p></div>';
                 return;
             }
             
@@ -831,7 +907,6 @@
                             <div class="apuesta-item"><strong>⚽ Resultado:</strong> ${a.golesLocal} - ${a.golesVisitante}</div>
                             <div class="apuesta-item"><strong>🟨 Amarillas:</strong> ${a.tarjetasAmarillas}</div>
                             <div class="apuesta-item"><strong>🟥 Rojas:</strong> ${a.tarjetasRojas}</div>
-                            <div class="apuesta-item"><strong>⚽ Penales:</strong> ${a.huboPenales ? `${a.golesPenalesLocal} - ${a.golesPenalesVisitante}` : 'No'}</div>
                         </div>
                     </div>
                 </div>
@@ -839,26 +914,50 @@
         }
         
         // ============================================
-        // CARGAR PARTIDOS (SOLO PRIMERA JORNADA)
+        // CARGAR PARTIDOS
         // ============================================
         async function cargarPartidos() {
             try {
                 const response = await fetch(`${API_URL}/api/partidos`);
-                const todosPartidos = await response.json();
+                todosPartidos = await response.json();
                 
-                // Filtrar SOLO partidos de la primera jornada y no apostados
+                // Determinar la jornada actual
+                jornadaActual = obtenerJornadaActual(todosPartidos);
+                
+                // Filtrar partidos de la jornada actual que no han sido apostados
                 partidos = todosPartidos.filter(p => {
-                    return p.jornada === PRIMERA_JORNADA && !apuestasUsuario[p.id];
+                    return p.jornada === jornadaActual && !apuestasUsuario[p.id];
                 });
                 
-                // Calcular fecha límite (30 min antes del primer partido)
-                const primerPartido = obtenerPrimerPartidoFecha(todosPartidos.filter(p => p.jornada === PRIMERA_JORNADA));
+                // Actualizar título
+                document.getElementById('jornadaTitle').innerHTML = `⚽ Jornada ${jornadaActual}`;
+                document.querySelector('.tab.active').innerHTML = `🎯 Jornada ${jornadaActual}`;
+                
+                // Verificar si el usuario puede apostar
+                const puedeParticipar = await puedeUsuarioApostar(usuarioActual?.cedula);
+                
+                if (!puedeParticipar && usuarioActual) {
+                    document.getElementById('partidos-container').innerHTML = `
+                        <div class="no-data">
+                            <i class="fas fa-ban" style="font-size: 48px; opacity: 0.5; margin-bottom: 15px; color: #dc3545;"></i>
+                            <p>⚠️ No puedes realizar apuestas en la Jornada ${jornadaActual}</p>
+                            <p>Para participar en jornadas siguientes, debes haber apostado en la jornada anterior.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Calcular fecha límite
+                const partidosJornada = todosPartidos.filter(p => p.jornada === jornadaActual);
+                const primerPartido = partidosJornada.length > 0 ? new Date(Math.min(...partidosJornada.map(p => new Date(p.fecha_partido)))) : null;
+                
                 if (primerPartido) {
                     fechaLimite = new Date(primerPartido.getTime() - 30 * 60 * 1000);
                     puedeApostarGlobal = verificarFechaLimite();
                 }
                 
                 mostrarPartidos();
+                
             } catch (error) {
                 console.error('Error:', error);
                 document.getElementById('partidos-container').innerHTML = '<div class="loading">Error al cargar partidos</div>';
@@ -867,14 +966,42 @@
         
         function mostrarPartidos() {
             const container = document.getElementById('partidos-container');
+            const partidosJornada = todosPartidos?.filter(p => p.jornada === jornadaActual) || [];
             
             if (partidos.length === 0) {
-                if (Object.keys(apuestasUsuario).length > 0) {
-                    container.innerHTML = '<div class="no-data"><i class="fas fa-check-circle" style="font-size: 48px; opacity: 0.5; margin-bottom: 15px; color: #28a745;"></i><p>✅ ¡Ya has realizado todas tus apuestas de la primera jornada!</p><p>Espera los resultados y sigue participando en las próximas jornadas.</p></div>';
+                const yaApostoTodos = partidosJornada.length > 0 && partidosJornada.every(p => apuestasUsuario[p.id]);
+                
+                if (yaApostoTodos && partidosJornada.length > 0) {
+                    container.innerHTML = `
+                        <div class="no-data">
+                            <i class="fas fa-check-circle" style="font-size: 48px; opacity: 0.5; margin-bottom: 15px; color: #28a745;"></i>
+                            <p>✅ ¡Ya has realizado todas tus apuestas de la Jornada ${jornadaActual}!</p>
+                            <p>Espera a que comience la siguiente jornada para seguir participando.</p>
+                        </div>
+                    `;
                 } else if (!puedeApostarGlobal) {
-                    container.innerHTML = '<div class="no-data"><i class="fas fa-clock" style="font-size: 48px; opacity: 0.5; margin-bottom: 15px;"></i><p>⏰ El plazo para apostar en la primera jornada ha finalizado.</p><p>Los usuarios que participaron podrán continuar en las siguientes jornadas.</p></div>';
+                    container.innerHTML = `
+                        <div class="no-data">
+                            <i class="fas fa-clock" style="font-size: 48px; opacity: 0.5; margin-bottom: 15px;"></i>
+                            <p>⏰ El plazo para apostar en la Jornada ${jornadaActual} ha finalizado.</p>
+                            <p>Los usuarios que participaron podrán continuar en la siguiente jornada.</p>
+                        </div>
+                    `;
+                } else if (partidosJornada.length === 0) {
+                    container.innerHTML = `
+                        <div class="no-data">
+                            <i class="fas fa-flag-checkered" style="font-size: 48px; opacity: 0.5; margin-bottom: 15px;"></i>
+                            <p>🏁 ¡El Mundial ha finalizado!</p>
+                            <p>Gracias por participar.</p>
+                        </div>
+                    `;
                 } else {
-                    container.innerHTML = '<div class="no-data"><i class="fas fa-info-circle" style="font-size: 48px; opacity: 0.5; margin-bottom: 15px;"></i><p>No hay partidos disponibles para apostar en este momento.</p></div>';
+                    container.innerHTML = `
+                        <div class="no-data">
+                            <i class="fas fa-info-circle" style="font-size: 48px; opacity: 0.5; margin-bottom: 15px;"></i>
+                            <p>No hay partidos disponibles para apostar en este momento</p>
+                        </div>
+                    `;
                 }
                 return;
             }
@@ -923,24 +1050,12 @@
                             </div>
                         </div>
                         ${!puede && !finalizado ? '<div class="tiempo-restante">🔒 Plazo de apuesta cerrado</div>' : ''}
-                        ${puede ? `<button class="btn-apostar" onclick="enviarApuestaPartido(${partido.id})" ${!puede || finalizado ? 'disabled' : ''}>🚀 Enviar Pronóstico</button>` : ''}
+                        ${puede ? `<button class="btn-apostar" onclick="enviarApuestaPartido(${partido.id})">🚀 Enviar Pronóstico</button>` : ''}
                     </div>
                 `;
                 
                 container.appendChild(card);
             });
-        }
-        
-        function obtenerTiempoRestante(fechaLimitePartido) {
-            if (!fechaLimitePartido) return '';
-            const ahora = new Date();
-            const diff = fechaLimitePartido - ahora;
-            if (diff <= 0) return '⏰ Plazo cerrado';
-            const horas = Math.floor(diff / (1000 * 60 * 60));
-            const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            if (horas > 0) return `⏳ Cierra en ${horas}h ${minutos}m`;
-            if (minutos > 0) return `⏳ Cierra en ${minutos} minutos`;
-            return `⏳ Cierra en menos de 1 minuto`;
         }
         
         async function enviarApuestaPartido(partidoId) {
@@ -950,7 +1065,7 @@
             }
             
             if (!puedeApostarGlobal) {
-                mostrarToast('⏰ El plazo para apostar en la primera jornada ha finalizado', 'error');
+                mostrarToast('⏰ El plazo para apostar en esta jornada ha finalizado', 'error');
                 return;
             }
             
@@ -1034,7 +1149,7 @@
                                     <th style="padding: 15px;">Exactos</th>
                                     <th style="padding: 15px;">Ganador</th>
                                     <th style="padding: 15px;">Tarjetas</th>
-                                 </tr>
+                                </tr>
                             </thead>
                             <tbody>
                                 ${ranking.map((r, i) => `
@@ -1044,7 +1159,7 @@
                                         <td style="padding: 15px;"><strong style="color:#e94560; font-size:1.2em;">${r.total_puntos || 0}</strong></td>
                                         <td style="padding: 15px;">${r.aciertos_exactos || 0}</td>
                                         <td style="padding: 15px;">${r.aciertos_ganador || 0}</td>
-                                        <td style="padding: 15px;">${(r.aciertos_amarillas || 0) + (r.aciertos_rojas || 0)}</td>
+                                        <td style="padding: 15px;">${(r.aciertos_amarillas || 0) + (r.aciertos_rojas || 0)}<\/td>
                                     </tr>
                                 `).join('')}
                             </tbody>
@@ -1077,10 +1192,10 @@
                             <tbody>
                                 ${resultados.map(r => `
                                     <tr style="border-bottom: 1px solid #eee;">
-                                        <td style="padding: 15px;">${r.local} vs ${r.visitante}</td>
+                                        <td style="padding: 15px;">${r.local} vs ${r.visitante}<\/td>
                                         <td style="padding: 15px;"><strong>${r.resultado_local || 0} - ${r.resultado_visitante || 0}</strong></td>
-                                        <td style="padding: 15px;">${r.tarjetas_amarillas_real || 0}</td>
-                                        <td style="padding: 15px;">${r.tarjetas_rojas_real || 0}</td>
+                                        <td style="padding: 15px;">${r.tarjetas_amarillas_real || 0}<\/td>
+                                        <td style="padding: 15px;">${r.tarjetas_rojas_real || 0}<\/td>
                                     </tr>
                                 `).join('')}
                             </tbody>
