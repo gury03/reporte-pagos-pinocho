@@ -14,15 +14,6 @@
             min-height: 100vh;
         }
         
-        .login-container {
-            max-width: 400px;
-            margin: 100px auto;
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-        
         .admin-container {
             max-width: 1400px;
             margin: 0 auto;
@@ -119,21 +110,14 @@
             transform: translateY(-2px);
         }
         
-        .btn-refresh {
-            background: #17a2b8;
-        }
-        
-        .btn-logout {
-            background: #6c757d;
-        }
-        
-        .btn-sync {
-            background: #28a745;
-        }
-        
-        .btn-danger {
-            background: #dc3545 !important;
-        }
+        .btn-refresh { background: #17a2b8; }
+        .btn-logout { background: #6c757d; }
+        .btn-sync { background: #28a745; }
+        .btn-danger { background: #dc3545 !important; }
+        .btn-success { background: #28a745 !important; }
+        .btn-warning { background: #ffc107 !important; color: #333 !important; }
+        .btn-primary { background: #e94560 !important; color: white !important; }
+        .btn-info { background: #17a2b8 !important; color: white !important; }
         
         .panel {
             display: none;
@@ -143,9 +127,7 @@
             margin-top: 20px;
         }
         
-        .panel.active {
-            display: block;
-        }
+        .panel.active { display: block; }
         
         .panel-header {
             display: flex;
@@ -185,12 +167,6 @@
             top: 0;
         }
         
-        td .btn-group {
-            display: flex;
-            gap: 5px;
-            flex-wrap: wrap;
-        }
-        
         .btn {
             padding: 6px 12px;
             border: none;
@@ -203,34 +179,7 @@
             gap: 5px;
         }
         
-        .btn:hover {
-            transform: translateY(-2px);
-        }
-        
-        .btn-primary {
-            background: #e94560;
-            color: white;
-        }
-        
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
-        
-        .btn-warning {
-            background: #ffc107;
-            color: #333;
-        }
-        
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-        }
-        
-        .btn-info {
-            background: #17a2b8;
-            color: white;
-        }
+        .btn:hover { transform: translateY(-2px); }
         
         .form-modal {
             display: none;
@@ -250,7 +199,7 @@
             padding: 30px;
             border-radius: 15px;
             width: 90%;
-            max-width: 600px;
+            max-width: 700px;
             max-height: 90vh;
             overflow-y: auto;
         }
@@ -272,11 +221,6 @@
             border-radius: 8px;
         }
         
-        .form-group textarea {
-            font-family: monospace;
-            resize: vertical;
-        }
-        
         .toast {
             position: fixed;
             bottom: 20px;
@@ -288,64 +232,14 @@
             animation: slideIn 0.3s ease;
         }
         
-        .toast.success {
-            background: #28a745;
-            color: white;
-            display: block;
-        }
-        
-        .toast.error {
-            background: #dc3545;
-            color: white;
-            display: block;
-        }
-        
-        .toast.info {
-            background: #17a2b8;
-            color: white;
-            display: block;
-        }
+        .toast.success { background: #28a745; color: white; display: block; }
+        .toast.error { background: #dc3545; color: white; display: block; }
+        .toast.info { background: #17a2b8; color: white; display: block; }
         
         .loading {
             text-align: center;
             padding: 20px;
             color: #666;
-        }
-        
-        .resultado-card {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-left: 4px solid #28a745;
-        }
-        
-        .resultado-card.pendiente {
-            border-left-color: #ffc107;
-        }
-        
-        .resultado-equipos {
-            font-weight: bold;
-            font-size: 1.1em;
-            margin-bottom: 10px;
-        }
-        
-        .resultado-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        
-        .resultado-valor {
-            font-size: 1.3em;
-            font-weight: bold;
-        }
-        
-        .resultado-fecha {
-            color: #666;
-            font-size: 0.85em;
         }
         
         .error-message {
@@ -375,36 +269,66 @@
             text-align: center;
         }
         
-        .progress-bar {
-            width: 100%;
-            background-color: #f0f0f0;
-            border-radius: 10px;
-            margin: 10px 0;
-            overflow: hidden;
+        .preview-reglas {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            max-height: 400px;
+            overflow-y: auto;
         }
         
-        .progress-fill {
-            background-color: #28a745;
-            height: 20px;
-            width: 0%;
-            transition: width 0.3s;
-            border-radius: 10px;
+        .proveedores-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
         }
         
-        .preview-img {
-            max-height: 60px;
+        .proveedor-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #28a745;
+        }
+        
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .filter-bar input, .filter-bar select {
+            padding: 8px 12px;
             border: 1px solid #ddd;
             border-radius: 8px;
-            padding: 5px;
-            margin-top: 10px;
         }
         
-        .preview-fondo {
-            max-height: 100px;
-            width: 100%;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-top: 10px;
+        .resultado-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #28a745;
+        }
+        
+        .resultado-equipos {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+        
+        .resultado-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         
         @keyframes slideIn {
@@ -416,41 +340,27 @@
             .admin-container { padding: 10px; }
             th, td { padding: 8px; font-size: 12px; }
             .btn { padding: 4px 8px; font-size: 10px; }
-            .resultado-info { flex-direction: column; align-items: flex-start; }
             .header-top { flex-direction: column; text-align: center; }
             .nav-tabs { justify-content: center; }
-            .preview-fondo { max-height: 60px; }
         }
     </style>
 </head>
 <body>
-    <div id="loginPanel" class="login-container">
-        <h2 style="margin-bottom: 20px;">🔐 Panel Admin</h2>
-        <input type="password" id="adminPass" placeholder="Contraseña" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 2px solid #ddd; border-radius: 8px;">
-        <button onclick="verificarAdmin()" style="width: 100%; padding: 10px; background: #e94560; color: white; border: none; border-radius: 8px; cursor: pointer;">Ingresar</button>
-        <div id="loginError" style="color: red; margin-top: 10px;"></div>
-    </div>
-    
     <div id="adminPanel" style="display: none;">
         <div class="admin-container">
             <div class="header">
                 <div class="header-top">
                     <div>
                         <h1>⚽ Panel de Administración - Quiniela Mundial 2026</h1>
-                        <p>Gestiona grupos, equipos, partidos, resultados y apuestas</p>
+                        <p>Bienvenido, <span id="adminNombre">-</span> (<span id="adminRol">-</span>)</p>
                     </div>
                     <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                         <div class="proveedor-selector">
                             <i class="fas fa-building"></i>
                             <span>Proveedor:</span>
-                            <select id="selectProveedor" onchange="cambiarProveedor()">
-                                <option value="adjuntas">📡 Adjuntas</option>
-                                <option value="rio_chiquito_esperanza">🌊 Rio Chiquito Esperanza</option>
-                                <option value="caucagua">🏞️ Caucagua</option>
-                                <option value="all">📊 Todos (Global)</option>
-                            </select>
+                            <select id="selectProveedor" onchange="cambiarProveedor()"></select>
                         </div>
-                        <div class="auto-refresh-status active" id="autoRefreshStatus">
+                        <div class="auto-refresh-status active">
                             <i class="fas fa-sync-alt fa-fw"></i>
                             <span>Auto-refresh: 30s</span>
                         </div>
@@ -460,7 +370,7 @@
                         <button class="btn btn-success btn-sync" onclick="sincronizarMundial()">
                             <i class="fas fa-cloud-download-alt"></i> Sincronizar Mundial
                         </button>
-                        <button class="btn btn-logout" onclick="logout()">
+                        <button class="btn btn-logout" onclick="cerrarSesion()">
                             <i class="fas fa-sign-out-alt"></i> Salir
                         </button>
                     </div>
@@ -481,17 +391,16 @@
                 <button class="nav-btn" onclick="showPanel('usuarios-autorizados')">✅ Usuarios Autorizados</button>
                 <button class="nav-btn" onclick="showPanel('usuarios-apostadores')">👥 Apostadores</button>
                 <button class="nav-btn" onclick="showPanel('config-imagenes')">🖼️ Configurar Imágenes</button>
+                <button class="nav-btn" onclick="showPanel('config-reglas')">📜 Editar Reglas</button>
+                <button class="nav-btn" onclick="showPanel('proveedores')">🏢 Gestionar Proveedores</button>
+                <button class="nav-btn" id="btnAdminPanel" onclick="showPanel('administradores')">👥 Administradores</button>
+                <button class="nav-btn" onclick="showPanel('logs')">📋 Logs</button>
                 <button class="nav-btn btn-danger" onclick="mostrarModalReinicio()">🗑️ Reiniciar DB</button>
             </div>
             
             <!-- Panel Apuestas -->
             <div id="panel-apuestas" class="panel active">
-                <div class="panel-header">
-                    <h3>📊 Apuestas de Usuarios <span id="proveedorBadge" style="background:#e94560; padding:2px 10px; border-radius:20px; font-size:12px;"></span></h3>
-                </div>
-                <div class="table-responsive">
-                    <div id="apuestas-table"><div class="loading">Cargando apuestas...</div></div>
-                </div>
+                <div id="apuestas-table"><div class="loading">Cargando apuestas...</div></div>
             </div>
             
             <!-- Panel Grupos -->
@@ -500,9 +409,7 @@
                     <h3>📁 Grupos</h3>
                     <button class="btn btn-primary" onclick="openModal('grupo')">+ Nuevo Grupo</button>
                 </div>
-                <div class="table-responsive">
-                    <div id="grupos-table"><div class="loading">Cargando grupos...</div></div>
-                </div>
+                <div id="grupos-table"><div class="loading">Cargando grupos...</div></div>
             </div>
             
             <!-- Panel Equipos -->
@@ -511,9 +418,7 @@
                     <h3>⚽ Equipos</h3>
                     <button class="btn btn-primary" onclick="openModal('equipo')">+ Nuevo Equipo</button>
                 </div>
-                <div class="table-responsive">
-                    <div id="equipos-table"><div class="loading">Cargando equipos...</div></div>
-                </div>
+                <div id="equipos-table"><div class="loading">Cargando equipos...</div></div>
             </div>
             
             <!-- Panel Partidos -->
@@ -522,9 +427,7 @@
                     <h3>📅 Partidos</h3>
                     <button class="btn btn-primary" onclick="openModal('partido')">+ Nuevo Partido</button>
                 </div>
-                <div class="table-responsive">
-                    <div id="partidos-table"><div class="loading">Cargando partidos...</div></div>
-                </div>
+                <div id="partidos-table"><div class="loading">Cargando partidos...</div></div>
             </div>
             
             <!-- Panel Resultados -->
@@ -532,102 +435,105 @@
                 <div class="panel-header">
                     <h3>🎯 Gestión de Resultados</h3>
                 </div>
-                <p style="margin-bottom: 15px; color: #666;">Aquí puedes ver, cargar, editar y eliminar resultados de partidos.</p>
                 <div id="resultados-container"><div class="loading">Cargando resultados...</div></div>
             </div>
             
             <!-- Panel Usuarios Autorizados -->
             <div id="panel-usuarios-autorizados" class="panel">
                 <div class="panel-header">
-                    <h3>✅ Usuarios Autorizados <span id="usuariosAutorizadosBadge" style="background:#e94560; padding:2px 10px; border-radius:20px; font-size:12px;"></span></h3>
-                    <button class="btn btn-info" onclick="mostrarModalCargaUsuarios()">
-                        <i class="fas fa-upload"></i> Carga Masiva
-                    </button>
+                    <h3>✅ Usuarios Autorizados <span id="usuariosAutorizadosBadge"></span></h3>
+                    <button class="btn btn-info" onclick="mostrarModalCargaUsuarios()">Carga Masiva</button>
                 </div>
-                <div class="table-responsive">
-                    <div id="usuarios-autorizados-table"><div class="loading">Cargando usuarios autorizados...</div></div>
-                </div>
+                <div id="usuarios-autorizados-table"><div class="loading">Cargando usuarios...</div></div>
             </div>
             
             <!-- Panel Usuarios Apostadores -->
             <div id="panel-usuarios-apostadores" class="panel">
                 <div class="panel-header">
-                    <h3>👥 Usuarios que han Apostado <span id="usuariosApostadoresBadge" style="background:#e94560; padding:2px 10px; border-radius:20px; font-size:12px;"></span></h3>
+                    <h3>👥 Usuarios que han Apostado <span id="usuariosApostadoresBadge"></span></h3>
                 </div>
-                <div class="table-responsive">
-                    <div id="usuarios-apostadores-table"><div class="loading">Cargando apostadores...</div></div>
-                </div>
+                <div id="usuarios-apostadores-table"><div class="loading">Cargando apostadores...</div></div>
             </div>
             
             <!-- Panel Configuración de Imágenes -->
             <div id="panel-config-imagenes" class="panel">
                 <div class="panel-header">
-                    <h3>🖼️ Configuración de Imágenes <span id="configProveedorBadge" style="background:#e94560; padding:2px 10px; border-radius:20px; font-size:12px;"></span></h3>
+                    <h3>🖼️ Configuración de Imágenes <span id="configProveedorBadge"></span></h3>
                 </div>
                 <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
                     <div class="form-group">
-                        <label>URL del Logo (imagen superior izquierda)</label>
-                        <input type="text" id="logoUrlInput" placeholder="https://ejemplo.com/logo.png" style="width: 100%;">
-                        <div id="logoPreview" style="margin-top: 10px; display: none;">
-                            <img id="logoPreviewImg" class="preview-img" alt="Vista previa logo">
-                        </div>
+                        <label>URL del Logo</label>
+                        <input type="text" id="logoUrlInput" placeholder="https://ejemplo.com/logo.png">
                     </div>
                     <div class="form-group">
-                        <label>URL del Fondo del Header (imagen alusiva al mundial)</label>
-                        <input type="text" id="fondoHeaderUrlInput" placeholder="https://ejemplo.com/fondo-mundial.jpg" style="width: 100%;">
-                        <div id="fondoPreview" style="margin-top: 10px; display: none;">
-                            <img id="fondoPreviewImg" class="preview-fondo" alt="Vista previa fondo">
-                        </div>
+                        <label>URL del Fondo del Header</label>
+                        <input type="text" id="fondoHeaderUrlInput" placeholder="https://ejemplo.com/fondo.jpg">
                     </div>
-                    <div class="btn-group" style="margin-top: 15px;">
-                        <button class="btn btn-success" onclick="guardarConfigImagenes()">
-                            <i class="fas fa-save"></i> Guardar Configuración
-                        </button>
-                        <button class="btn btn-warning" onclick="cargarConfigImagenes()">
-                            <i class="fas fa-sync-alt"></i> Recargar
-                        </button>
+                    <button class="btn btn-success" onclick="guardarConfigImagenes()">Guardar</button>
+                    <div id="configImagenesResultado"></div>
+                </div>
+            </div>
+            
+            <!-- Panel Configuración de Reglas -->
+            <div id="panel-config-reglas" class="panel">
+                <div class="panel-header">
+                    <h3>📜 Editar Reglamento <span id="reglasProveedorBadge"></span></h3>
+                </div>
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                    <div class="form-group">
+                        <label>Título del Reglamento</label>
+                        <input type="text" id="reglasTitulo">
                     </div>
-                    <div id="configImagenesResultado" style="margin-top: 15px;"></div>
+                    <div class="form-group">
+                        <label>Contenido (HTML)</label>
+                        <textarea id="reglasContenido" rows="15"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Vista previa</label>
+                        <div id="reglasPreview" class="preview-reglas"></div>
+                    </div>
+                    <button class="btn btn-success" onclick="guardarConfigReglas()">Guardar</button>
+                    <div id="configReglasResultado"></div>
                 </div>
-                <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 8px;">
-                    <strong>📌 Sugerencias de imágenes gratuitas:</strong><br>
-                    <small>• Logo: Puedes usar cualquier URL de imagen (PNG, JPG, SVG)<br>
-                    • Fondo: Recomendado tamaño 1200x300px<br>
-                    • Para subir imágenes, puedes usar servicios como Imgur, PostImage, o tu propio hosting</small>
+            </div>
+            
+            <!-- Panel Gestión de Proveedores -->
+            <div id="panel-proveedores" class="panel">
+                <div class="panel-header">
+                    <h3>🏢 Gestión de Proveedores</h3>
+                    <button class="btn btn-primary" onclick="mostrarModalCrearProveedor()">+ Nuevo Proveedor</button>
                 </div>
+                <div id="proveedores-container"><div class="loading">Cargando proveedores...</div></div>
+            </div>
+            
+            <!-- Panel Gestión de Administradores -->
+            <div id="panel-administradores" class="panel">
+                <div class="panel-header">
+                    <h3>👥 Gestión de Administradores</h3>
+                    <button class="btn btn-primary" onclick="mostrarModalAdmin(null)">+ Nuevo Administrador</button>
+                </div>
+                <div class="filter-bar">
+                    <input type="text" id="filtroAdmin" placeholder="Buscar..." onkeyup="filtrarAdministradores()">
+                    <select id="filtroRolAdmin" onchange="filtrarAdministradores()">
+                        <option value="">Todos los roles</option>
+                    </select>
+                    <button class="btn btn-warning" onclick="cargarAdministradores()">Actualizar</button>
+                </div>
+                <div id="administradores-container"><div class="loading">Cargando administradores...</div></div>
+            </div>
+            
+            <!-- Panel Logs -->
+            <div id="panel-logs" class="panel">
+                <div class="panel-header">
+                    <h3>📋 Logs de Actividad</h3>
+                    <button class="btn btn-warning" onclick="cargarLogs()">Actualizar</button>
+                </div>
+                <div id="logs-container"><div class="loading">Cargando logs...</div></div>
             </div>
         </div>
     </div>
     
-    <!-- Modal de Carga Masiva -->
-    <div id="modalCargaUsuarios" class="form-modal">
-        <div class="form-modal-content">
-            <h3 style="color: #e94560; margin-bottom: 20px;"><i class="fas fa-upload"></i> Carga Masiva de Usuarios Autorizados</h3>
-            <div class="form-group"><label>Proveedor</label><select id="cargaProveedorSelect"><option value="adjuntas">Adjuntas</option><option value="rio_chiquito_esperanza">Rio Chiquito Esperanza</option><option value="caucagua">Caucagua</option></select></div>
-            <div class="form-group"><label>Formato</label><select id="formatoArchivoSelect" onchange="cambiarFormatoEjemplo()"><option value="txt">TXT (cedula|nombre|telefono|ciudad)</option><option value="csv">CSV (cedula,nombre,telefono,ciudad)</option><option value="json">JSON</option></select></div>
-            <div class="form-group"><label>Tamaño del lote</label><select id="loteTamanoSelect"><option value="200">200 registros por lote (Recomendado)</option><option value="500">500 registros por lote</option><option value="1000">1000 registros por lote</option></select></div>
-            <div class="form-group"><label>Formato esperado</label><div style="background: #f0f0f0; padding: 10px; border-radius: 8px; font-family: monospace; font-size: 12px;" id="ejemploFormato">12345678|Juan Perez|0412-1234567|Adjuntas<br>87654321|Maria Gomez|0416-7654321|Adjuntas</div></div>
-            <div class="form-group"><label>Seleccionar archivo</label><input type="file" id="archivoUsuariosInput" accept=".txt,.csv,.json"></div>
-            <div id="previsualizacionContainer" style="display: none;"><label>Vista previa</label><div style="background: #f0f0f0; padding: 10px; border-radius: 8px; max-height: 150px; overflow-y: auto;"><pre id="previsualizacionDatos" style="margin: 0; font-size: 11px;"></pre></div></div>
-            <div id="cargaResultadoDiv"></div>
-            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;"><button class="btn" onclick="cerrarModalCargaUsuarios()">Cancelar</button><button class="btn btn-success" onclick="procesarArchivoUsuarios()"><i class="fas fa-upload"></i> Cargar Usuarios</button></div>
-        </div>
-    </div>
-    
-    <!-- Modal de Reinicio -->
-    <div id="modalReinicio" class="form-modal">
-        <div class="form-modal-content">
-            <h3 style="color: #dc3545; margin-bottom: 20px;"><i class="fas fa-exclamation-triangle"></i> Reiniciar Base de Datos</h3>
-            <p style="margin-bottom: 20px; color: #666;">⚠️ Esta acción ELIMINARÁ usuarios, apuestas y puntajes.<br>Los grupos, equipos y partidos NO se verán afectados.</p>
-            <div class="form-group"><label>Proveedor a reiniciar</label><select id="reinicioProveedorSelect"><option value="adjuntas">Adjuntas</option><option value="rio_chiquito_esperanza">Rio Chiquito Esperanza</option><option value="caucagua">Caucagua</option><option value="all">Todos (Global)</option></select></div>
-            <div class="form-group"><label>Contraseña</label><input type="password" id="reinicioPasswordInput" placeholder="Contraseña"></div>
-            <div class="form-group"><label>Escribe <strong style="color: #dc3545;">REINICIAR</strong> para confirmar</label><input type="text" id="reinicioConfirmarInput" placeholder="REINICIAR"></div>
-            <div id="reinicioMessageDiv" style="display: none; padding: 10px; border-radius: 8px; margin-bottom: 15px;"></div>
-            <div style="display: flex; gap: 10px; justify-content: flex-end;"><button class="btn" onclick="cerrarModalReinicio()">Cancelar</button><button class="btn btn-danger" onclick="ejecutarReinicio()">Reiniciar</button></div>
-        </div>
-    </div>
-    
-    <!-- Modal General -->
+    <!-- Modales -->
     <div id="modal" class="form-modal">
         <div class="form-modal-content">
             <h3 id="modal-title"></h3>
@@ -639,63 +545,261 @@
         </div>
     </div>
     
-    <div id="toast" class="toast"></div>
-    
-    <!-- Footer -->
-    <div style="background: linear-gradient(135deg, #1a1a2e 0%, #0f0c29 100%); color: #888; text-align: center; padding: 25px 20px; margin-top: 50px; border-top: 1px solid rgba(255,255,255,0.1);">
-        <p>© 2026 - Robertsystems. Todos los derechos reservados.</p>
-        <p>Diseñado por <a href="https://robertsystems.org" target="_blank" style="color: #e94560; text-decoration: none;">Robertsystems.org</a> | 
-           <i class="fas fa-phone"></i> <a href="tel:04128856847" style="color: #e94560; text-decoration: none;">0412-8856847</a></p>
-        <p><i class="fas fa-heart" style="color: #e94560;"></i> Conectando con el mundo <i class="fas fa-heart" style="color: #e94560;"></i></p>
+    <div id="modalAdmin" class="form-modal">
+        <div class="form-modal-content">
+            <h3 id="modalAdminTitle">Administrador</h3>
+            <div id="modalAdminBody"></div>
+            <div id="modalAdminResultado"></div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+                <button class="btn" onclick="cerrarModalAdmin()">Cancelar</button>
+                <button class="btn btn-primary" onclick="guardarAdmin()">Guardar</button>
+            </div>
+        </div>
     </div>
+    
+    <div id="modalCargaUsuarios" class="form-modal">
+        <div class="form-modal-content">
+            <h3>Carga Masiva de Usuarios</h3>
+            <div class="form-group"><label>Proveedor</label><select id="cargaProveedorSelect"></select></div>
+            <div class="form-group"><label>Formato</label><select id="formatoArchivoSelect" onchange="cambiarFormatoEjemplo()">
+                <option value="txt">TXT (cedula|nombre|telefono|ciudad)</option>
+                <option value="csv">CSV (cedula,nombre,telefono,ciudad)</option>
+                <option value="json">JSON</option>
+            </select></div>
+            <div class="form-group"><label>Archivo</label><input type="file" id="archivoUsuariosInput" accept=".txt,.csv,.json"></div>
+            <div id="previsualizacionContainer" style="display: none;"><pre id="previsualizacionDatos" style="background:#f0f0f0; padding:10px;"></pre></div>
+            <div id="cargaResultadoDiv"></div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button class="btn" onclick="cerrarModalCargaUsuarios()">Cancelar</button>
+                <button class="btn btn-success" onclick="procesarArchivoUsuarios()">Cargar</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="modalCrearProveedor" class="form-modal">
+        <div class="form-modal-content">
+            <h3>Nuevo Proveedor</h3>
+            <div class="form-group"><label>Nombre</label><input type="text" id="nuevoProveedorNombre"></div>
+            <div class="form-group"><label>Clave</label><input type="text" id="nuevoProveedorClave"></div>
+            <div id="crearProveedorResultado"></div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button class="btn" onclick="cerrarModalCrearProveedor()">Cancelar</button>
+                <button class="btn btn-primary" onclick="crearProveedor()">Crear</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="modalReinicio" class="form-modal">
+        <div class="form-modal-content">
+            <h3>⚠️ Reiniciar Base de Datos</h3>
+            <div class="form-group"><label>Proveedor</label><select id="reinicioProveedorSelect"></select></div>
+            <div class="form-group"><label>Contraseña</label><input type="password" id="reinicioPasswordInput"></div>
+            <div class="form-group"><label>Escribe REINICIAR para confirmar</label><input type="text" id="reinicioConfirmarInput"></div>
+            <div id="reinicioMessageDiv"></div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button class="btn" onclick="cerrarModalReinicio()">Cancelar</button>
+                <button class="btn btn-danger" onclick="ejecutarReinicio()">Reiniciar</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="toast" class="toast"></div>
     
     <script>
         // ============================================
         // CONFIGURACIÓN
         // ============================================
         const API_URL = 'https://quiniela-mundial.thecrow859.workers.dev';
+        let adminActual = null;
         let proveedorActual = 'adjuntas';
+        let listaProveedores = [];
+        let listaRoles = [];
+        let listaAdmins = [];
         let equiposList = [];
         let gruposList = [];
-        let currentModalType = '';
         let currentEditId = null;
+        let currentModalType = '';
         let autoRefreshInterval = null;
         let datosPrevisualizados = [];
-        let ultimosConteos = { usuarios_validos: 0, apuestas: 0, partidosFinalizados: 0 };
+        
+        // ============================================
+        // VERIFICAR SESIÓN AL CARGAR
+        // ============================================
+        
+        function checkSession() {
+            const session = localStorage.getItem('admin_session');
+            if (!session) {
+                window.location.href = 'login-admin.html';
+                return;
+            }
+            
+            try {
+                adminActual = JSON.parse(session);
+                document.getElementById('adminNombre').textContent = adminActual.nombre;
+                document.getElementById('adminRol').textContent = adminActual.rol?.nombre || adminActual.rol?.clave || 'Admin';
+                document.getElementById('adminPanel').style.display = 'block';
+                
+                cargarListaProveedores();
+                cargarRoles();
+                cargarAdministradores();
+                cargarEstadisticas();
+                iniciarAutoRefresh();
+            } catch (error) {
+                window.location.href = 'login-admin.html';
+            }
+        }
+        
+        function cerrarSesion() {
+            if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+            localStorage.removeItem('admin_session');
+            window.location.href = 'login-admin.html';
+        }
+        
+        function mostrarToast(msg, tipo) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.className = `toast ${tipo}`;
+            setTimeout(() => { toast.style.display = 'none'; toast.className = 'toast'; }, 3000);
+        }
         
         function getApiUrl(endpoint, params = {}) {
             const url = new URL(`${API_URL}${endpoint}`);
-            if (proveedorActual !== 'all') { params.proveedor = proveedorActual; }
+            if (proveedorActual !== 'all') params.proveedor = proveedorActual;
             Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
             return url.toString();
         }
         
-        async function fetchStats() {
-            const url = getApiUrl('/api/admin/estadisticas');
-            console.log('🔍 Solicitando estadísticas a:', url);
-            const response = await fetch(url);
-            const data = await response.json();
-            console.log('📊 Respuesta de estadísticas:', data);
-            return data;
+        // ============================================
+        // ESTADÍSTICAS
+        // ============================================
+        
+        async function cargarEstadisticas() {
+            try {
+                const url = getApiUrl('/api/admin/estadisticas');
+                const response = await fetch(url);
+                const stats = await response.json();
+                document.getElementById('stats').innerHTML = `
+                    <div class="stat-card"><div class="stat-number">${stats.total_usuarios_validos || 0}</div><div>Usuarios Autorizados</div></div>
+                    <div class="stat-card"><div class="stat-number">${stats.total_apuestas || 0}</div><div>Apuestas</div></div>
+                    <div class="stat-card"><div class="stat-number">${stats.partidos_finalizados || 0}/${stats.total_partidos || 0}</div><div>Partidos</div></div>
+                    <div class="stat-card"><div class="stat-number">${stats.porcentaje_finalizado || 0}%</div><div>Completado</div></div>
+                `;
+            } catch (error) { console.error(error); }
         }
         
-        async function fetchAPI(endpoint, options = {}) {
+        function iniciarAutoRefresh() {
+            if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+            autoRefreshInterval = setInterval(() => {
+                cargarEstadisticas();
+                const panel = document.querySelector('.panel.active')?.id;
+                if (panel === 'panel-apuestas') cargarApuestas();
+                else if (panel === 'panel-grupos') cargarGrupos();
+                else if (panel === 'panel-equipos') cargarEquipos();
+                else if (panel === 'panel-partidos') cargarPartidos();
+                else if (panel === 'panel-resultados') cargarResultados();
+                else if (panel === 'panel-usuarios-autorizados') cargarUsuariosAutorizados();
+                else if (panel === 'panel-usuarios-apostadores') cargarUsuariosApostadores();
+                else if (panel === 'panel-proveedores') mostrarProveedores();
+                else if (panel === 'panel-administradores') cargarAdministradores();
+                else if (panel === 'panel-logs') cargarLogs();
+                document.getElementById('lastUpdateTime').innerText = new Date().toLocaleTimeString();
+            }, 30000);
+        }
+        
+        function actualizarManual() {
+            mostrarToast('Actualizando...', 'info');
+            cargarEstadisticas();
+            const panel = document.querySelector('.panel.active')?.id;
+            if (panel === 'panel-apuestas') cargarApuestas();
+            else if (panel === 'panel-grupos') cargarGrupos();
+            else if (panel === 'panel-equipos') cargarEquipos();
+            else if (panel === 'panel-partidos') cargarPartidos();
+            else if (panel === 'panel-resultados') cargarResultados();
+            else if (panel === 'panel-usuarios-autorizados') cargarUsuariosAutorizados();
+            else if (panel === 'panel-usuarios-apostadores') cargarUsuariosApostadores();
+            else if (panel === 'panel-proveedores') mostrarProveedores();
+            else if (panel === 'panel-administradores') cargarAdministradores();
+            else if (panel === 'panel-logs') cargarLogs();
+            document.getElementById('lastUpdateTime').innerText = new Date().toLocaleTimeString();
+            mostrarToast('✅ Actualizado', 'success');
+        }
+        
+        // ============================================
+        // PROVEEDORES
+        // ============================================
+        
+        async function cargarListaProveedores() {
             try {
-                const url = getApiUrl(endpoint);
-                const response = await fetch(url, options);
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                return await response.json();
-            } catch (error) { console.error(`Error en ${endpoint}:`, error); return []; }
+                const response = await fetch(`${API_URL}/api/admin/proveedores`);
+                const data = await response.json();
+                listaProveedores = data.success ? data.proveedores : [
+                    { clave: 'adjuntas', nombre: 'Adjuntas' },
+                    { clave: 'rio_chiquito_esperanza', nombre: 'Rio Chiquito Esperanza' },
+                    { clave: 'caucagua', nombre: 'Caucagua' }
+                ];
+                actualizarSelectores();
+                mostrarProveedores();
+            } catch (error) {
+                listaProveedores = [
+                    { clave: 'adjuntas', nombre: 'Adjuntas' },
+                    { clave: 'rio_chiquito_esperanza', nombre: 'Rio Chiquito Esperanza' },
+                    { clave: 'caucagua', nombre: 'Caucagua' }
+                ];
+                actualizarSelectores();
+            }
+        }
+        
+        function actualizarSelectores() {
+            const selectProveedor = document.getElementById('selectProveedor');
+            if (selectProveedor) {
+                selectProveedor.innerHTML = '';
+                listaProveedores.forEach(prov => {
+                    const option = document.createElement('option');
+                    option.value = prov.clave;
+                    option.textContent = `📡 ${prov.nombre}`;
+                    selectProveedor.appendChild(option);
+                });
+                const optionAll = document.createElement('option');
+                optionAll.value = 'all';
+                optionAll.textContent = '📊 Todos (Global)';
+                selectProveedor.appendChild(optionAll);
+            }
+            
+            const cargaSelect = document.getElementById('cargaProveedorSelect');
+            if (cargaSelect) {
+                cargaSelect.innerHTML = '';
+                listaProveedores.forEach(prov => {
+                    const option = document.createElement('option');
+                    option.value = prov.clave;
+                    option.textContent = prov.nombre;
+                    cargaSelect.appendChild(option);
+                });
+            }
+            
+            const reinicioSelect = document.getElementById('reinicioProveedorSelect');
+            if (reinicioSelect) {
+                reinicioSelect.innerHTML = '';
+                listaProveedores.forEach(prov => {
+                    const option = document.createElement('option');
+                    option.value = prov.clave;
+                    option.textContent = prov.nombre;
+                    reinicioSelect.appendChild(option);
+                });
+                const optionAll = document.createElement('option');
+                optionAll.value = 'all';
+                optionAll.textContent = 'Todos (Global)';
+                reinicioSelect.appendChild(optionAll);
+            }
         }
         
         async function cambiarProveedor() {
             proveedorActual = document.getElementById('selectProveedor').value;
-            document.getElementById('proveedorBadge').innerHTML = proveedorActual === 'all' ? '📊 Todos los proveedores' : `📡 ${proveedorActual === 'rio_chiquito_esperanza' ? 'Rio Chiquito Esperanza' : proveedorActual.toUpperCase()}`;
-            document.getElementById('usuariosAutorizadosBadge').innerHTML = proveedorActual === 'all' ? '📊 Todos los proveedores' : `📡 ${proveedorActual === 'rio_chiquito_esperanza' ? 'Rio Chiquito Esperanza' : proveedorActual.toUpperCase()}`;
-            document.getElementById('usuariosApostadoresBadge').innerHTML = proveedorActual === 'all' ? '📊 Todos los proveedores' : `📡 ${proveedorActual === 'rio_chiquito_esperanza' ? 'Rio Chiquito Esperanza' : proveedorActual.toUpperCase()}`;
-            document.getElementById('configProveedorBadge').innerHTML = proveedorActual === 'all' ? '📊 Todos los proveedores' : `📡 ${proveedorActual === 'rio_chiquito_esperanza' ? 'Rio Chiquito Esperanza' : proveedorActual.toUpperCase()}`;
+            const proveedorNombre = listaProveedores.find(p => p.clave === proveedorActual)?.nombre || proveedorActual;
+            document.getElementById('usuariosAutorizadosBadge').innerHTML = proveedorActual === 'all' ? '📊 Todos' : `📡 ${proveedorNombre}`;
+            document.getElementById('usuariosApostadoresBadge').innerHTML = proveedorActual === 'all' ? '📊 Todos' : `📡 ${proveedorNombre}`;
+            document.getElementById('configProveedorBadge').innerHTML = proveedorActual === 'all' ? '📊 Todos' : `📡 ${proveedorNombre}`;
+            document.getElementById('reglasProveedorBadge').innerHTML = proveedorActual === 'all' ? '📊 Todos' : `📡 ${proveedorNombre}`;
             
-            // Recargar estadísticas específicamente para "all"
             await cargarEstadisticas();
             await cargarUsuariosAutorizados();
             await cargarUsuariosApostadores();
@@ -704,338 +808,487 @@
             await cargarEquipos();
             await cargarPartidos();
             await cargarResultados();
-            if (proveedorActual !== 'all') await cargarConfigImagenes();
-            
-            mostrarToast(`✅ Cambiado a proveedor: ${proveedorActual === 'all' ? 'Todos' : (proveedorActual === 'rio_chiquito_esperanza' ? 'Rio Chiquito Esperanza' : proveedorActual)}`, 'success');
+            if (proveedorActual !== 'all') {
+                await cargarConfigImagenes();
+                await cargarConfigReglas();
+            }
+            mostrarToast(`Cambiado a: ${proveedorNombre}`, 'success');
         }
         
-        function checkSession() {
-            const adminPassword = localStorage.getItem('admin_password');
-            if (adminPassword) { document.getElementById('adminPass').value = adminPassword; verificarAdmin(true); }
-        }
-        
-        function logout() {
-            if (autoRefreshInterval) clearInterval(autoRefreshInterval);
-            localStorage.removeItem('admin_password');
-            document.getElementById('loginPanel').style.display = 'block';
-            document.getElementById('adminPanel').style.display = 'none';
-            document.getElementById('adminPass').value = '';
-            mostrarToast('Sesión cerrada', 'success');
-        }
-        
-        async function verificarCambios() {
+        async function mostrarProveedores() {
+            const container = document.getElementById('proveedores-container');
             try {
-                const stats = await fetchStats();
-                const nuevosConteos = { usuarios_validos: stats.total_usuarios_validos || 0, apuestas: stats.total_apuestas || 0, partidosFinalizados: stats.partidos_finalizados || 0 };
-                let huboCambios = false;
-                if (ultimosConteos.usuarios_validos !== nuevosConteos.usuarios_validos) huboCambios = true;
-                if (ultimosConteos.apuestas !== nuevosConteos.apuestas) huboCambios = true;
-                if (ultimosConteos.partidosFinalizados !== nuevosConteos.partidosFinalizados) huboCambios = true;
-                ultimosConteos = nuevosConteos;
-                if (huboCambios) await actualizarDatos();
-            } catch (error) { console.error('Error:', error); }
+                const response = await fetch(`${API_URL}/api/admin/proveedores`);
+                const data = await response.json();
+                if (data.success && data.proveedores.length) {
+                    container.innerHTML = `<div class="proveedores-grid">${data.proveedores.map(prov => `
+                        <div class="proveedor-card">
+                            <div><strong>${prov.nombre}</strong><br><small>${prov.clave}</small></div>
+                            <button class="btn btn-danger" onclick="eliminarProveedor('${prov.clave}')" ${prov.clave === 'adjuntas' ? 'disabled' : ''}>Eliminar</button>
+                        </div>
+                    `).join('')}</div>`;
+                } else {
+                    container.innerHTML = '<div class="no-data">No hay proveedores</div>';
+                }
+            } catch (error) {
+                container.innerHTML = '<div class="error-message">Error</div>';
+            }
         }
         
-        async function actualizarDatos() {
-            const panelActual = document.querySelector('.panel.active')?.id || 'panel-apuestas';
-            await cargarEstadisticas();
-            if (panelActual === 'panel-apuestas') await cargarApuestas();
-            else if (panelActual === 'panel-grupos') await cargarGrupos();
-            else if (panelActual === 'panel-equipos') await cargarEquipos();
-            else if (panelActual === 'panel-partidos') await cargarPartidos();
-            else if (panelActual === 'panel-resultados') await cargarResultados();
-            else if (panelActual === 'panel-usuarios-autorizados') await cargarUsuariosAutorizados();
-            else if (panelActual === 'panel-usuarios-apostadores') await cargarUsuariosApostadores();
-            else if (panelActual === 'panel-config-imagenes' && proveedorActual !== 'all') await cargarConfigImagenes();
-            document.getElementById('lastUpdateTime').innerText = new Date().toLocaleTimeString();
+        function mostrarModalCrearProveedor() {
+            document.getElementById('nuevoProveedorNombre').value = '';
+            document.getElementById('nuevoProveedorClave').value = '';
+            document.getElementById('crearProveedorResultado').innerHTML = '';
+            document.getElementById('modalCrearProveedor').style.display = 'flex';
         }
         
-        async function actualizarManual() { mostrarToast('🔄 Actualizando...', 'info'); await verificarCambios(); await actualizarDatos(); mostrarToast('✅ Actualizado', 'success'); }
+        function cerrarModalCrearProveedor() {
+            document.getElementById('modalCrearProveedor').style.display = 'none';
+        }
+        
+        async function crearProveedor() {
+            const nombre = document.getElementById('nuevoProveedorNombre').value.trim();
+            const clave = document.getElementById('nuevoProveedorClave').value.trim().toLowerCase().replace(/\s/g, '_');
+            const password = adminActual?.password || 'admin123';
+            const resultadoDiv = document.getElementById('crearProveedorResultado');
+            
+            if (!nombre || !clave) {
+                resultadoDiv.innerHTML = '<div class="error-message">Complete los campos</div>';
+                return;
+            }
+            
+            resultadoDiv.innerHTML = '<div class="loading">Creando...</div>';
+            
+            try {
+                const response = await fetch(`${API_URL}/api/admin/proveedores`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password, nombre, clave })
+                });
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    resultadoDiv.innerHTML = `<div class="success-message">✅ ${data.message}</div>`;
+                    mostrarToast(data.message, 'success');
+                    setTimeout(() => {
+                        cerrarModalCrearProveedor();
+                        cargarListaProveedores();
+                    }, 1500);
+                } else {
+                    resultadoDiv.innerHTML = `<div class="error-message">❌ ${data.error || 'Error'}</div>`;
+                }
+            } catch (error) {
+                resultadoDiv.innerHTML = '<div class="error-message">Error de conexión</div>';
+            }
+        }
+        
+        async function eliminarProveedor(clave) {
+            if (!confirm('¿Eliminar proveedor? Se eliminarán TODOS los datos.')) return;
+            const password = adminActual?.password || 'admin123';
+            try {
+                const response = await fetch(`${API_URL}/api/admin/proveedores`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password, clave })
+                });
+                const data = await response.json();
+                if (response.ok && data.success) {
+                    mostrarToast(data.message, 'success');
+                    await cargarListaProveedores();
+                } else {
+                    mostrarToast(data.error || 'Error', 'error');
+                }
+            } catch (error) {
+                mostrarToast('Error de conexión', 'error');
+            }
+        }
+        
+        // ============================================
+        // ADMINISTRADORES
+        // ============================================
+        
+        async function cargarRoles() {
+            try {
+                const response = await fetch(`${API_URL}/api/admin/roles`);
+                const data = await response.json();
+                if (data.success) {
+                    listaRoles = data.roles || [];
+                    const filtroRol = document.getElementById('filtroRolAdmin');
+                    if (filtroRol) {
+                        filtroRol.innerHTML = '<option value="">Todos los roles</option>';
+                        listaRoles.forEach(rol => {
+                            const option = document.createElement('option');
+                            option.value = rol.id;
+                            option.textContent = rol.nombre;
+                            filtroRol.appendChild(option);
+                        });
+                    }
+                }
+            } catch (error) { console.error(error); }
+        }
+        
+        async function cargarAdministradores() {
+            const container = document.getElementById('administradores-container');
+            container.innerHTML = '<div class="loading">Cargando...</div>';
+            try {
+                const response = await fetch(`${API_URL}/api/admin/administradores`);
+                const data = await response.json();
+                if (data.success) {
+                    listaAdmins = data.administradores || [];
+                    mostrarListaAdministradores();
+                } else {
+                    container.innerHTML = '<div class="error-message">Error</div>';
+                }
+            } catch (error) {
+                container.innerHTML = '<div class="error-message">Error de conexión</div>';
+            }
+        }
+        
+        function mostrarListaAdministradores() {
+            const filtroTexto = document.getElementById('filtroAdmin')?.value.toLowerCase() || '';
+            const filtroRol = document.getElementById('filtroRolAdmin')?.value || '';
+            
+            let filtrados = listaAdmins.filter(a => 
+                (!filtroTexto || (a.nombre || '').toLowerCase().includes(filtroTexto) || (a.usuario || '').toLowerCase().includes(filtroTexto)) &&
+                (!filtroRol || a.rol_id == filtroRol)
+            );
+            
+            const container = document.getElementById('administradores-container');
+            if (!filtrados.length) {
+                container.innerHTML = '<div class="no-data">No hay administradores</div>';
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="table-responsive">
+                    <table>
+                        <thead><tr><th>ID</th><th>Nombre</th><th>Usuario</th><th>Email</th><th>Rol</th><th>Estado</th><th>Acciones</th></tr></thead>
+                        <tbody>
+                            ${filtrados.map(admin => `
+                                <tr>
+                                    <td>${admin.id}</td>
+                                    <td><strong>${admin.nombre || '-'}</strong></td>
+                                    <td>${admin.usuario || '-'}</td>
+                                    <td>${admin.email || '-'}</td>
+                                    <td>${admin.rol_nombre || admin.rol_clave || '-'}</td>
+                                    <td><span style="color: ${admin.activo ? '#28a745' : '#dc3545'}">${admin.activo ? 'Activo' : 'Inactivo'}</span></td>
+                                    <td>
+                                        <button class="btn btn-warning" onclick="mostrarModalAdmin(${admin.id})">Editar</button>
+                                        <button class="btn btn-danger" onclick="eliminarAdmin(${admin.id})" ${admin.id === adminActual?.id ? 'disabled' : ''}>Eliminar</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+        
+        function filtrarAdministradores() { mostrarListaAdministradores(); }
+        
+        function mostrarModalAdmin(id = null) {
+            const isEdit = id !== null;
+            const admin = isEdit ? listaAdmins.find(a => a.id === id) : null;
+            
+            let rolesHtml = listaRoles.map(rol => `<option value="${rol.id}" ${admin?.rol_id === rol.id ? 'selected' : ''}>${rol.nombre}</option>`).join('');
+            
+            const modalBody = document.getElementById('modalAdminBody');
+            modalBody.innerHTML = `
+                ${isEdit ? `<input type="hidden" id="editAdminId" value="${admin.id}">` : ''}
+                <div class="form-group"><label>Nombre</label><input type="text" id="adminNombre" value="${admin?.nombre || ''}"></div>
+                <div class="form-group"><label>Usuario</label><input type="text" id="adminUsuario" value="${admin?.usuario || ''}"></div>
+                <div class="form-group"><label>Email</label><input type="email" id="adminEmail" value="${admin?.email || ''}"></div>
+                <div class="form-group"><label>Contraseña ${isEdit ? '(dejar vacío para mantener)' : '*'}</label><input type="password" id="adminPassword"></div>
+                <div class="form-group"><label>Rol</label><select id="adminRolId">${rolesHtml}</select></div>
+                <div class="form-group"><label>Estado</label>
+                    <select id="adminActivo"><option value="1" ${admin?.activo === 1 ? 'selected' : ''}>Activo</option><option value="0" ${admin?.activo === 0 ? 'selected' : ''}>Inactivo</option></select>
+                </div>
+            `;
+            
+            document.getElementById('modalAdminTitle').textContent = isEdit ? 'Editar Administrador' : 'Nuevo Administrador';
+            document.getElementById('modalAdmin').style.display = 'flex';
+            document.getElementById('modalAdminResultado').innerHTML = '';
+        }
+        
+        function cerrarModalAdmin() {
+            document.getElementById('modalAdmin').style.display = 'none';
+        }
+        
+        async function guardarAdmin() {
+            const id = document.getElementById('editAdminId')?.value;
+            const nombre = document.getElementById('adminNombre').value.trim();
+            const usuario = document.getElementById('adminUsuario').value.trim();
+            const email = document.getElementById('adminEmail').value.trim();
+            const password = document.getElementById('adminPassword').value;
+            const rol_id = document.getElementById('adminRolId').value;
+            const activo = document.getElementById('adminActivo').value;
+            
+            if (!nombre || !usuario || !email) {
+                document.getElementById('modalAdminResultado').innerHTML = '<div class="error-message">Complete los campos obligatorios</div>';
+                return;
+            }
+            
+            const data = { nombre, usuario, email, rol_id: parseInt(rol_id), activo: parseInt(activo), created_by: adminActual?.id || 1 };
+            if (password && password.trim()) data.password = password;
+            if (id) data.id = parseInt(id);
+            
+            document.getElementById('modalAdminResultado').innerHTML = '<div class="loading">Guardando...</div>';
+            
+            try {
+                const method = id ? 'PUT' : 'POST';
+                const response = await fetch(`${API_URL}/api/admin/administradores`, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json', 'Authorization': adminActual?.id?.toString() || '' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (response.ok && result.success) {
+                    document.getElementById('modalAdminResultado').innerHTML = `<div class="success-message">✅ ${result.message}</div>`;
+                    mostrarToast(result.message, 'success');
+                    setTimeout(() => {
+                        cerrarModalAdmin();
+                        cargarAdministradores();
+                    }, 1500);
+                } else {
+                    document.getElementById('modalAdminResultado').innerHTML = `<div class="error-message">❌ ${result.error || 'Error'}</div>`;
+                }
+            } catch (error) {
+                document.getElementById('modalAdminResultado').innerHTML = '<div class="error-message">Error de conexión</div>';
+            }
+        }
+        
+        async function eliminarAdmin(id) {
+            if (!confirm('¿Eliminar este administrador?')) return;
+            try {
+                const response = await fetch(`${API_URL}/api/admin/administradores`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': adminActual?.id?.toString() || '' },
+                    body: JSON.stringify({ id })
+                });
+                const result = await response.json();
+                if (response.ok && result.success) {
+                    mostrarToast(result.message, 'success');
+                    cargarAdministradores();
+                } else {
+                    mostrarToast(result.error || 'Error', 'error');
+                }
+            } catch (error) {
+                mostrarToast('Error de conexión', 'error');
+            }
+        }
+        
+        // ============================================
+        // LOGS
+        // ============================================
+        
+        async function cargarLogs() {
+            const container = document.getElementById('logs-container');
+            container.innerHTML = '<div class="loading">Cargando logs...</div>';
+            try {
+                const response = await fetch(`${API_URL}/api/admin/logs`, {
+                    headers: { 'Authorization': adminActual?.id?.toString() || '' }
+                });
+                const data = await response.json();
+                if (data.success && data.logs && data.logs.length) {
+                    container.innerHTML = `
+                        <div class="table-responsive">
+                            <table>
+                                <thead><tr><th>Fecha</th><th>Administrador</th><th>Acción</th><th>Descripción</th></tr></thead>
+                                <tbody>
+                                    ${data.logs.map(log => `
+                                        <tr><td>${new Date(log.fecha).toLocaleString()}</td><td>${log.admin_nombre || log.admin_usuario}</td><td>${log.accion}</td><td>${log.descripcion || '-'}</td></tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = '<div class="no-data">No hay logs</div>';
+                }
+            } catch (error) {
+                container.innerHTML = '<div class="error-message">Error</div>';
+            }
+        }
+        
+        // ============================================
+        // CONFIGURACIÓN DE IMÁGENES Y REGLAS
+        // ============================================
+        
+        async function cargarConfigImagenes() {
+            if (proveedorActual === 'all') return;
+            try {
+                const response = await fetch(`${API_URL}/api/config-imagenes?proveedor=${proveedorActual}`);
+                const config = await response.json();
+                document.getElementById('logoUrlInput').value = config.logo_url || '';
+                document.getElementById('fondoHeaderUrlInput').value = config.fondo_header_url || '';
+            } catch (error) { console.error(error); }
+        }
+        
+        async function guardarConfigImagenes() {
+            if (proveedorActual === 'all') { mostrarToast('Selecciona un proveedor', 'error'); return; }
+            const password = adminActual?.password || 'admin123';
+            try {
+                const response = await fetch(`${API_URL}/api/admin/config-imagenes`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password, proveedor: proveedorActual, logo_url: document.getElementById('logoUrlInput').value, fondo_header_url: document.getElementById('fondoHeaderUrlInput').value })
+                });
+                const data = await response.json();
+                if (response.ok && data.success) mostrarToast('Imágenes guardadas', 'success');
+                else mostrarToast(data.error || 'Error', 'error');
+            } catch (error) { mostrarToast('Error', 'error'); }
+        }
+        
+        async function cargarConfigReglas() {
+            if (proveedorActual === 'all') return;
+            try {
+                const response = await fetch(`${API_URL}/api/config-reglas?proveedor=${proveedorActual}`);
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('reglasTitulo').value = data.titulo || '';
+                    document.getElementById('reglasContenido').value = data.reglas;
+                    document.getElementById('reglasPreview').innerHTML = `<h2>${data.titulo || ''}</h2>${data.reglas || ''}`;
+                }
+            } catch (error) { console.error(error); }
+        }
+        
+        async function guardarConfigReglas() {
+            if (proveedorActual === 'all') { mostrarToast('Selecciona un proveedor', 'error'); return; }
+            const password = adminActual?.password || 'admin123';
+            try {
+                const response = await fetch(`${API_URL}/api/admin/config-reglas`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password, proveedor: proveedorActual, titulo: document.getElementById('reglasTitulo').value, reglas: document.getElementById('reglasContenido').value })
+                });
+                const data = await response.json();
+                if (response.ok && data.success) mostrarToast('Reglamento guardado', 'success');
+                else mostrarToast(data.error || 'Error', 'error');
+            } catch (error) { mostrarToast('Error', 'error'); }
+        }
         
         async function sincronizarMundial() {
-            const password = localStorage.getItem('admin_password');
-            if (!password) { mostrarToast('No hay sesión activa', 'error'); return; }
-            if (!confirm('⚠️ ¿Sincronizar datos del Mundial?\n\nSe cargarán grupos, países participantes y partidos.\n\nEsta acción es GLOBAL.')) return;
-            mostrarToast('🌍 Sincronizando...', 'info');
+            if (!confirm('¿Sincronizar datos del Mundial?')) return;
+            const password = adminActual?.password || 'admin123';
             try {
-                const response = await fetch(`${API_URL}/api/admin/sincronizar-mundial`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }) });
+                const response = await fetch(`${API_URL}/api/admin/sincronizar-mundial`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password })
+                });
                 const data = await response.json();
-                if (response.ok && data.success) { mostrarToast(data.message, 'success'); await cargarGrupos(); await cargarEquipos(); await cargarPartidos(); await cargarResultados(); }
-                else { mostrarToast(data.error || 'Error', 'error'); }
-            } catch (error) { mostrarToast('Error de conexión', 'error'); }
+                if (response.ok && data.success) mostrarToast(data.message, 'success');
+                else mostrarToast(data.error || 'Error', 'error');
+            } catch (error) { mostrarToast('Error', 'error'); }
         }
         
-        function iniciarAutoRefresh() { if (autoRefreshInterval) clearInterval(autoRefreshInterval); autoRefreshInterval = setInterval(verificarCambios, 30000); }
+        // ============================================
+        // FUNCIONES CRUD (Grupos, Equipos, Partidos)
+        // ============================================
         
-        async function verificarAdmin(esRecarga = false) {
-            const password = document.getElementById('adminPass').value;
-            const loginError = document.getElementById('loginError');
-            if (!password) { if (!esRecarga) loginError.textContent = 'Ingresa la contraseña'; return; }
-            loginError.textContent = '';
-            try {
-                const response = await fetch(`${API_URL}/api/admin/verificar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password }) });
-                if (response.ok) {
-                    localStorage.setItem('admin_password', password);
-                    document.getElementById('loginPanel').style.display = 'none';
-                    document.getElementById('adminPanel').style.display = 'block';
-                    if (!esRecarga) mostrarToast('✅ Sesión iniciada', 'success');
-                    await cargarTodo();
-                    iniciarAutoRefresh();
-                    document.getElementById('lastUpdateTime').innerText = new Date().toLocaleTimeString();
-                } else { const error = await response.json(); loginError.textContent = error.error || 'Contraseña incorrecta'; if (esRecarga) localStorage.removeItem('admin_password'); }
-            } catch (error) { loginError.textContent = 'Error de conexión'; }
-        }
-        
-        async function cargarTodo() {
-            await cargarEstadisticas();
-            await cargarApuestas();
-            await cargarGrupos();
-            await cargarEquipos();
-            await cargarPartidos();
-            await cargarResultados();
-            await cargarUsuariosAutorizados();
-            await cargarUsuariosApostadores();
-            if (proveedorActual !== 'all') await cargarConfigImagenes();
-            const stats = await fetchStats();
-            ultimosConteos = { usuarios_validos: stats.total_usuarios_validos || 0, apuestas: stats.total_apuestas || 0, partidosFinalizados: stats.partidos_finalizados || 0 };
-        }
-        
-        // ==================== FUNCIONES DE ESTADÍSTICAS ====================
-        async function fetchStats() {
-            if (proveedorActual === 'all') {
-                // Para "Todos", sumar manualmente los 3 proveedores
-                const proveedores = ['adjuntas', 'rio_chiquito_esperanza', 'caucagua'];
-                let totalUsuariosValidos = 0;
-                let totalApuestas = 0;
-                let partidosFinalizados = 0;
-                let totalPartidos = 0;
-                
-                for (const prov of proveedores) {
-                    try {
-                        const url = `${API_URL}/api/admin/estadisticas?proveedor=${prov}`;
-                        const response = await fetch(url);
-                        const data = await response.json();
-                        
-                        totalUsuariosValidos += data.total_usuarios_validos || 0;
-                        totalApuestas += data.total_apuestas || 0;
-                        
-                        // Partidos (son los mismos para todos, solo tomar una vez)
-                        if (partidosFinalizados === 0) {
-                            partidosFinalizados = data.partidos_finalizados || 0;
-                            totalPartidos = data.total_partidos || 0;
-                        }
-                    } catch (e) {
-                        console.error(`Error obteniendo estadísticas de ${prov}:`, e);
-                    }
-                }
-                
-                const porcentaje = totalPartidos > 0 ? ((partidosFinalizados / totalPartidos) * 100).toFixed(1) : 0;
-                
-                console.log('📊 Suma de usuarios por proveedor:', { totalUsuariosValidos, totalApuestas });
-                
-                return {
-                    total_usuarios_validos: totalUsuariosValidos,
-                    total_apuestas: totalApuestas,
-                    partidos_finalizados: partidosFinalizados,
-                    total_partidos: totalPartidos,
-                    porcentaje_finalizado: porcentaje
-                };
-            } else {
-                const url = getApiUrl('/api/admin/estadisticas');
-                const response = await fetch(url);
-                return await response.json();
-            }
-        }
-        
-        async function cargarEstadisticas() {
-            try {
-                const stats = await fetchStats();
-                
-                document.getElementById('stats').innerHTML = `
-                    <div class="stat-card">
-                        <div class="stat-number">${stats.total_usuarios_validos || 0}</div>
-                        <div>Usuarios Autorizados</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">${stats.total_apuestas || 0}</div>
-                        <div>Apuestas</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">${stats.partidos_finalizados || 0}/${stats.total_partidos || 0}</div>
-                        <div>Partidos</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">${stats.porcentaje_finalizado || 0}%</div>
-                        <div>Completado</div>
-                    </div>
-                `;
-            } catch (error) { 
-                console.error('Error cargando estadísticas:', error);
-                document.getElementById('stats').innerHTML = '<div class="stat-card error-message">Error cargando estadísticas</div>';
-            }
-        }
-        
-        // ==================== APUESTAS ====================
-        async function cargarApuestas() {
-            try {
-                let apuestas = [];
-                
-                if (proveedorActual === 'all') {
-                    // Combinar apuestas de todos los proveedores
-                    const proveedores = ['adjuntas', 'rio_chiquito_esperanza', 'caucagua'];
-                    for (const prov of proveedores) {
-                        try {
-                            const response = await fetch(`${API_URL}/api/admin/apuestas?proveedor=${prov}`);
-                            if (response.ok) {
-                                const apuestasProv = await response.json();
-                                // Agregar proveedor a cada apuesta
-                                const apuestasConProveedor = apuestasProv.map(a => ({ ...a, proveedor: prov }));
-                                apuestas = apuestas.concat(apuestasConProveedor);
-                            }
-                        } catch (e) {
-                            console.error(`Error cargando apuestas de ${prov}:`, e);
-                        }
-                    }
-                    // Ordenar por fecha (más recientes primero)
-                    apuestas.sort((a, b) => new Date(b.fecha_apuesta) - new Date(a.fecha_apuesta));
-                } else {
-                    const response = await fetch(`${API_URL}/api/admin/apuestas?proveedor=${proveedorActual}`);
-                    apuestas = await response.json();
-                }
-                
-                const container = document.getElementById('apuestas-table');
-                if (!apuestas || apuestas.length === 0) { container.innerHTML = '<div class="loading">No hay apuestas registradas</div>'; return; }
-                
-                const mostrarProveedor = proveedorActual === 'all';
-                
-                container.innerHTML = `
-                    <div class="table-responsive">
-                        <table style="width:100%; border-collapse: collapse;">
-                            <thead>
-                                <tr style="background: #533483; color: white;">
-                                    <th style="padding: 10px;">Usuario</th>
-                                    <th style="padding: 10px;">Cédula</th>
-                                    <th style="padding: 10px;">Partido</th>
-                                    <th style="padding: 10px;">Apuesta</th>
-                                    <th style="padding: 10px;">Resultado</th>
-                                    <th style="padding: 10px;">Amarillas</th>
-                                    <th style="padding: 10px;">Rojas</th>
-                                    <th style="padding: 10px;">Penales</th>
-                                    ${mostrarProveedor ? '<th style="padding: 10px;">Proveedor</th>' : ''}
-                                    <th style="padding: 10px;">Puntos</th>
-                                    <th style="padding: 10px;">Fecha</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${apuestas.map(a => `
-                                    <tr style="border-bottom: 1px solid #ddd;">
-                                        <td style="padding: 10px;">${a.usuario_nombre || '?'}<br><small>${a.telefono || ''}</small></td>
-                                        <td style="padding: 10px;">${a.usuario_cedula || '-'}</td>
-                                        <td style="padding: 10px;">${a.equipo_local || '?'} vs ${a.equipo_visitante || '?'}</td>
-                                        <td style="padding: 10px;"><strong>${a.goles_local || 0} - ${a.goles_visitante || 0}</strong></td>
-                                        <td style="padding: 10px;">${a.finalizado ? `${a.resultado_local || 0} - ${a.resultado_visitante || 0}` : '⏳'}</td>
-                                        <td style="padding: 10px;">${a.tarjetas_amarillas || 0}</td>
-                                        <td style="padding: 10px;">${a.tarjetas_rojas || 0}</td>
-                                        <td style="padding: 10px;">${a.hubo_penales ? (a.goles_penales_local || 0) + '-' + (a.goles_penales_visitante || 0) : 'No'}</td>
-                                        ${mostrarProveedor ? `<td style="padding: 10px;"><span style="background:#e94560; color:white; padding:2px 8px; border-radius:12px; font-size:11px;">${a.proveedor === 'rio_chiquito_esperanza' ? 'Rio Chiquito' : a.proveedor}</span></td>` : ''}
-                                        <td style="padding: 10px; color: ${(a.puntos_obtenidos || 0) > 0 ? 'green' : 'red'}; font-weight: bold;">${a.puntos_obtenidos || 0}</td>
-                                        <td style="padding: 10px;">${new Date(a.fecha_apuesta).toLocaleString()}</td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                `;
-            } catch (error) { 
-                console.error('Error:', error);
-                document.getElementById('apuestas-table').innerHTML = '<div class="loading error-message">Error cargando apuestas</div>';
-            }
-        }
-        
-        // ==================== GRUPOS ====================
         async function cargarGrupos() {
             try {
                 const response = await fetch(`${API_URL}/api/admin/grupos`);
                 gruposList = await response.json();
                 const container = document.getElementById('grupos-table');
-                if (!gruposList || gruposList.length === 0) { container.innerHTML = '<div class="loading">No hay grupos registrados</div>'; return; }
-                container.innerHTML = `<button class="btn btn-primary" onclick="openModal('grupo')">+ Nuevo Grupo</button><div class="table-responsive"><table style="margin-top:15px"><thead><tr><th>ID</th><th>Grupo</th><th>Acciones</th></tr></thead><tbody>${gruposList.map(g => `<tr><td style="padding:10px;">${g.id}</td><td style="padding:10px;"><strong>Grupo ${g.nombre}</strong></td><td style="padding:10px;"><div class="btn-group"><button class="btn btn-warning" onclick="editarGrupo(${g.id})">✏️ Editar</button><button class="btn btn-danger" onclick="eliminarGrupo(${g.id})">🗑️ Eliminar</button></div></td></tr>`).join('')}</tbody></table></div>`;
-            } catch (error) { document.getElementById('grupos-table').innerHTML = '<div class="loading error-message">Error cargando grupos</div>'; }
+                if (!gruposList || gruposList.length === 0) { container.innerHTML = '<div class="loading">No hay grupos</div>'; return; }
+                container.innerHTML = `<button class="btn btn-primary" onclick="openModal('grupo')">+ Grupo</button><div class="table-responsive"><table style="margin-top:15px"><thead><tr><th>ID</th><th>Grupo</th><th>Acciones</th></tr></thead><tbody>${gruposList.map(g => `<tr><td>${g.id}</td><td><strong>Grupo ${g.nombre}</strong></td><td><button class="btn btn-warning" onclick="editarGrupo(${g.id})">✏️ Editar</button> <button class="btn btn-danger" onclick="eliminarGrupo(${g.id})">🗑️ Eliminar</button></td></tr>`).join('')}</tbody></table></div>`;
+            } catch (error) { document.getElementById('grupos-table').innerHTML = '<div class="error-message">Error</div>'; }
         }
         
-        async function editarGrupo(id) { const g = gruposList.find(g => g.id === id); if (g) { currentEditId = id; openModal('grupo', g); } }
+        function editarGrupo(id) { const g = gruposList.find(g => g.id === id); if (g) { currentEditId = id; openModal('grupo', g); } }
+        
         async function eliminarGrupo(id) {
-            if (!confirm('¿Eliminar este grupo?')) return;
-            try {
-                const response = await fetch(`${API_URL}/api/admin/grupos?id=${id}`, { method: 'DELETE' });
-                if (response.ok) { mostrarToast('Grupo eliminado', 'success'); await cargarGrupos(); await cargarEquipos(); }
-                else { const data = await response.json(); mostrarToast(data.error || 'Error', 'error'); }
-            } catch (error) { mostrarToast('Error', 'error'); }
+            if (!confirm('¿Eliminar?')) return;
+            await fetch(`${API_URL}/api/admin/grupos?id=${id}`, { method: 'DELETE' });
+            await cargarGrupos();
+            await cargarEquipos();
         }
         
-        // ==================== EQUIPOS ====================
         async function cargarEquipos() {
             try {
                 const response = await fetch(`${API_URL}/api/admin/equipos`);
                 equiposList = await response.json();
                 const container = document.getElementById('equipos-table');
-                if (!equiposList || equiposList.length === 0) { container.innerHTML = '<div class="loading">No hay equipos registrados</div>'; return; }
-                container.innerHTML = `<button class="btn btn-primary" onclick="openModal('equipo')">+ Nuevo Equipo</button><div class="table-responsive"><table style="margin-top:15px"><thead><tr><th>Equipo</th><th>Grupo</th><th>Acciones</th></tr></thead><tbody>${equiposList.map(e => `<td><td style="padding:10px;"><strong>${e.nombre}</strong></td><td style="padding:10px;">${e.grupo_nombre || 'Sin grupo'}</td><td style="padding:10px;"><div class="btn-group"><button class="btn btn-warning" onclick="editarEquipo(${e.id})">✏️ Editar</button><button class="btn btn-danger" onclick="eliminarEquipo(${e.id})">🗑️ Eliminar</button></div></td></tr>`).join('')}</tbody></table></div>`;
-            } catch (error) { document.getElementById('equipos-table').innerHTML = '<div class="loading error-message">Error cargando equipos</div>'; }
+                if (!equiposList || equiposList.length === 0) { container.innerHTML = '<div class="loading">No hay equipos</div>'; return; }
+                container.innerHTML = `<button class="btn btn-primary" onclick="openModal('equipo')">+ Equipo</button><div class="table-responsive"><table style="margin-top:15px"><thead><tr><th>Equipo</th><th>Grupo</th><th>Acciones</th></tr></thead><tbody>${equiposList.map(e => `<tr><td><strong>${e.nombre}</strong></td><td>${e.grupo_nombre || '-'}</td><td><button class="btn btn-warning" onclick="editarEquipo(${e.id})">✏️ Editar</button> <button class="btn btn-danger" onclick="eliminarEquipo(${e.id})">🗑️ Eliminar</button></td></tr>`).join('')}</tbody></table></div>`;
+            } catch (error) { document.getElementById('equipos-table').innerHTML = '<div class="error-message">Error</div>'; }
         }
         
-        async function editarEquipo(id) { const e = equiposList.find(e => e.id === id); if (e) { currentEditId = id; openModal('equipo', e); } }
+        function editarEquipo(id) { const e = equiposList.find(e => e.id === id); if (e) { currentEditId = id; openModal('equipo', e); } }
+        
         async function eliminarEquipo(id) {
-            if (!confirm('¿Eliminar este equipo?')) return;
-            try {
-                const response = await fetch(`${API_URL}/api/admin/equipos?id=${id}`, { method: 'DELETE' });
-                if (response.ok) { mostrarToast('Equipo eliminado', 'success'); await cargarEquipos(); await cargarPartidos(); }
-                else { const data = await response.json(); mostrarToast(data.error || 'Error', 'error'); }
-            } catch (error) { mostrarToast('Error', 'error'); }
+            if (!confirm('¿Eliminar?')) return;
+            await fetch(`${API_URL}/api/admin/equipos?id=${id}`, { method: 'DELETE' });
+            await cargarEquipos();
+            await cargarPartidos();
         }
         
-        // ==================== PARTIDOS ====================
         async function cargarPartidos() {
             try {
                 const response = await fetch(`${API_URL}/api/admin/partidos`);
                 const partidos = await response.json();
                 const container = document.getElementById('partidos-table');
-                if (!partidos || partidos.length === 0) { container.innerHTML = '<div class="loading">No hay partidos registrados</div>'; return; }
-                container.innerHTML = `<button class="btn btn-primary" onclick="openModal('partido')">+ Nuevo Partido</button><div class="table-responsive"><table style="margin-top:15px"><thead><tr><th>Local</th><th>Visitante</th><th>Grupo</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>${partidos.map(p => `<tr><td style="padding:10px;">${p.equipo_local_nombre}</td><td style="padding:10px;">${p.equipo_visitante_nombre}</td><td style="padding:10px;">${p.grupo_nombre || '-'}</td><td style="padding:10px;">${new Date(p.fecha_partido).toLocaleString()}</td><td style="padding:10px;">${p.finalizado ? '✅ Finalizado' : '⏳ Pendiente'}</td><td style="padding:10px;"><div class="btn-group"><button class="btn btn-warning" onclick="editarPartido(${p.id})">✏️ Editar</button>${!p.finalizado ? `<button class="btn btn-danger" onclick="eliminarPartido(${p.id})">🗑️ Eliminar</button>` : ''}</div></td></tr>`).join('')}</tbody></table></div>`;
-            } catch (error) { document.getElementById('partidos-table').innerHTML = '<div class="loading error-message">Error cargando partidos</div>'; }
+                if (!partidos || partidos.length === 0) { container.innerHTML = '<div class="loading">No hay partidos</div>'; return; }
+                container.innerHTML = `<button class="btn btn-primary" onclick="openModal('partido')">+ Partido</button><div class="table-responsive"><table style="margin-top:15px"><thead><tr><th>Local</th><th>Visitante</th><th>Grupo</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>${partidos.map(p => `<tr><td>${p.equipo_local_nombre}</td><td>${p.equipo_visitante_nombre}</td><td>${p.grupo_nombre || '-'}</td><td>${new Date(p.fecha_partido).toLocaleString()}</td><td>${p.finalizado ? '✅ Finalizado' : '⏳ Pendiente'}</td><td><button class="btn btn-warning" onclick="editarPartido(${p.id})">✏️ Editar</button>${!p.finalizado ? `<button class="btn btn-danger" onclick="eliminarPartido(${p.id})">🗑️ Eliminar</button>` : ''}</td></tr>`).join('')}</tbody></table></div>`;
+            } catch (error) { document.getElementById('partidos-table').innerHTML = '<div class="error-message">Error</div>'; }
         }
         
-        async function editarPartido(id) {
-            const response = await fetch(`${API_URL}/api/admin/partidos`);
-            const partidos = await response.json();
-            const p = partidos.find(p => p.id === id);
-            if (p) { currentEditId = id; openModal('partido', p); }
+        function editarPartido(id) {
+            fetch(`${API_URL}/api/admin/partidos`).then(r => r.json()).then(partidos => {
+                const p = partidos.find(p => p.id === id);
+                if (p) { currentEditId = id; openModal('partido', p); }
+            });
         }
+        
         async function eliminarPartido(id) {
-            if (!confirm('¿Eliminar este partido?')) return;
-            try {
-                const response = await fetch(`${API_URL}/api/admin/partidos?id=${id}`, { method: 'DELETE' });
-                if (response.ok) { mostrarToast('Partido eliminado', 'success'); await cargarPartidos(); await cargarResultados(); }
-                else { const data = await response.json(); mostrarToast(data.error || 'Error', 'error'); }
-            } catch (error) { mostrarToast('Error', 'error'); }
+            if (!confirm('¿Eliminar?')) return;
+            await fetch(`${API_URL}/api/admin/partidos?id=${id}`, { method: 'DELETE' });
+            await cargarPartidos();
+            await cargarResultados();
         }
         
-        // ==================== RESULTADOS ====================
+        // ============================================
+        // RESULTADOS
+        // ============================================
+        
         async function cargarResultados() {
             try {
                 const response = await fetch(`${API_URL}/api/admin/todos-resultados`);
                 const resultados = await response.json();
                 const container = document.getElementById('resultados-container');
-                if (!resultados || resultados.length === 0) { container.innerHTML = '<div class="loading">No hay partidos registrados</div>'; return; }
-                container.innerHTML = `<div style="margin-bottom:20px;padding:15px;background:#e8f4f8;border-radius:10px;"><strong>📌 Instrucciones:</strong><ul style="margin-top:10px;margin-left:20px;"><li><span style="color:#28a745;">●</span> <strong>Cargar</strong> - Para partidos pendientes</li><li><span style="color:#ffc107;">●</span> <strong>Editar</strong> - Para modificar resultado</li><li><span style="color:#dc3545;">●</span> <strong>Eliminar</strong> - Volver a pendiente</li></ul></div>${resultados.map(r => `<div class="resultado-card ${r.finalizado ? '' : 'pendiente'}"><div class="resultado-equipos">${r.local} vs ${r.visitante}</div><div class="resultado-info"><div class="resultado-valor">${r.finalizado ? `<span style="background:#28a745;color:white;padding:5px 12px;border-radius:20px;">${r.resultado_local} - ${r.resultado_visitante}</span><span style="margin-left:10px;background:#17a2b8;color:white;padding:5px 12px;border-radius:20px;">🟨${r.tarjetas_amarillas_real || 0} 🟥${r.tarjetas_rojas_real || 0}</span><span style="margin-left:10px;background:#6c757d;color:white;padding:5px 12px;border-radius:20px;">⚽ ${r.hubo_penales_real ? (r.goles_penales_local_real || 0) + '-' + (r.goles_penales_visitante_real || 0) : 'Sin penales'}</span>` : '<span style="background:#ffc107;color:#333;padding:5px 12px;border-radius:20px;">⏳ Pendiente</span>'}</div><div class="resultado-fecha">📅 ${new Date(r.fecha_partido).toLocaleString()}</div><div class="btn-group">${!r.finalizado ? `<button class="btn btn-success" onclick="abrirCargarResultado(${r.id}, '${r.local}', '${r.visitante}')">➕ Cargar</button>` : `<button class="btn btn-warning" onclick="abrirEditarResultado(${r.id}, ${r.resultado_local}, ${r.resultado_visitante}, '${r.local}', '${r.visitante}', ${r.tarjetas_amarillas_real || 0}, ${r.tarjetas_rojas_real || 0}, ${r.hubo_penales_real || false}, ${r.goles_penales_local_real || 0}, ${r.goles_penales_visitante_real || 0})">✏️ Editar</button><button class="btn btn-danger" onclick="eliminarResultado(${r.id})">🗑️ Eliminar</button>`}</div></div></div>`).join('')}`;
-            } catch (error) { document.getElementById('resultados-container').innerHTML = '<div class="loading error-message">Error cargando resultados</div>'; }
+                if (!resultados || resultados.length === 0) { container.innerHTML = '<div class="loading">No hay partidos</div>'; return; }
+                container.innerHTML = resultados.map(r => `
+                    <div class="resultado-card ${r.finalizado ? '' : 'pendiente'}">
+                        <div class="resultado-equipos">${r.local} vs ${r.visitante}</div>
+                        <div class="resultado-info">
+                            <div class="resultado-valor">${r.finalizado ? `${r.resultado_local} - ${r.resultado_visitante}` : '⏳ Pendiente'}</div>
+                            <div class="resultado-fecha">📅 ${new Date(r.fecha_partido).toLocaleString()}</div>
+                            <div class="btn-group">
+                                ${!r.finalizado ? `<button class="btn btn-success" onclick="abrirCargarResultado(${r.id}, '${r.local}', '${r.visitante}')">➕ Cargar</button>` : `<button class="btn btn-warning" onclick="abrirEditarResultado(${r.id}, ${r.resultado_local}, ${r.resultado_visitante}, '${r.local}', '${r.visitante}', ${r.tarjetas_amarillas_real || 0}, ${r.tarjetas_rojas_real || 0}, ${r.hubo_penales_real || false}, ${r.goles_penales_local_real || 0}, ${r.goles_penales_visitante_real || 0})">✏️ Editar</button><button class="btn btn-danger" onclick="eliminarResultado(${r.id})">🗑️ Eliminar</button>`}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) { document.getElementById('resultados-container').innerHTML = '<div class="error-message">Error</div>'; }
         }
         
         function abrirCargarResultado(partidoId, local, visitante) {
             currentModalType = 'cargar-resultado'; currentEditId = partidoId;
             const modal = document.getElementById('modal');
             document.getElementById('modal-title').textContent = `Cargar Resultado: ${local} vs ${visitante}`;
-            document.getElementById('modal-body').innerHTML = `<div class="form-group"><label>📊 Goles ${local}</label><input type="number" id="resultado_local" placeholder="0" min="0"></div><div class="form-group"><label>📊 Goles ${visitante}</label><input type="number" id="resultado_visitante" placeholder="0" min="0"></div><hr><div class="form-group"><label>🟨 Tarjetas Amarillas</label><input type="number" id="tarjetas_amarillas" placeholder="0" min="0"></div><div class="form-group"><label>🟥 Tarjetas Rojas</label><input type="number" id="tarjetas_rojas" placeholder="0" min="0"></div><hr><div class="form-group"><label>⚽ ¿Hubo penales?</label><select id="hubo_penales" onchange="togglePenalesContainer()"><option value="false">No</option><option value="true">Sí</option></select></div><div id="penalesContainer" style="display:none;"><div class="form-group"><label>🎯 Goles penales ${local}</label><input type="number" id="goles_penales_local" placeholder="0" min="0"></div><div class="form-group"><label>🎯 Goles penales ${visitante}</label><input type="number" id="goles_penales_visitante" placeholder="0" min="0"></div></div>`;
+            document.getElementById('modal-body').innerHTML = `
+                <div class="form-group"><label>Goles ${local}</label><input type="number" id="resultado_local" min="0"></div>
+                <div class="form-group"><label>Goles ${visitante}</label><input type="number" id="resultado_visitante" min="0"></div>
+                <hr>
+                <div class="form-group"><label>Tarjetas Amarillas</label><input type="number" id="tarjetas_amarillas" min="0"></div>
+                <div class="form-group"><label>Tarjetas Rojas</label><input type="number" id="tarjetas_rojas" min="0"></div>
+                <hr>
+                <div class="form-group"><label>¿Hubo penales?</label><select id="hubo_penales" onchange="togglePenalesContainer()"><option value="false">No</option><option value="true">Sí</option></select></div>
+                <div id="penalesContainer" style="display:none;">
+                    <div class="form-group"><label>Goles penales ${local}</label><input type="number" id="goles_penales_local" min="0"></div>
+                    <div class="form-group"><label>Goles penales ${visitante}</label><input type="number" id="goles_penales_visitante" min="0"></div>
+                </div>
+            `;
             modal.style.display = 'flex';
         }
         
@@ -1043,350 +1296,265 @@
             currentModalType = 'editar-resultado'; currentEditId = partidoId;
             const modal = document.getElementById('modal');
             document.getElementById('modal-title').textContent = `Editar Resultado: ${local} vs ${visitante}`;
-            document.getElementById('modal-body').innerHTML = `<div class="form-group"><label>📊 Goles ${local}</label><input type="number" id="resultado_local" value="${resultadoLocal}" min="0"></div><div class="form-group"><label>📊 Goles ${visitante}</label><input type="number" id="resultado_visitante" value="${resultadoVisitante}" min="0"></div><hr><div class="form-group"><label>🟨 Tarjetas Amarillas</label><input type="number" id="tarjetas_amarillas" value="${tarjetasAmarillas}" min="0"></div><div class="form-group"><label>🟥 Tarjetas Rojas</label><input type="number" id="tarjetas_rojas" value="${tarjetasRojas}" min="0"></div><hr><div class="form-group"><label>⚽ ¿Hubo penales?</label><select id="hubo_penales" onchange="togglePenalesContainer()"><option value="false" ${!huboPenales ? 'selected' : ''}>No</option><option value="true" ${huboPenales ? 'selected' : ''}>Sí</option></select></div><div id="penalesContainer" style="${huboPenales ? 'display:block;' : 'display:none;'}"><div class="form-group"><label>🎯 Goles penales ${local}</label><input type="number" id="goles_penales_local" value="${golesPenalesLocal}" min="0"></div><div class="form-group"><label>🎯 Goles penales ${visitante}</label><input type="number" id="goles_penales_visitante" value="${golesPenalesVisitante}" min="0"></div></div><p style="color:#ffc107;margin-top:10px;">⚠️ Al editar, se recalcularán los puntos.</p>`;
+            document.getElementById('modal-body').innerHTML = `
+                <div class="form-group"><label>Goles ${local}</label><input type="number" id="resultado_local" value="${resultadoLocal}" min="0"></div>
+                <div class="form-group"><label>Goles ${visitante}</label><input type="number" id="resultado_visitante" value="${resultadoVisitante}" min="0"></div>
+                <hr>
+                <div class="form-group"><label>Tarjetas Amarillas</label><input type="number" id="tarjetas_amarillas" value="${tarjetasAmarillas}" min="0"></div>
+                <div class="form-group"><label>Tarjetas Rojas</label><input type="number" id="tarjetas_rojas" value="${tarjetasRojas}" min="0"></div>
+                <hr>
+                <div class="form-group"><label>¿Hubo penales?</label><select id="hubo_penales" onchange="togglePenalesContainer()"><option value="false" ${!huboPenales ? 'selected' : ''}>No</option><option value="true" ${huboPenales ? 'selected' : ''}>Sí</option></select></div>
+                <div id="penalesContainer" style="${huboPenales ? 'display:block;' : 'display:none;'}">
+                    <div class="form-group"><label>Goles penales ${local}</label><input type="number" id="goles_penales_local" value="${golesPenalesLocal}" min="0"></div>
+                    <div class="form-group"><label>Goles penales ${visitante}</label><input type="number" id="goles_penales_visitante" value="${golesPenalesVisitante}" min="0"></div>
+                </div>
+                <p style="color:#ffc107;">⚠️ Al editar, se recalcularán los puntos.</p>
+            `;
             modal.style.display = 'flex';
         }
         
-        function togglePenalesContainer() { const select = document.getElementById('hubo_penales'); const container = document.getElementById('penalesContainer'); if (container) container.style.display = select && select.value === 'true' ? 'block' : 'none'; }
+        function togglePenalesContainer() {
+            const select = document.getElementById('hubo_penales');
+            const container = document.getElementById('penalesContainer');
+            if (container) container.style.display = select?.value === 'true' ? 'block' : 'none';
+        }
+        
         async function eliminarResultado(partidoId) {
             if (!confirm('¿Eliminar este resultado?')) return;
             try {
                 const response = await fetch(`${API_URL}/api/admin/eliminar-resultado?id=${partidoId}`, { method: 'DELETE' });
-                if (response.ok) { mostrarToast('Resultado eliminado', 'success'); await cargarResultados(); await cargarApuestas(); await cargarPartidos(); await cargarEstadisticas(); }
-                else { const data = await response.json(); mostrarToast(data.error || 'Error', 'error'); }
+                if (response.ok) {
+                    mostrarToast('Resultado eliminado', 'success');
+                    await cargarResultados();
+                    await cargarApuestas();
+                    await cargarPartidos();
+                    await cargarEstadisticas();
+                } else {
+                    const data = await response.json();
+                    mostrarToast(data.error || 'Error', 'error');
+                }
             } catch (error) { mostrarToast('Error', 'error'); }
         }
         
-        // ==================== USUARIOS AUTORIZADOS (CORREGIDO - ORDENADO) ====================
+        // ============================================
+        // APUESTAS
+        // ============================================
+        
+        async function cargarApuestas() {
+            try {
+                let apuestas = [];
+                if (proveedorActual === 'all') {
+                    const proveedores = ['adjuntas', 'rio_chiquito_esperanza', 'caucagua'];
+                    for (const prov of proveedores) {
+                        try {
+                            const response = await fetch(`${API_URL}/api/admin/apuestas?proveedor=${prov}`);
+                            if (response.ok) {
+                                const apuestasProv = await response.json();
+                                const apuestasConProveedor = apuestasProv.map(a => ({ ...a, proveedor: prov }));
+                                apuestas = apuestas.concat(apuestasConProveedor);
+                            }
+                        } catch (e) { console.error(e); }
+                    }
+                    apuestas.sort((a, b) => new Date(b.fecha_apuesta) - new Date(a.fecha_apuesta));
+                } else {
+                    const response = await fetch(`${API_URL}/api/admin/apuestas?proveedor=${proveedorActual}`);
+                    apuestas = await response.json();
+                }
+                const container = document.getElementById('apuestas-table');
+                if (!apuestas || apuestas.length === 0) { container.innerHTML = '<div class="loading">No hay apuestas</div>'; return; }
+                const mostrarProveedor = proveedorActual === 'all';
+                container.innerHTML = `
+                    <div class="table-responsive">
+                        <table>
+                            <thead><tr><th>Usuario</th><th>Cédula</th><th>Partido</th><th>Apuesta</th><th>Resultado</th><th>Amarillas</th><th>Rojas</th>${mostrarProveedor ? '<th>Proveedor</th>' : ''}<th>Puntos</th><th>Fecha</th></tr></thead>
+                            <tbody>
+                                ${apuestas.map(a => `
+                                    <tr>
+                                        <td>${a.usuario_nombre || '?'}<br><small>${a.telefono || ''}</small></td>
+                                        <td>${a.usuario_cedula || '-'}</td>
+                                        <td>${a.equipo_local || '?'} vs ${a.equipo_visitante || '?'}</td>
+                                        <td><strong>${a.goles_local || 0} - ${a.goles_visitante || 0}</strong></td>
+                                        <td>${a.finalizado ? `${a.resultado_local || 0} - ${a.resultado_visitante || 0}` : '⏳'}</td>
+                                        <td>${a.tarjetas_amarillas || 0}</td>
+                                        <td>${a.tarjetas_rojas || 0}</td>
+                                        ${mostrarProveedor ? `<td><span style="background:#e94560;color:white;padding:2px 8px;border-radius:12px;">${a.proveedor}</span></td>` : ''}
+                                        <td style="color: ${(a.puntos_obtenidos || 0) > 0 ? 'green' : 'red'}; font-weight: bold;">${a.puntos_obtenidos || 0}</td>
+                                        <td>${new Date(a.fecha_apuesta).toLocaleString()}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } catch (error) { document.getElementById('apuestas-table').innerHTML = '<div class="error-message">Error</div>'; }
+        }
+        
+        // ============================================
+        // USUARIOS AUTORIZADOS Y APOSTADORES
+        // ============================================
+        
         async function cargarUsuariosAutorizados() {
             try {
                 let usuarios = [];
-                
                 if (proveedorActual === 'all') {
-                    // Combinar usuarios de todos los proveedores
                     const proveedores = ['adjuntas', 'rio_chiquito_esperanza', 'caucagua'];
-                    
                     for (const prov of proveedores) {
                         try {
                             const response = await fetch(`${API_URL}/api/admin/usuarios-validos?proveedor=${prov}`);
                             if (response.ok) {
                                 const usuariosProv = await response.json();
-                                // Agregar el proveedor a cada usuario para identificarlo
-                                const usuariosConProveedor = usuariosProv.map(u => ({
-                                    ...u,
-                                    proveedor: prov
-                                }));
+                                const usuariosConProveedor = usuariosProv.map(u => ({ ...u, proveedor: prov }));
                                 usuarios = usuarios.concat(usuariosConProveedor);
                             }
-                        } catch (e) {
-                            console.error(`Error cargando usuarios de ${prov}:`, e);
-                        }
+                        } catch (e) { console.error(e); }
                     }
+                    usuarios.sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''));
                 } else {
                     const response = await fetch(`${API_URL}/api/admin/usuarios-validos?proveedor=${proveedorActual}`);
                     usuarios = await response.json();
                 }
-                
                 const container = document.getElementById('usuarios-autorizados-table');
-                
-                if (!usuarios || usuarios.length === 0) {
-                    container.innerHTML = '<div class="loading">No hay usuarios autorizados</div>';
-                    return;
-                }
-                
-                // Ordenar alfabéticamente por nombre (CORREGIDO)
-                const usuariosOrdenados = [...usuarios].sort((a, b) => {
-                    const nombreA = (a.nombre || '').toLowerCase();
-                    const nombreB = (b.nombre || '').toLowerCase();
-                    if (nombreA < nombreB) return -1;
-                    if (nombreA > nombreB) return 1;
-                    return 0;
-                });
-                
-                // Mostrar tabla con columna adicional de proveedor cuando es "all"
+                if (!usuarios || usuarios.length === 0) { container.innerHTML = '<div class="loading">No hay usuarios</div>'; return; }
                 const mostrarProveedor = proveedorActual === 'all';
-                
                 container.innerHTML = `
                     <div class="table-responsive">
-                        <table style="width:100%; border-collapse: collapse;">
-                            <thead>
-                                <tr style="background: #533483; color: white;">
-                                    <th style="padding: 12px;">ID</th>
-                                    <th style="padding: 12px;">Nombre</th>
-                                    <th style="padding: 12px;">Cédula</th>
-                                    <th style="padding: 12px;">Teléfono</th>
-                                    <th style="padding: 12px;">Ciudad</th>
-                                    ${mostrarProveedor ? '<th style="padding: 12px;">Proveedor</th>' : ''}
-                                    <th style="padding: 12px;">Fecha Registro</th>
-                                    <th style="padding: 12px;">Acciones</th>
-                                </tr>
-                            </thead>
+                        <table>
+                            <thead><tr><th>ID</th><th>Nombre</th><th>Cédula</th><th>Teléfono</th><th>Ciudad</th>${mostrarProveedor ? '<th>Proveedor</th>' : ''}<th>Acciones</th></tr></thead>
                             <tbody>
-                                ${usuariosOrdenados.map(u => `
-                                    <tr style="border-bottom: 1px solid #ddd;">
-                                        <td style="padding: 12px;">${u.id}</td>
-                                        <td style="padding: 12px;"><strong>${u.nombre || '?'}</strong></td>
-                                        <td style="padding: 12px;">${u.cedula || '-'}</td>
-                                        <td style="padding: 12px;">${u.telefono || '-'}</td>
-                                        <td style="padding: 12px;">${u.ciudad || '-'}</td>
-                                        ${mostrarProveedor ? `<td style="padding: 12px;"><span style="background:#e94560; color:white; padding:2px 8px; border-radius:12px; font-size:11px;">${u.proveedor === 'rio_chiquito_esperanza' ? 'Rio Chiquito' : u.proveedor}</span></td>` : ''}
-                                        <td style="padding: 12px;">${new Date(u.fecha_registro).toLocaleDateString()}</td>
-                                        <td style="padding: 12px;"><button class="btn btn-danger" onclick="eliminarUsuarioAutorizado(${u.id})">🗑️ Eliminar</button></td>
+                                ${usuarios.map(u => `
+                                    <tr>
+                                        <td>${u.id}</td>
+                                        <td><strong>${u.nombre || '?'}</strong></td>
+                                        <td>${u.cedula || '-'}</td>
+                                        <td>${u.telefono || '-'}</td>
+                                        <td>${u.ciudad || '-'}</td>
+                                        ${mostrarProveedor ? `<td><span style="background:#e94560;color:white;padding:2px 8px;border-radius:12px;">${u.proveedor}</span></td>` : ''}
+                                        <td><button class="btn btn-danger" onclick="eliminarUsuarioAutorizado(${u.id})">Eliminar</button></td>
                                     </tr>
                                 `).join('')}
                             </tbody>
                         </table>
                     </div>
                 `;
-            } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('usuarios-autorizados-table').innerHTML = '<div class="loading error-message">Error cargando usuarios autorizados</div>';
-            }
+            } catch (error) { document.getElementById('usuarios-autorizados-table').innerHTML = '<div class="error-message">Error</div>'; }
         }
         
         async function eliminarUsuarioAutorizado(id) {
-            if (!confirm('¿Eliminar este usuario de la lista de autorizados?')) return;
-            
+            if (!confirm('¿Eliminar este usuario?')) return;
             let proveedor = proveedorActual;
             if (proveedorActual === 'all') {
-                proveedor = prompt('¿De qué proveedor es este usuario?\nEscribe: adjuntas, rio_chiquito_esperanza o caucagua');
-                if (!proveedor) return;
-                if (!['adjuntas', 'rio_chiquito_esperanza', 'caucagua'].includes(proveedor)) {
+                proveedor = prompt('¿De qué proveedor es este usuario? (adjuntas, rio_chiquito_esperanza, caucagua)');
+                if (!proveedor || !['adjuntas', 'rio_chiquito_esperanza', 'caucagua'].includes(proveedor)) {
                     mostrarToast('Proveedor inválido', 'error');
                     return;
                 }
             }
-            
             try {
                 const url = getApiUrl('/api/admin/usuarios-validos', { id: id, proveedor: proveedor });
                 const response = await fetch(url, { method: 'DELETE' });
-                if (response.ok) { 
-                    mostrarToast('Usuario eliminado de la lista de autorizados', 'success'); 
-                    await cargarUsuariosAutorizados(); 
+                if (response.ok) {
+                    mostrarToast('Usuario eliminado', 'success');
+                    await cargarUsuariosAutorizados();
                     await cargarEstadisticas();
-                } else { 
-                    const data = await response.json(); 
-                    mostrarToast(data.error || 'Error', 'error'); 
+                } else {
+                    const data = await response.json();
+                    mostrarToast(data.error || 'Error', 'error');
                 }
             } catch (error) { mostrarToast('Error', 'error'); }
         }
         
-        // ==================== USUARIOS APOSTADORES (CORREGIDO) ====================
         async function cargarUsuariosApostadores() {
             try {
                 let usuarios = [];
-                
                 if (proveedorActual === 'all') {
-                    // Combinar apostadores de todos los proveedores
                     const proveedores = ['adjuntas', 'rio_chiquito_esperanza', 'caucagua'];
-                    
                     for (const prov of proveedores) {
                         try {
                             const response = await fetch(`${API_URL}/api/ranking?proveedor=${prov}`);
                             if (response.ok) {
                                 const usuariosProv = await response.json();
-                                // Agregar el proveedor a cada usuario
-                                const usuariosConProveedor = usuariosProv.map(u => ({
-                                    ...u,
-                                    proveedor: prov
-                                }));
+                                const usuariosConProveedor = usuariosProv.map(u => ({ ...u, proveedor: prov }));
                                 usuarios = usuarios.concat(usuariosConProveedor);
                             }
-                        } catch (e) {
-                            console.error(`Error cargando apostadores de ${prov}:`, e);
-                        }
+                        } catch (e) { console.error(e); }
                     }
-                    // Ordenar por puntos (mayor a menor)
                     usuarios.sort((a, b) => (b.total_puntos || 0) - (a.total_puntos || 0));
                 } else {
                     const response = await fetch(`${API_URL}/api/ranking?proveedor=${proveedorActual}`);
                     usuarios = await response.json();
                 }
-                
                 const container = document.getElementById('usuarios-apostadores-table');
-                
-                if (!usuarios || usuarios.length === 0) {
-                    container.innerHTML = '<div class="loading">No hay usuarios que hayan apostado</div>';
-                    return;
-                }
-                
+                if (!usuarios || usuarios.length === 0) { container.innerHTML = '<div class="loading">No hay apostadores</div>'; return; }
                 const mostrarProveedor = proveedorActual === 'all';
-                
                 container.innerHTML = `
                     <div class="table-responsive">
-                        <table style="width:100%; border-collapse: collapse;">
-                            <thead>
-                                <tr style="background: #533483; color: white;">
-                                    <th style="padding: 12px;">ID</th>
-                                    <th style="padding: 12px;">Nombre</th>
-                                    <th style="padding: 12px;">Cédula</th>
-                                    <th style="padding: 12px;">Teléfono</th>
-                                    <th style="padding: 12px;">Ciudad</th>
-                                    ${mostrarProveedor ? '<th style="padding: 12px;">Proveedor</th>' : ''}
-                                    <th style="padding: 12px;">Puntos</th>
-                                    <th style="padding: 12px;">Exactos</th>
-                                    <th style="padding: 12px;">Ganador</th>
-                                    <th style="padding: 12px;">Fecha Registro</th>
-                                    <th style="padding: 12px;">Acciones</th>
-                                </tr>
-                            </thead>
+                        <table>
+                            <thead><tr><th>Nombre</th><th>Cédula</th><th>Teléfono</th><th>Ciudad</th>${mostrarProveedor ? '<th>Proveedor</th>' : ''}<th>Puntos</th><th>Exactos</th><th>Ganador</th><th>Acciones</th></tr></thead>
                             <tbody>
                                 ${usuarios.map(u => `
-                                    <tr style="border-bottom: 1px solid #ddd;">
-                                        <td style="padding: 12px;">${u.id}</td>
-                                        <td style="padding: 12px;"><strong>${u.nombre || '?'}</strong></td>
-                                        <td style="padding: 12px;">${u.cedula || '-'}</td>
-                                        <td style="padding: 12px;">${u.telefono || '-'}</td>
-                                        <td style="padding: 12px;">${u.ciudad || '-'}</td>
-                                        ${mostrarProveedor ? `<td style="padding: 12px;"><span style="background:#e94560; color:white; padding:2px 8px; border-radius:12px; font-size:11px;">${u.proveedor === 'rio_chiquito_esperanza' ? 'Rio Chiquito' : u.proveedor}</span></td>` : ''}
-                                        <td style="padding: 12px; font-weight: bold; color: #e94560;">${u.total_puntos || 0}</td>
-                                        <td style="padding: 12px;">${u.aciertos_exactos || 0}</td>
-                                        <td style="padding: 12px;">${u.aciertos_ganador || 0}</td>
-                                        <td style="padding: 12px;">${u.fecha_registro ? new Date(u.fecha_registro).toLocaleDateString() : '-'}</td>
-                                        <td style="padding: 12px;"><button class="btn btn-danger" onclick="eliminarApostador(${u.id})">🗑️ Eliminar</button></td>
+                                    <tr>
+                                        <td><strong>${u.nombre || '?'}</strong></td>
+                                        <td>${u.cedula || '-'}</td>
+                                        <td>${u.telefono || '-'}</td>
+                                        <td>${u.ciudad || '-'}</td>
+                                        ${mostrarProveedor ? `<td><span style="background:#e94560;color:white;padding:2px 8px;border-radius:12px;">${u.proveedor}</span></td>` : ''}
+                                        <td style="font-weight:bold;color:#e94560;">${u.total_puntos || 0}</td>
+                                        <td>${u.aciertos_exactos || 0}</td>
+                                        <td>${u.aciertos_ganador || 0}</td>
+                                        <td><button class="btn btn-danger" onclick="eliminarApostador(${u.id})">Eliminar</button></td>
                                     </tr>
                                 `).join('')}
                             </tbody>
                         </table>
                     </div>
                 `;
-            } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('usuarios-apostadores-table').innerHTML = '<div class="loading error-message">Error cargando apostadores</div>';
-            }
+            } catch (error) { document.getElementById('usuarios-apostadores-table').innerHTML = '<div class="error-message">Error</div>'; }
         }
         
         async function eliminarApostador(id) {
-            if (!confirm('¿Eliminar este usuario? Se eliminarán todas sus apuestas.')) return;
-            
+            if (!confirm('¿Eliminar este usuario y todas sus apuestas?')) return;
             let proveedor = proveedorActual;
             if (proveedorActual === 'all') {
-                proveedor = prompt('¿De qué proveedor es este usuario?\nEscribe: adjuntas, rio_chiquito_esperanza o caucagua');
-                if (!proveedor) return;
-                if (!['adjuntas', 'rio_chiquito_esperanza', 'caucagua'].includes(proveedor)) {
+                proveedor = prompt('¿De qué proveedor es este usuario? (adjuntas, rio_chiquito_esperanza, caucagua)');
+                if (!proveedor || !['adjuntas', 'rio_chiquito_esperanza', 'caucagua'].includes(proveedor)) {
                     mostrarToast('Proveedor inválido', 'error');
                     return;
                 }
             }
-            
             try {
                 const url = getApiUrl('/api/admin/usuarios', { id: id, proveedor: proveedor });
                 const response = await fetch(url, { method: 'DELETE' });
-                if (response.ok) { 
-                    mostrarToast('Usuario eliminado', 'success'); 
-                    await cargarUsuariosApostadores(); 
+                if (response.ok) {
+                    mostrarToast('Usuario eliminado', 'success');
+                    await cargarUsuariosApostadores();
                     await cargarApuestas();
                     await cargarEstadisticas();
-                } else { 
-                    const data = await response.json(); 
-                    mostrarToast(data.error || 'Error', 'error'); 
+                } else {
+                    const data = await response.json();
+                    mostrarToast(data.error || 'Error', 'error');
                 }
             } catch (error) { mostrarToast('Error', 'error'); }
         }
         
-        // ==================== CONFIGURACIÓN DE IMÁGENES ====================
-        async function cargarConfigImagenes() {
-            if (proveedorActual === 'all') {
-                document.getElementById('configImagenesResultado').innerHTML = '<div class="warning-message">⚠️ Selecciona un proveedor específico para configurar imágenes</div>';
-                return;
-            }
-            try {
-                const response = await fetch(`${API_URL}/api/admin/config-imagenes?proveedor=${proveedorActual}`);
-                const config = await response.json();
-                
-                document.getElementById('logoUrlInput').value = config.logo_url || '';
-                document.getElementById('fondoHeaderUrlInput').value = config.fondo_header_url || '';
-                
-                if (config.logo_url) {
-                    document.getElementById('logoPreview').style.display = 'block';
-                    document.getElementById('logoPreviewImg').src = config.logo_url;
-                } else {
-                    document.getElementById('logoPreview').style.display = 'none';
-                }
-                
-                if (config.fondo_header_url) {
-                    document.getElementById('fondoPreview').style.display = 'block';
-                    document.getElementById('fondoPreviewImg').src = config.fondo_header_url;
-                } else {
-                    document.getElementById('fondoPreview').style.display = 'none';
-                }
-            } catch (error) {
-                console.error('Error cargando configuración:', error);
-            }
-        }
-        
-        function previsualizarLogo() {
-            const url = document.getElementById('logoUrlInput').value;
-            if (url && url.trim() !== '') {
-                document.getElementById('logoPreview').style.display = 'block';
-                document.getElementById('logoPreviewImg').src = url;
-            } else {
-                document.getElementById('logoPreview').style.display = 'none';
-            }
-        }
-        
-        function previsualizarFondo() {
-            const url = document.getElementById('fondoHeaderUrlInput').value;
-            if (url && url.trim() !== '') {
-                document.getElementById('fondoPreview').style.display = 'block';
-                document.getElementById('fondoPreviewImg').src = url;
-            } else {
-                document.getElementById('fondoPreview').style.display = 'none';
-            }
-        }
-        
-        async function guardarConfigImagenes() {
-            if (proveedorActual === 'all') {
-                document.getElementById('configImagenesResultado').innerHTML = '<div class="error-message">❌ Selecciona un proveedor específico para guardar imágenes</div>';
-                return;
-            }
-            
-            const password = localStorage.getItem('admin_password');
-            const logo_url = document.getElementById('logoUrlInput').value;
-            const fondo_header_url = document.getElementById('fondoHeaderUrlInput').value;
-            const resultadoDiv = document.getElementById('configImagenesResultado');
-            
-            resultadoDiv.innerHTML = '<div class="loading">⏳ Guardando configuración...</div>';
-            
-            try {
-                const response = await fetch(`${API_URL}/api/admin/config-imagenes`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ password, proveedor: proveedorActual, logo_url, fondo_header_url })
-                });
-                
-                const data = await response.json();
-                
-                if (response.ok && data.success) {
-                    resultadoDiv.innerHTML = '<div class="success-message">✅ Imágenes guardadas correctamente</div>';
-                    setTimeout(() => { resultadoDiv.innerHTML = ''; }, 3000);
-                } else {
-                    resultadoDiv.innerHTML = `<div class="error-message">❌ Error: ${data.error || 'Error desconocido'}</div>`;
-                }
-            } catch (error) {
-                resultadoDiv.innerHTML = `<div class="error-message">❌ Error de conexión: ${error.message}</div>`;
-            }
-        }
-        
-        // ==================== CARGA MASIVA ====================
-        function cambiarFormatoEjemplo() {
-            const formato = document.getElementById('formatoArchivoSelect').value;
-            const ejemploDiv = document.getElementById('ejemploFormato');
-            if (formato === 'txt') ejemploDiv.innerHTML = '12345678|Juan Perez|0412-1234567|Adjuntas<br>87654321|Maria Gomez|0416-7654321|Adjuntas';
-            else if (formato === 'csv') ejemploDiv.innerHTML = '12345678,Juan Perez,0412-1234567,Adjuntas<br>87654321,Maria Gomez,0416-7654321,Adjuntas';
-            else ejemploDiv.innerHTML = '{"cedula":"12345678","nombre":"Juan Perez","telefono":"0412-1234567","ciudad":"Adjuntas"}<br>{"cedula":"87654321","nombre":"Maria Gomez","telefono":"0416-7654321","ciudad":"Adjuntas"}';
-        }
+        // ============================================
+        // CARGA MASIVA
+        // ============================================
         
         function mostrarModalCargaUsuarios() {
-            document.getElementById('cargaProveedorSelect').value = proveedorActual === 'all' ? 'adjuntas' : proveedorActual;
-            document.getElementById('archivoUsuariosInput').value = '';
-            document.getElementById('previsualizacionContainer').style.display = 'none';
-            document.getElementById('cargaResultadoDiv').innerHTML = '';
-            datosPrevisualizados = [];
             document.getElementById('modalCargaUsuarios').style.display = 'flex';
         }
         
-        function cerrarModalCargaUsuarios() { document.getElementById('modalCargaUsuarios').style.display = 'none'; }
+        function cerrarModalCargaUsuarios() {
+            document.getElementById('modalCargaUsuarios').style.display = 'none';
+        }
+        
+        function cambiarFormatoEjemplo() {
+            const formato = document.getElementById('formatoArchivoSelect').value;
+            const ejemploDiv = document.getElementById('ejemploFormato');
+            if (formato === 'txt') ejemploDiv.innerHTML = '12345678|Juan Perez|0412-1234567|Adjuntas';
+            else if (formato === 'csv') ejemploDiv.innerHTML = '12345678,Juan Perez,0412-1234567,Adjuntas';
+            else ejemploDiv.innerHTML = '{"cedula":"12345678","nombre":"Juan Perez","telefono":"0412-1234567","ciudad":"Adjuntas"}';
+        }
         
         function previsualizarArchivo(event) {
             const file = event.target.files[0];
@@ -1402,7 +1570,7 @@
                         for (const linea of lineas) {
                             if (linea.trim()) {
                                 const partes = linea.split('|');
-                                if (partes.length >= 2) datosPrevisualizados.push({ cedula: partes[0].trim(), nombre: partes[1].trim(), telefono: partes[2] ? partes[2].trim() : '', ciudad: partes[3] ? partes[3].trim() : '' });
+                                if (partes.length >= 2) datosPrevisualizados.push({ cedula: partes[0].trim(), nombre: partes[1].trim(), telefono: partes[2]?.trim() || '', ciudad: partes[3]?.trim() || '' });
                             }
                         }
                     } else if (formato === 'csv') {
@@ -1411,7 +1579,7 @@
                         for (const linea of lineas) {
                             if (linea.trim()) {
                                 const partes = linea.split(',');
-                                if (partes.length >= 2) datosPrevisualizados.push({ cedula: partes[0].trim(), nombre: partes[1].trim(), telefono: partes[2] ? partes[2].trim() : '', ciudad: partes[3] ? partes[3].trim() : '' });
+                                if (partes.length >= 2) datosPrevisualizados.push({ cedula: partes[0].trim(), nombre: partes[1].trim(), telefono: partes[2]?.trim() || '', ciudad: partes[3]?.trim() || '' });
                             }
                         }
                     } else {
@@ -1420,123 +1588,98 @@
                     }
                     document.getElementById('previsualizacionContainer').style.display = 'block';
                     document.getElementById('previsualizacionDatos').innerText = JSON.stringify(datosPrevisualizados, null, 2);
-                    document.getElementById('cargaResultadoDiv').innerHTML = `<div class="success-message">📄 ${datosPrevisualizados.length} registros encontrados</div>`;
                 } catch(error) {
-                    document.getElementById('previsualizacionContainer').style.display = 'block';
-                    document.getElementById('previsualizacionDatos').innerText = 'Error al parsear: ' + error.message;
-                    datosPrevisualizados = [];
-                    document.getElementById('cargaResultadoDiv').innerHTML = `<div class="error-message">❌ Error: ${error.message}</div>`;
+                    document.getElementById('previsualizacionDatos').innerText = 'Error: ' + error.message;
                 }
             };
             reader.readAsText(file);
         }
         
         async function procesarArchivoUsuarios() {
-            if (datosPrevisualizados.length === 0) {
-                document.getElementById('cargaResultadoDiv').innerHTML = '<div class="error-message">❌ No hay datos para cargar</div>';
-                return;
-            }
-            
-            const password = localStorage.getItem('admin_password');
+            if (datosPrevisualizados.length === 0) { mostrarToast('No hay datos', 'error'); return; }
+            const password = adminActual?.password || 'admin123';
             const proveedor = document.getElementById('cargaProveedorSelect').value;
-            const resultadoDiv = document.getElementById('cargaResultadoDiv');
-            const totalRegistros = datosPrevisualizados.length;
-            const LOTE_TAMANO = parseInt(document.getElementById('loteTamanoSelect').value);
-            const lotes = Math.ceil(totalRegistros / LOTE_TAMANO);
-            
-            resultadoDiv.innerHTML = `<div class="loading">⏳ Procesando ${totalRegistros.toLocaleString()} registros en ${lotes} lotes de ${LOTE_TAMANO}...</div><div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>`;
-            
-            let totalInsertados = 0;
-            let totalActualizados = 0;
-            let totalErrores = 0;
-            let todosErrores = [];
-            
-            for (let i = 0; i < lotes; i++) {
-                const inicio = i * LOTE_TAMANO;
-                const fin = Math.min(inicio + LOTE_TAMANO, totalRegistros);
-                const lote = datosPrevisualizados.slice(inicio, fin);
-                const progreso = ((i + 1) / lotes) * 100;
-                
-                const progressFill = document.getElementById('progressFill');
-                if (progressFill) { progressFill.style.width = `${progreso}%`; }
-                
-                resultadoDiv.innerHTML = `<div class="loading">⏳ Procesando lote ${i + 1} de ${lotes}<br>${(inicio + 1).toLocaleString()} - ${fin.toLocaleString()} de ${totalRegistros.toLocaleString()} registros</div><div class="progress-bar"><div class="progress-fill" style="width:${progreso}%"></div></div>`;
-                
-                try {
-                    const response = await fetch(`${API_URL}/api/admin/cargar-usuarios-validos`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ password, proveedor, usuarios: lote })
-                    });
-                    const data = await response.json();
-                    if (response.ok && data.success) {
-                        totalInsertados += data.detalles?.insertados || 0;
-                        totalActualizados += data.detalles?.actualizados || 0;
-                        if (data.errores && data.errores.length > 0) {
-                            totalErrores += data.errores.length;
-                            todosErrores = todosErrores.concat(data.errores);
-                        }
-                    } else {
-                        totalErrores += lote.length;
-                        todosErrores.push(`Lote ${i + 1}: ${data.error || 'Error desconocido'}`);
-                    }
-                } catch (error) {
-                    totalErrores += lote.length;
-                    todosErrores.push(`Lote ${i + 1}: Error de conexión - ${error.message}`);
-                }
-                await new Promise(resolve => setTimeout(resolve, 100));
-            }
-            
-            resultadoDiv.innerHTML = `<div class="success-message">✅ Carga completada<br>📊 Total registros: ${totalRegistros.toLocaleString()}<br>📈 Insertados: ${totalInsertados.toLocaleString()}<br>🔄 Actualizados: ${totalActualizados.toLocaleString()}<br>❌ Errores: ${totalErrores.toLocaleString()}</div>`;
-            if (todosErrores.length > 0 && todosErrores.length <= 10) {
-                resultadoDiv.innerHTML += `<div class="warning-message">⚠️ Errores: ${todosErrores.join(', ')}</div>`;
-            } else if (todosErrores.length > 10) {
-                resultadoDiv.innerHTML += `<div class="warning-message">⚠️ ${todosErrores.length} errores ocurrieron. Revisa el formato de los datos.</div>`;
-            }
-            
-            setTimeout(() => { cerrarModalCargaUsuarios(); cargarUsuariosAutorizados(); cargarEstadisticas(); }, 2000);
-        }
-        
-        // ==================== REINICIO ====================
-        function mostrarModalReinicio() { document.getElementById('reinicioPasswordInput').value = ''; document.getElementById('reinicioConfirmarInput').value = ''; document.getElementById('reinicioMessageDiv').style.display = 'none'; document.getElementById('modalReinicio').style.display = 'flex'; }
-        function cerrarModalReinicio() { document.getElementById('modalReinicio').style.display = 'none'; }
-        async function ejecutarReinicio() {
-            const password = document.getElementById('reinicioPasswordInput').value;
-            const confirmar = document.getElementById('reinicioConfirmarInput').value;
-            const proveedor = document.getElementById('reinicioProveedorSelect').value;
-            const msgDiv = document.getElementById('reinicioMessageDiv');
-            if (!password) { msgDiv.innerHTML = '❌ Ingresa la contraseña'; msgDiv.style.background = '#fee2e2'; msgDiv.style.display = 'block'; return; }
-            if (confirmar !== 'REINICIAR') { msgDiv.innerHTML = '❌ Escribe REINICIAR para confirmar'; msgDiv.style.background = '#fee2e2'; msgDiv.style.display = 'block'; return; }
+            mostrarToast('Procesando...', 'info');
             try {
-                const response = await fetch(`${API_URL}/api/admin/reiniciar`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password, confirmar, proveedor }) });
+                const response = await fetch(`${API_URL}/api/admin/cargar-usuarios-validos`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password, proveedor, usuarios: datosPrevisualizados })
+                });
                 const data = await response.json();
-                if (response.ok) { msgDiv.innerHTML = '✅ ' + data.message; msgDiv.style.background = '#d1fae5'; msgDiv.style.display = 'block'; setTimeout(() => { cerrarModalReinicio(); cargarTodo(); }, 2000); }
-                else { msgDiv.innerHTML = '❌ ' + (data.error || 'Error'); msgDiv.style.background = '#fee2e2'; msgDiv.style.display = 'block'; }
-            } catch (error) { msgDiv.innerHTML = '❌ Error de conexión'; msgDiv.style.background = '#fee2e2'; msgDiv.style.display = 'block'; }
+                if (response.ok && data.success) mostrarToast(data.message, 'success');
+                else mostrarToast(data.error || 'Error', 'error');
+                cerrarModalCargaUsuarios();
+                cargarUsuariosAutorizados();
+                cargarEstadisticas();
+            } catch (error) { mostrarToast('Error', 'error'); }
         }
         
-        // ==================== MODALES GENERALES ====================
+        // ============================================
+        // MODALES GENERALES
+        // ============================================
+        
         function openModal(type, data = null) {
             currentModalType = type;
             const modal = document.getElementById('modal');
             const title = document.getElementById('modal-title');
             const body = document.getElementById('modal-body');
-            if (type === 'grupo') { title.textContent = data ? 'Editar Grupo' : 'Nuevo Grupo'; body.innerHTML = `<div class="form-group"><label>Nombre del Grupo</label><input type="text" id="grupo_nombre" value="${data?.nombre || ''}" placeholder="A" maxlength="1"></div>`; }
-            else if (type === 'equipo') { title.textContent = data ? 'Editar Equipo' : 'Nuevo Equipo'; body.innerHTML = `<div class="form-group"><label>Nombre del Equipo</label><input type="text" id="equipo_nombre" value="${data?.nombre || ''}" placeholder="Ej: Argentina"></div><div class="form-group"><label>Grupo</label><select id="equipo_grupo_id"><option value="">Sin grupo</option>${gruposList.map(g => `<option value="${g.id}" ${data?.grupo_id === g.id ? 'selected' : ''}>Grupo ${g.nombre}</option>`).join('')}</select></div>`; }
-            else if (type === 'partido') { title.textContent = data ? 'Editar Partido' : 'Nuevo Partido'; body.innerHTML = `<div class="form-group"><label>Equipo Local</label><select id="partido_local">${equiposList.map(e => `<option value="${e.id}" ${data?.equipo_local_id === e.id ? 'selected' : ''}>${e.nombre}</option>`).join('')}</select></div><div class="form-group"><label>Equipo Visitante</label><select id="partido_visitante">${equiposList.map(e => `<option value="${e.id}" ${data?.equipo_visitante_id === e.id ? 'selected' : ''}>${e.nombre}</option>`).join('')}</select></div><div class="form-group"><label>Grupo</label><select id="partido_grupo"><option value="">Sin grupo</option>${gruposList.map(g => `<option value="${g.id}" ${data?.grupo_id === g.id ? 'selected' : ''}>Grupo ${g.nombre}</option>`).join('')}</select></div><div class="form-group"><label>Fecha y Hora</label><input type="datetime-local" id="partido_fecha" value="${data?.fecha_partido?.slice(0, 16) || ''}"></div><div class="form-group"><label>Jornada</label><input type="number" id="partido_jornada" value="${data?.jornada || '1'}"></div>`; }
+            if (type === 'grupo') {
+                title.textContent = data ? 'Editar Grupo' : 'Nuevo Grupo';
+                body.innerHTML = `<div class="form-group"><label>Nombre del Grupo</label><input type="text" id="grupo_nombre" value="${data?.nombre || ''}" placeholder="A" maxlength="1"></div>`;
+            } else if (type === 'equipo') {
+                title.textContent = data ? 'Editar Equipo' : 'Nuevo Equipo';
+                body.innerHTML = `<div class="form-group"><label>Nombre del Equipo</label><input type="text" id="equipo_nombre" value="${data?.nombre || ''}" placeholder="Ej: Argentina"></div><div class="form-group"><label>Grupo</label><select id="equipo_grupo_id"><option value="">Sin grupo</option>${gruposList.map(g => `<option value="${g.id}" ${data?.grupo_id === g.id ? 'selected' : ''}>Grupo ${g.nombre}</option>`).join('')}</select></div>`;
+            } else if (type === 'partido') {
+                title.textContent = data ? 'Editar Partido' : 'Nuevo Partido';
+                body.innerHTML = `<div class="form-group"><label>Equipo Local</label><select id="partido_local">${equiposList.map(e => `<option value="${e.id}" ${data?.equipo_local_id === e.id ? 'selected' : ''}>${e.nombre}</option>`).join('')}</select></div><div class="form-group"><label>Equipo Visitante</label><select id="partido_visitante">${equiposList.map(e => `<option value="${e.id}" ${data?.equipo_visitante_id === e.id ? 'selected' : ''}>${e.nombre}</option>`).join('')}</select></div><div class="form-group"><label>Grupo</label><select id="partido_grupo"><option value="">Sin grupo</option>${gruposList.map(g => `<option value="${g.id}" ${data?.grupo_id === g.id ? 'selected' : ''}>Grupo ${g.nombre}</option>`).join('')}</select></div><div class="form-group"><label>Fecha y Hora</label><input type="datetime-local" id="partido_fecha" value="${data?.fecha_partido?.slice(0, 16) || ''}"></div><div class="form-group"><label>Jornada</label><input type="number" id="partido_jornada" value="${data?.jornada || '1'}"></div>`;
+            }
             modal.style.display = 'flex';
         }
-        function closeModal() { document.getElementById('modal').style.display = 'none'; currentEditId = null; }
+        
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            currentEditId = null;
+        }
         
         async function guardarModal() {
             if (currentModalType === 'cargar-resultado' || currentModalType === 'editar-resultado') {
-                const golesLocal = document.getElementById('resultado_local')?.value, golesVisitante = document.getElementById('resultado_visitante')?.value, tarjetasAmarillas = document.getElementById('tarjetas_amarillas')?.value, tarjetasRojas = document.getElementById('tarjetas_rojas')?.value, huboPenales = document.getElementById('hubo_penales')?.value === 'true', golesPenalesLocal = document.getElementById('goles_penales_local')?.value, golesPenalesVisitante = document.getElementById('goles_penales_visitante')?.value;
+                const golesLocal = document.getElementById('resultado_local')?.value;
+                const golesVisitante = document.getElementById('resultado_visitante')?.value;
+                const tarjetasAmarillas = document.getElementById('tarjetas_amarillas')?.value;
+                const tarjetasRojas = document.getElementById('tarjetas_rojas')?.value;
+                const huboPenales = document.getElementById('hubo_penales')?.value === 'true';
+                const golesPenalesLocal = document.getElementById('goles_penales_local')?.value;
+                const golesPenalesVisitante = document.getElementById('goles_penales_visitante')?.value;
+                
                 if (!golesLocal || !golesVisitante) { mostrarToast('Ingresa ambos resultados', 'error'); return; }
                 const endpoint = currentModalType === 'cargar-resultado' ? '/api/admin/resultado' : '/api/admin/editar-resultado';
                 try {
-                    const response = await fetch(`${API_URL}${endpoint}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ partido_id: currentEditId, resultado_local: parseInt(golesLocal), resultado_visitante: parseInt(golesVisitante), tarjetas_amarillas: parseInt(tarjetasAmarillas) || 0, tarjetas_rojas: parseInt(tarjetasRojas) || 0, hubo_penales: huboPenales, goles_penales_local: huboPenales ? (parseInt(golesPenalesLocal) || 0) : 0, goles_penales_visitante: huboPenales ? (parseInt(golesPenalesVisitante) || 0) : 0 }) });
-                    if (response.ok) { mostrarToast('Resultado guardado', 'success'); await cargarResultados(); await cargarApuestas(); await cargarPartidos(); await cargarEstadisticas(); closeModal(); }
-                    else { const data = await response.json(); mostrarToast(data.error || 'Error', 'error'); }
+                    const response = await fetch(`${API_URL}${endpoint}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            partido_id: currentEditId,
+                            resultado_local: parseInt(golesLocal),
+                            resultado_visitante: parseInt(golesVisitante),
+                            tarjetas_amarillas: parseInt(tarjetasAmarillas) || 0,
+                            tarjetas_rojas: parseInt(tarjetasRojas) || 0,
+                            hubo_penales: huboPenales,
+                            goles_penales_local: huboPenales ? (parseInt(golesPenalesLocal) || 0) : 0,
+                            goles_penales_visitante: huboPenales ? (parseInt(golesPenalesVisitante) || 0) : 0
+                        })
+                    });
+                    if (response.ok) {
+                        mostrarToast('Resultado guardado', 'success');
+                        await cargarResultados();
+                        await cargarApuestas();
+                        await cargarPartidos();
+                        await cargarEstadisticas();
+                        closeModal();
+                    } else {
+                        const data = await response.json();
+                        mostrarToast(data.error || 'Error', 'error');
+                    }
                 } catch (error) { mostrarToast('Error de conexión', 'error'); }
                 return;
             }
@@ -1545,27 +1688,86 @@
                 if (currentModalType === 'grupo') {
                     const nombre = document.getElementById('grupo_nombre').value.trim().toUpperCase();
                     if (!nombre) { mostrarToast('Ingresa el nombre', 'error'); return; }
-                    const response = await fetch(`${API_URL}/api/admin/grupos`, { method: currentEditId ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(currentEditId ? { id: currentEditId, nombre } : { nombre }) });
-                    if (response.ok) { mostrarToast(currentEditId ? 'Grupo actualizado' : 'Grupo creado', 'success'); await cargarGrupos(); await cargarEquipos(); closeModal(); }
+                    await fetch(`${API_URL}/api/admin/grupos`, {
+                        method: currentEditId ? 'PUT' : 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(currentEditId ? { id: currentEditId, nombre } : { nombre })
+                    });
+                    mostrarToast(currentEditId ? 'Grupo actualizado' : 'Grupo creado', 'success');
+                    await cargarGrupos();
+                    await cargarEquipos();
+                    closeModal();
                 } else if (currentModalType === 'equipo') {
-                    const nombre = document.getElementById('equipo_nombre').value.trim(), grupo_id = document.getElementById('equipo_grupo_id').value;
+                    const nombre = document.getElementById('equipo_nombre').value.trim();
+                    const grupo_id = document.getElementById('equipo_grupo_id').value;
                     if (!nombre) { mostrarToast('Ingresa el nombre', 'error'); return; }
-                    const response = await fetch(`${API_URL}/api/admin/equipos`, { method: currentEditId ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(currentEditId ? { id: currentEditId, nombre, grupo_id: grupo_id ? parseInt(grupo_id) : null } : { nombre, grupo_id: grupo_id ? parseInt(grupo_id) : null }) });
-                    if (response.ok) { mostrarToast(currentEditId ? 'Equipo actualizado' : 'Equipo creado', 'success'); await cargarEquipos(); await cargarPartidos(); closeModal(); }
+                    await fetch(`${API_URL}/api/admin/equipos`, {
+                        method: currentEditId ? 'PUT' : 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(currentEditId ? { id: currentEditId, nombre, grupo_id: grupo_id || null } : { nombre, grupo_id: grupo_id || null })
+                    });
+                    mostrarToast(currentEditId ? 'Equipo actualizado' : 'Equipo creado', 'success');
+                    await cargarEquipos();
+                    await cargarPartidos();
+                    closeModal();
                 } else if (currentModalType === 'partido') {
-                    const equipo_local_id = document.getElementById('partido_local').value, equipo_visitante_id = document.getElementById('partido_visitante').value, grupo_id = document.getElementById('partido_grupo').value, fecha_partido = document.getElementById('partido_fecha').value, jornada = document.getElementById('partido_jornada').value;
-                    if (!equipo_local_id || !equipo_visitante_id || !fecha_partido) { mostrarToast('Completa todos los campos', 'error'); return; }
-                    const response = await fetch(`${API_URL}/api/admin/partidos`, { method: currentEditId ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(currentEditId ? { id: currentEditId, equipo_local_id: parseInt(equipo_local_id), equipo_visitante_id: parseInt(equipo_visitante_id), grupo_id: grupo_id ? parseInt(grupo_id) : null, fecha_partido, jornada: parseInt(jornada) } : { equipo_local_id: parseInt(equipo_local_id), equipo_visitante_id: parseInt(equipo_visitante_id), grupo_id: grupo_id ? parseInt(grupo_id) : null, fecha_partido, jornada: parseInt(jornada) }) });
-                    if (response.ok) { mostrarToast(currentEditId ? 'Partido actualizado' : 'Partido creado', 'success'); await cargarPartidos(); await cargarResultados(); closeModal(); }
+                    const equipo_local_id = document.getElementById('partido_local').value;
+                    const equipo_visitante_id = document.getElementById('partido_visitante').value;
+                    const grupo_id = document.getElementById('partido_grupo').value;
+                    const fecha_partido = document.getElementById('partido_fecha').value;
+                    const jornada = document.getElementById('partido_jornada').value;
+                    if (!equipo_local_id || !equipo_visitante_id || !fecha_partido) { mostrarToast('Completa los campos', 'error'); return; }
+                    await fetch(`${API_URL}/api/admin/partidos`, {
+                        method: currentEditId ? 'PUT' : 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(currentEditId ? { id: currentEditId, equipo_local_id: parseInt(equipo_local_id), equipo_visitante_id: parseInt(equipo_visitante_id), grupo_id: grupo_id || null, fecha_partido, jornada: parseInt(jornada) } : { equipo_local_id: parseInt(equipo_local_id), equipo_visitante_id: parseInt(equipo_visitante_id), grupo_id: grupo_id || null, fecha_partido, jornada: parseInt(jornada) })
+                    });
+                    mostrarToast(currentEditId ? 'Partido actualizado' : 'Partido creado', 'success');
+                    await cargarPartidos();
+                    await cargarResultados();
+                    closeModal();
                 }
-            } catch (error) { mostrarToast('Error de conexión', 'error'); }
+            } catch (error) { mostrarToast('Error', 'error'); }
         }
+        
+        // ============================================
+        // REINICIO DB
+        // ============================================
+        
+        function mostrarModalReinicio() { document.getElementById('modalReinicio').style.display = 'flex'; }
+        function cerrarModalReinicio() { document.getElementById('modalReinicio').style.display = 'none'; }
+        
+        async function ejecutarReinicio() {
+            const password = document.getElementById('reinicioPasswordInput').value;
+            const confirmar = document.getElementById('reinicioConfirmarInput').value;
+            const proveedor = document.getElementById('reinicioProveedorSelect').value;
+            const msgDiv = document.getElementById('reinicioMessageDiv');
+            
+            if (password !== "Gury03") { msgDiv.innerHTML = '❌ Contraseña incorrecta'; return; }
+            if (confirmar !== 'REINICIAR') { msgDiv.innerHTML = '❌ Escribe REINICIAR'; return; }
+            
+            try {
+                const response = await fetch(`${API_URL}/api/admin/reiniciar`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password, confirmar, proveedor })
+                });
+                const data = await response.json();
+                if (response.ok) { msgDiv.innerHTML = '✅ ' + data.message; setTimeout(() => cerrarModalReinicio(), 2000); }
+                else { msgDiv.innerHTML = '❌ ' + (data.error || 'Error'); }
+            } catch (error) { msgDiv.innerHTML = '❌ Error de conexión'; }
+        }
+        
+        // ============================================
+        // SHOW PANEL
+        // ============================================
         
         function showPanel(panel) {
             document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(`panel-${panel}`).classList.add('active');
             if (event && event.target) event.target.classList.add('active');
+            
             if (panel === 'apuestas') cargarApuestas();
             else if (panel === 'grupos') cargarGrupos();
             else if (panel === 'equipos') cargarEquipos();
@@ -1574,19 +1776,18 @@
             else if (panel === 'usuarios-autorizados') cargarUsuariosAutorizados();
             else if (panel === 'usuarios-apostadores') cargarUsuariosApostadores();
             else if (panel === 'config-imagenes' && proveedorActual !== 'all') cargarConfigImagenes();
-            else if (panel === 'config-imagenes' && proveedorActual === 'all') document.getElementById('configImagenesResultado').innerHTML = '<div class="warning-message">⚠️ Selecciona un proveedor específico para configurar imágenes</div>';
+            else if (panel === 'config-reglas' && proveedorActual !== 'all') cargarConfigReglas();
+            else if (panel === 'proveedores') mostrarProveedores();
+            else if (panel === 'administradores') cargarAdministradores();
+            else if (panel === 'logs') cargarLogs();
         }
         
-        function mostrarToast(msg, tipo) {
-            const toast = document.getElementById('toast');
-            toast.textContent = msg;
-            toast.className = `toast ${tipo}`;
-            setTimeout(() => { toast.style.display = 'none'; toast.className = 'toast'; }, 3000);
-        }
-        
+        // Event listeners
         document.getElementById('archivoUsuariosInput').addEventListener('change', previsualizarArchivo);
-        document.getElementById('logoUrlInput').addEventListener('input', previsualizarLogo);
-        document.getElementById('fondoHeaderUrlInput').addEventListener('input', previsualizarFondo);
+        document.getElementById('reglasContenido').addEventListener('input', () => {
+            document.getElementById('reglasPreview').innerHTML = `<h2>${document.getElementById('reglasTitulo').value}</h2>${document.getElementById('reglasContenido').value}`;
+        });
+        
         checkSession();
     </script>
 </body>
