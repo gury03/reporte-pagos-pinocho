@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiniela Mundial 2026 - Adjuntas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .container { 
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            flex: 1;
+        }
+        
+        /* Header */
+        .header {
+            position: relative;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .header-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 0;
+        }
+        .header-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.5) 100%);
+            z-index: 1;
+        }
+        .header-content {
+            position: relative;
+            z-index: 2;
+            padding: 30px 40px;
+            text-align: center;
+            color: white;
+        }
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        .logo-img {
+            max-height: 60px;
+            max-width: 180px;
+        }
+        .header h1 {
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .header p {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        /* Login Section */
+        .login-section {
+            max-width: 450px;
+            margin: 50px auto;
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+        }
+        .login-section h2 {
+            color: #e94560;
+            margin-bottom: 10px;
+            font-size: 1.8em;
+        }
+        .login-section p {
+            color: #666;
+            margin-bottom: 25px;
+        }
+        .login-section input {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 16px;
+            text-align: center;
+        }
+        .login-section input:focus {
+            outline: none;
+            border-color: #e94560;
+        }
+        .login-section button {
+            background: linear-gradient(135deg, #e94560, #533483);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+        }
+        .login-section button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(233,69,96,0.3);
+        }
+        .login-error {
+            color: #dc3545;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        
+        /* Info Banner */
+        .info-banner {
+            background: linear-gradient(135deg, #e94560, #533483);
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            text-align: center;
+            color: white;
+        }
+        .info-banner h3 {
+            font-size: 1em;
+            margin-bottom: 5px;
+        }
+        .info-banner p {
+            font-size: 0.8em;
+            opacity: 0.9;
+        }
+        .info-banner.warning {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+        }
+        .info-banner.closed {
+            background: linear-gradient(135deg, #6c757d, #495057);
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .tab {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 10px 24px;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .tab:hover {
+            transform: translateY(-2px);
+            background: rgba(255,255,255,0.2);
+        }
+        .tab.active {
+            background: linear-gradient(135deg, #e94560, #533483);
+            box-shadow: 0 5px 15px rgba(233,69,96,0.3);
+        }
+        .tab-reglas {
+            background: #ff9800 !important;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* User Card */
+        .user-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        .user-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .user-title h3 {
+            color: #e94560;
+            font-size: 1.1em;
+        }
+        .user-title p {
+            color: #666;
+            font-size: 0.8em;
+        }
+        .user-stats {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .stat-badge {
+            background: white;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.75em;
+            color: #533483;
+            font-weight: bold;
+        }
+        .logout-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+        .logout-btn:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+        
+        /* Acordeones */
+        .accordion {
+            margin-bottom: 20px;
+            border-radius: 15px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .accordion-header {
+            background: linear-gradient(135deg, #533483, #e94560);
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            transition: all 0.3s;
+        }
+        .accordion-header:hover {
+            background: linear-gradient(135deg, #e94560, #533483);
+        }
+        .accordion-header h3 {
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .accordion-header .badge {
+            background: rgba(255,255,255,0.2);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7em;
+        }
+        .accordion-header i {
+            transition: transform 0.3s;
+        }
+        .accordion-header.active i {
+            transform: rotate(180deg);
+        }
+        .accordion-content {
+            display: none;
+            padding: 0;
+            background: #f8f9fa;
+        }
+        .accordion-content.active {
+            display: block;
+        }
+        
+        /* Grid de partidos */
+        .partidos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: 15px;
+            padding: 20px;
+        }
+        
+        /* Tarjeta de partido */
+        .match-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            border: 1px solid #e0e0e0;
+        }
+        .match-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        .match-card.disabled {
+            opacity: 0.7;
+            background: #f5f5f5;
+        }
+        .match-card.disabled:hover {
+            transform: none;
+        }
+        
+        .match-header {
+            background: linear-gradient(135deg, #533483, #e94560);
+            padding: 10px 15px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75em;
+        }
+        .match-date {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .match-status {
+            background: rgba(255,255,255,0.2);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.7em;
+        }
+        .match-status.apostado {
+            background: #28a745;
+        }
+        .match-status.cerrado {
+            background: #dc3545;
+        }
+        
+        .match-teams {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 15px;
+            background: #f8f9fa;
+        }
+        .team {
+            text-align: center;
+            flex: 1;
+        }
+        .team-name {
+            font-weight: bold;
+            font-size: 1em;
+            color: #333;
+        }
+        .match-vs {
+            font-size: 0.8em;
+            font-weight: bold;
+            color: #e94560;
+            margin: 0 10px;
+        }
+        
+        .match-bet {
+            padding: 15px;
+        }
+        .bet-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .bet-label {
+            font-size: 0.75em;
+            font-weight: 600;
+            color: #533483;
+            min-width: 90px;
+        }
+        .bet-fields {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .bet-fields input {
+            width: 60px;
+            padding: 8px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .bet-fields input:focus {
+            outline: none;
+            border-color: #e94560;
+        }
+        .bet-fields input:disabled {
+            background: #e9ecef;
+            color: #6c757d;
+        }
+        
+        .match-time-left {
+            background: #fff3cd;
+            padding: 8px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.7em;
+            color: #856404;
+            margin-top: 10px;
+        }
+        .match-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 25px;
+            font-size: 0.8em;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+        .match-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(40,167,69,0.3);
+        }
+        .match-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .my-bet-badge {
+            background: #d4edda;
+            color: #155724;
+            padding: 8px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.7em;
+            margin-top: 10px;
+        }
+        
+        /* Mis Apuestas */
+        .apuesta-realizada-card {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            border-left: 4px solid #28a745;
+        }
+        .apuesta-realizada-header {
+            background: #f8f9fa;
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .apuesta-realizada-equipos {
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .apuesta-realizada-fecha {
+            font-size: 0.7em;
+            color: #999;
+        }
+        .apuesta-realizada-body {
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .apuesta-realizada-detalle {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .apuesta-item {
+            background: #f0f0f0;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75em;
+        }
+        
+        /* Ranking y Resultados */
+        .ranking-table, .resultados-table {
+            background: white;
+            border-radius: 15px;
+            overflow-x: auto;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            background: linear-gradient(135deg, #533483, #e94560);
+            color: white;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            background: white;
+            border-radius: 15px;
+        }
+        
+        /* Modal de Reglas */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-contenido {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 850px;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalEntrada 0.3s ease;
+        }
+        @keyframes modalEntrada {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        .modal-header {
+            background: linear-gradient(135deg, #e94560, #533483);
+            color: white;
+            padding: 20px;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.4rem;
+        }
+        .modal-cerrar {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .modal-cerrar:hover {
+            transform: scale(1.1);
+        }
+        .modal-body {
+            padding: 25px;
+        }
+        
+        /* Estilos para el reglamento */
+        .reglamento-section {
+            margin-bottom: 25px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+        .reglamento-section h3 {
+            color: #e94560;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .reglamento-section h3 i {
+            font-size: 1.3rem;
+        }
+        .reglamento-section p {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+        .reglamento-section ul, .reglamento-section ol {
+            margin-left: 25px;
+            color: #555;
+            line-height: 1.6;
+        }
+        .reglamento-section li {
+            margin-bottom: 8px;
+        }
+        .premio-card {
+            background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+            border-left: 4px solid #ff9800;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        .premio-card strong {
+            color: #e94560;
+            font-size: 1rem;
+        }
+        .badge-regla {
+            display: inline-block;
+            background: #e94560;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-right: 8px;
+        }
+        
+        /* Footer */
+        .footer {
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f0c29 100%);
+            color: #888;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .footer p {
+            margin: 3px 0;
+            font-size: 0.75em;
+        }
+        .footer a {
+            color: #e94560;
+            text-decoration: none;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 10px;
+            display: none;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+            font-size: 14px;
+        }
+        .toast.success { background: #28a745; color: white; display: block; }
+        .toast.error { background: #dc3545; color: white; display: block; }
+        .toast.warning { background: #ffc107; color: #333; display: block; }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+        }
+        .spinner {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .container { padding: 15px; }
+            .header-content { padding: 20px; }
+            .header h1 { font-size: 1.5em; }
+            .partidos-grid { grid-template-columns: 1fr; }
+            .match-teams { flex-direction: column; gap: 10px; }
+            .match-vs { margin: 5px 0; }
+            .user-header { flex-direction: column; text-align: center; }
+            .user-stats { justify-content: center; }
+            .bet-row { flex-direction: column; align-items: flex-start; }
+            .modal-header h2 { font-size: 1rem; }
+            .modal-body { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header" id="headerContainer">
+            <div class="header-bg" id="headerBg"></div>
+            <div class="header-overlay"></div>
+            <div class="header-content">
+                <div class="logo-container" id="logoContainer" style="display: none;">
+                    <img id="logoImg" class="logo-img" alt="Logo">
+                </div>
+                <h1>🏆 QUINIELA MUNDIAL 2026</h1>
+                <p>Adjuntas - ¡Pronostica y gana!</p>
+            </div>
+        </div>
+        
+        <!-- Login Section -->
+        <div id="loginContainer" class="login-section">
+            <h2>🔐 Acceso a la Quiniela</h2>
+            <p>Ingresa tu número de cédula para participar</p>
+            <input type="text" id="cedulaInput" placeholder="Ej: 12345678" maxlength="10" autocomplete="off">
+            <button onclick="verificarUsuario()">Ingresar</button>
+            <div id="loginError" class="login-error"></div>
+        </div>
+        
+        <!-- Main Content -->
+        <div id="mainContent" style="display: none;">
+            <!-- User Card -->
+            <div class="user-card">
+                <div class="user-header">
+                    <div class="user-title">
+                        <h3><i class="fas fa-user-circle"></i> <span id="display-nombre">-</span></h3>
+                        <p>Cédula: <span id="display-cedula">-</span></p>
+                    </div>
+                    <div class="user-stats">
+                        <div class="stat-badge"><i class="fas fa-phone"></i> <span id="display-telefono">-</span></div>
+                        <div class="stat-badge"><i class="fas fa-map-marker-alt"></i> <span id="display-ciudad">-</span></div>
+                    </div>
+                    <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Salir</button>
+                </div>
+            </div>
+            
+            <!-- Info Banner con fecha límite global -->
+            <div id="infoBanner" class="info-banner"></div>
+            
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('apostar')">🎯 Apostar</button>
+                <button class="tab" onclick="showTab('mis-apuestas')">📋 Mis Apuestas</button>
+                <button class="tab" onclick="showTab('ranking')">🏅 Ranking</button>
+                <button class="tab" onclick="showTab('resultados')">📊 Resultados</button>
+                <button class="tab tab-reglas" onclick="mostrarModalReglas()">📋 Reglas</button>
+            </div>
+            
+            <!-- Tab Apostar -->
+            <div id="tab-apostar" class="tab-content active">
+                <div id="partidos-container"><div class="loading"><div class="spinner"></div>Cargando partidos...</div></div>
+            </div>
+            
+            <!-- Tab Mis Apuestas -->
+            <div id="tab-mis-apuestas" class="tab-content">
+                <div id="mis-apuestas-container"><div class="loading"><div class="spinner"></div>Cargando tus apuestas...</div></div>
+            </div>
+            
+            <!-- Tab Ranking -->
+            <div id="tab-ranking" class="tab-content">
+                <div class="ranking-table" id="ranking-container"><div class="loading"><div class="spinner"></div>Cargando ranking...</div></div>
+            </div>
+            
+            <!-- Tab Resultados -->
+            <div id="tab-resultados" class="tab-content">
+                <div class="resultados-table" id="resultados-container"><div class="loading"><div class="spinner"></div>Cargando resultados...</div></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Reglas (se muestra automáticamente al abrir la página) -->
+    <div id="modalReglas" class="modal-overlay">
+        <div class="modal-contenido">
+            <div class="modal-header">
+                <h2 id="modalTituloReglas"><i class="fas fa-scroll"></i> 🏆 REGLAMENTO OFICIAL: QUINIELA FIBEX 2026</h2>
+                <button class="modal-cerrar" onclick="cerrarModalReglas()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalReglasBody">
+                <div class="loading">Cargando reglas...</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="footer">
+        <p>© 2026 - Robertsystems. Todos los derechos reservados.</p>
+        <p>Diseñado por <a href="https://robertsystems.org" target="_blank">Robertsystems.org</a> | 
+           <i class="fas fa-phone"></i> <a href="tel:04128856847">0412-8856847</a></p>
+        <p><i class="fas fa-heart" style="color: #e94560;"></i> Conectando con el mundo</p>
+    </div>
+    
+    <div id="toast" class="toast"></div>
+    
+    <script>
+        // ============================================
+        // CONFIGURACIÓN
+        // ============================================
+        const API_URL = 'https://quiniela-mundial.thecrow859.workers.dev';
+        const PROVEEDOR = 'adjuntas';
+        
+        let usuarioActual = null;
+        let todosLosPartidos = [];
+        let partidosAgrupados = {};
+        let apuestasUsuario = {};
+        let jornadas = [];
+        
+        // Variables para fecha límite GLOBAL
+        let fechaLimiteGlobal = null;
+        let plazoCerrado = false;
+        
+        // ============================================
+        // MODAL DE REGLAS
+        // ============================================
+        
+        function mostrarModalReglas() {
+            document.getElementById('modalReglas').classList.add('active');
+        }
+        
+        function cerrarModalReglas() {
+            document.getElementById('modalReglas').classList.remove('active');
+        }
+        
+        // ============================================
+        // CARGAR REGLAS DESDE LA BASE DE DATOS (CON TÍTULO)
+        // ============================================
+        async function cargarReglas() {
+            try {
+                const response = await fetch(`${API_URL}/api/config-reglas?proveedor=${PROVEEDOR}`);
+                const data = await response.json();
+                
+                if (data.success && data.reglas) {
+                    const titulo = data.titulo || "🏆 REGLAMENTO OFICIAL: QUINIELA FIBEX 2026";
+                    document.getElementById('modalTituloReglas').innerHTML = `<i class="fas fa-scroll"></i> ${titulo}`;
+                    document.getElementById('modalReglasBody').innerHTML = data.reglas;
+                } else {
+                    document.getElementById('modalTituloReglas').innerHTML = `<i class="fas fa-scroll"></i> 🏆 REGLAMENTO OFICIAL: QUINIELA FIBEX 2026`;
+                    document.getElementById('modalReglasBody').innerHTML = obtenerReglasDefaultHTML();
+                }
+            } catch (error) {
+                console.error('Error cargando reglas:', error);
+                document.getElementById('modalTituloReglas').innerHTML = `<i class="fas fa-scroll"></i> 🏆 REGLAMENTO OFICIAL: QUINIELA FIBEX 2026`;
+                document.getElementById('modalReglasBody').innerHTML = obtenerReglasDefaultHTML();
+            }
+        }
+        
+        function obtenerReglasDefaultHTML() {
+            return `<!-- 1. REQUISITOS DE PARTICIPACIÓN -->
+<div class="reglamento-section">
+    <h3><i class="fas fa-check-circle"></i> 1. REQUISITOS DE PARTICIPACIÓN</h3>
+    <p><span class="badge-regla">✓</span> <strong>Solvencia Obligatoria:</strong> El participante debe ser cliente activo de Fibex y estar totalmente al día con el pago de su mensualidad al momento de registrarse y durante cada una de las fases del torneo. El retraso en el pago suspenderá la participación del usuario en esa jornada.</p>
+    <p><span class="badge-regla">✓</span> <strong>Identificación Única:</strong> Cada participación estará vinculada estrictamente al número de cédula de identidad del titular del servicio. Se permite únicamente una (1) participación por contrato.</p>
+    <p><span class="badge-regla">✓</span> <strong>Exclusión de Transparencia:</strong> No podrán participar en esta promoción empleados directos de Fibex ni contratistas, ni aliado que esté vinculado con Fibex.</p>
+</div>
+
+<!-- 2. SISTEMA DE PUNTUACIÓN -->
+<div class="reglamento-section">
+    <h3><i class="fas fa-chart-line"></i> 2. SISTEMA DE PUNTUACIÓN DE LOS PARTIDOS</h3>
+    <p>Los puntos por partido se asignarán de la siguiente manera:</p>
+    <ul>
+        <li><strong>Acierto de Ganador / Empate:</strong> 1 punto.</li>
+        <li><strong>Acierto de Marcador Exacto:</strong> 3 puntos.</li>
+        <li><strong>Tiempo Válido:</strong> Para efectos de la quiniela, el resultado oficial tomado en cuenta será el del tiempo reglamentario más el tiempo de reposición/añadido por el árbitro. Se incluirán goles anotados en prórrogas (tiempos extras) tomando en cuenta el ganador final. <strong>NO sumarán los goles en tanda de penales</strong>.</li>
+    </ul>
+</div>
+
+<!-- 3. CRITERIO DE DESEMPATE -->
+<div class="reglamento-section">
+    <h3><i class="fas fa-balance-scale"></i> 3. CRITERIO DE DESEMPATE (FACTOR DISCIPLINARIO Y REGISTRO)</h3>
+    <p>Las tarjetas amarillas y rojas <strong>NO suman puntos</strong> en la tabla general ordinaria. Solo se activarán y contabilizarán como <strong>criterio de desempate</strong> en caso de que dos o más usuarios terminen una fase con la misma cantidad de puntos:</p>
+    <ol>
+        <li><strong>Primer Criterio:</strong> Mayor número de aciertos en la cantidad total de Tarjetas Amarillas del partido (suma 1 punto de desempate por acierto).</li>
+        <li><strong>Segundo Criterio:</strong> Mayor número de aciertos en la cantidad total de Tarjetas Rojas del partido (suma 1 punto de desempate por acierto).</li>
+        <li><strong>Tercer Criterio (Súper Desempate):</strong> De persistir el empate en puntos y tarjetas, resultará ganador el usuario que haya registrado y guardado primero sus pronósticos en el sistema (determinado por la fecha y hora exacta del servidor).</li>
+    </ol>
+</div>
+
+<!-- 4. PLAZO DE REGISTRO -->
+<div class="reglamento-section">
+    <h3><i class="fas fa-clock"></i> 4. PLAZO DE REGISTRO DE PRONÓSTICOS</h3>
+    <p>⏰ Los pronósticos de cada partido se recibirán de manera obligatoria hasta <strong>30 minutos antes</strong> de la hora oficial de inicio de cada juego.</p>
+    <p>🔒 Una vez cerrado el sistema para ese encuentro, <strong>no se permitirán modificaciones ni ingresos tardíos</strong> bajo ninguna circunstancia.</p>
+</div>
+
+<!-- 5. DINÁMICA DE LA COMPETICIÓN -->
+<div class="reglamento-section">
+    <h3><i class="fas fa-chart-simple"></i> 5. DINÁMICA DE LA COMPETICIÓN, FASES Y PREMIOS</h3>
+    
+    <div class="premio-card">
+        <strong>🏆 FASE DE GRUPOS (Todos participan):</strong> Al finalizar esta fase, la quiniela se reinicia a cero puntos para todos.<br>
+        🥇 <strong>Ganador de Fase:</strong> 1 Teléfono Celular Inteligente + 1 mes de servicio Fibex exonerados.<br>
+        🔄 <strong>Regla de Continuidad:</strong> El ganador de esta fase mantiene su derecho de seguir participando en las fases siguientes en igualdad de condiciones.
+    </div>
+
+    <div class="premio-card">
+        <strong>🏆 DIECISEISAVOS:</strong> Todos participan. Al finalizar esta fase, la quiniela se reinicia a cero puntos para todos.<br>
+        🥇 <strong>Ganador de Fase:</strong> 1 Televisor de 40" + 1 mes de servicio Fibex exonerados.
+    </div>
+
+    <div class="premio-card">
+        <strong>🏆 OCTAVOS:</strong> Participan todos los usuarios. Al terminar la fase, no hay premio físico; clasifican únicamente los <strong>8 mejores puntajes</strong> a la siguiente ronda. Los demás quedan eliminados.<br>
+        🎁 <strong>Beneficio:</strong> Los 8 usuarios clasificados pasan a cuartos.
+    </div>
+
+    <div class="premio-card">
+        <strong>🏆 CUARTOS:</strong> Participan solo los 8 clasificados de la fase anterior. Al terminar, avanzan únicamente los <strong>4 mejores puntajes</strong>.<br>
+        🎁 <strong>Beneficio:</strong> Los 4 usuarios clasificados pasan a semifinal.
+    </div>
+
+    <div class="premio-card">
+        <strong>🏆 SEMIFINAL:</strong> Participan solo los 4 clasificados de la fase anterior. Al terminar, avanzan únicamente los <strong>2 mejores puntajes</strong> a la Gran Final.<br>
+        🎁 <strong>Beneficio:</strong> Los 2 usuarios finalistas pasan a la final.
+    </div>
+
+    <div class="premio-card">
+        <strong>🏆 GRAN FINAL:</strong> Enfrentamiento final entre los 2 mejores usuarios del torneo.<br>
+        🥇 <strong>Campeón (Mayor puntaje):</strong> 1 Moto 150cc 0 km + 2 meses de servicio Fibex exonerados.<br>
+        🥈 <strong>Subcampeón (Segundo mayor puntaje):</strong> 1 Televisor Smart TV de 55" + 1 mes de servicio Fibex exonerado.
+    </div>
+</div>
+
+<!-- 6. CONDICIONES GENERALES -->
+<div class="reglamento-section">
+    <h3><i class="fas fa-file-contract"></i> 6. CONDICIONES GENERALES DE LAS EXONERACIONES</h3>
+    <p><span class="badge-regla">⚠️</span> <strong>No Acumulabilidad:</strong> Las exoneraciones otorgadas en las distintas fases del torneo no son acumulables entre sí. El beneficio máximo de exoneración al que puede optar un mismo cliente/contrato durante todo el evento es de <strong>dos (2) meses de servicio en total</strong>.</p>
+    <p><span class="badge-regla">⚠️</span> <strong>Aplicación del Beneficio:</strong> Los 2 meses de servicio exonerados se aplicarán en la facturación del titular inmediatamente posterior a la finalización del torneo (o de la fase en la que el usuario resulte ganador/eliminado). El beneficio es intransferible y no puede ser canjeado por dinero en efectivo.</p>
+</div>
+
+<!-- 7. MODIFICACIONES Y FUERZA MAYOR -->
+<div class="reglamento-section">
+    <h3><i class="fas fa-gavel"></i> 7. MODIFICACIONES Y FUERZA MAYOR</h3>
+    <p>Fibex se reserva el derecho de modificar el calendario de la quiniela, suspender o anular partidos si el torneo de fútbol oficial sufre cambios imprevistos, cancelaciones o reprogramaciones por fuerza mayor (clima, decisiones arbitrales de la FIFA/Federación, etc.).</p>
+</div>
+
+<div style="text-align: center; margin-top: 20px; padding-top: 15px; border-top: 2px solid #e94560;">
+    <p style="color: #e94560; font-weight: bold;">¡Buena suerte a todos los participantes! ⚽🏆</p>
+    <p style="font-size: 12px; color: #888;">Fibex - Conectando con el mundo</p>
+</div>`;
+        }
+        
+        // ============================================
+        // CARGAR CONFIGURACIÓN DE IMÁGENES
+        // ============================================
+        async function cargarConfigImagenes() {
+            try {
+                const response = await fetch(`${API_URL}/api/config-imagenes?proveedor=${PROVEEDOR}`);
+                const config = await response.json();
+                
+                if (config.logo_url && config.logo_url !== '') {
+                    const logoContainer = document.getElementById('logoContainer');
+                    const logoImg = document.getElementById('logoImg');
+                    logoImg.src = config.logo_url;
+                    logoContainer.style.display = 'flex';
+                }
+                
+                if (config.fondo_header_url && config.fondo_header_url !== '') {
+                    const headerBg = document.getElementById('headerBg');
+                    headerBg.style.backgroundImage = `url('${config.fondo_header_url}')`;
+                }
+            } catch (error) {
+                console.error('Error cargando configuración:', error);
+            }
+        }
+        
+        // ============================================
+        // CALCULAR FECHA LÍMITE GLOBAL
+        // ============================================
+        function calcularFechaLimiteGlobal() {
+            if (!todosLosPartidos || todosLosPartidos.length === 0) return null;
+            const fechas = todosLosPartidos.map(p => new Date(p.fecha_partido));
+            const primerPartido = new Date(Math.min(...fechas));
+            return new Date(primerPartido.getTime() - 30 * 60 * 1000);
+        }
+        
+        function actualizarBannerGlobal() {
+            const banner = document.getElementById('infoBanner');
+            const ahora = new Date();
+            
+            if (plazoCerrado || (fechaLimiteGlobal && ahora >= fechaLimiteGlobal)) {
+                plazoCerrado = true;
+                banner.innerHTML = `
+                    <h3><i class="fas fa-lock"></i> ⏰ PLAZO DE APUESTAS CERRADO</h3>
+                    <p>El plazo para realizar apuestas ha finalizado. ¡Gracias por participar!</p>
+                `;
+                banner.classList.add('closed');
+                return false;
+            }
+            
+            if (fechaLimiteGlobal) {
+                const diff = fechaLimiteGlobal - ahora;
+                const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const horas = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                
+                let tiempoTexto = '';
+                if (dias > 0) tiempoTexto = `${dias} días, ${horas} horas y ${minutos} minutos`;
+                else if (horas > 0) tiempoTexto = `${horas} horas y ${minutos} minutos`;
+                else tiempoTexto = `${minutos} minutos`;
+                
+                banner.innerHTML = `
+                    <h3><i class="fas fa-hourglass-half"></i> ⏰ APERTURA DE APUESTAS</h3>
+                    <p>Las apuestas estarán habilitadas hasta el <strong>${fechaLimiteGlobal.toLocaleString()}</strong></p>
+                    <p>Tiempo restante: <strong>${tiempoTexto}</strong></p>
+                `;
+                banner.classList.remove('closed');
+            }
+            return true;
+        }
+        
+        function puedeApostar() {
+            if (plazoCerrado) return false;
+            if (!fechaLimiteGlobal) return true;
+            return new Date() < fechaLimiteGlobal;
+        }
+        
+        // ============================================
+        // LOGIN
+        // ============================================
+        async function verificarUsuario() {
+            const cedula = document.getElementById('cedulaInput').value.trim();
+            const loginError = document.getElementById('loginError');
+            
+            if (!cedula) {
+                loginError.textContent = 'Ingresa tu número de cédula';
+                return;
+            }
+            
+            if (cedula.length < 6) {
+                loginError.textContent = 'La cédula debe tener al menos 6 dígitos';
+                return;
+            }
+            
+            loginError.textContent = '';
+            
+            try {
+                const response = await fetch(`${API_URL}/api/verificar-usuario`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cedula, proveedor: PROVEEDOR })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    usuarioActual = data.usuario;
+                    sessionStorage.setItem(`usuario_${PROVEEDOR}`, JSON.stringify(usuarioActual));
+                    
+                    document.getElementById('loginContainer').style.display = 'none';
+                    document.getElementById('mainContent').style.display = 'block';
+                    
+                    document.getElementById('display-nombre').textContent = usuarioActual.nombre;
+                    document.getElementById('display-cedula').textContent = usuarioActual.cedula;
+                    document.getElementById('display-telefono').textContent = usuarioActual.telefono || 'No registrado';
+                    document.getElementById('display-ciudad').textContent = usuarioActual.ciudad || 'No registrada';
+                    
+                    await cargarApuestasUsuario();
+                    await cargarPartidos();
+                    cargarRanking();
+                    cargarResultados();
+                    
+                    mostrarToast(`✅ Bienvenido ${usuarioActual.nombre}`, 'success');
+                } else {
+                    loginError.textContent = data.error || 'Cédula no encontrada';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                loginError.textContent = 'Error de conexión. Intenta de nuevo.';
+            }
+        }
+        
+        function logout() {
+            sessionStorage.removeItem(`usuario_${PROVEEDOR}`);
+            usuarioActual = null;
+            document.getElementById('loginContainer').style.display = 'block';
+            document.getElementById('mainContent').style.display = 'none';
+            document.getElementById('cedulaInput').value = '';
+            mostrarToast('Sesión cerrada', 'success');
+        }
+        
+        function checkSession() {
+            const savedUser = sessionStorage.getItem(`usuario_${PROVEEDOR}`);
+            if (savedUser) {
+                usuarioActual = JSON.parse(savedUser);
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                document.getElementById('display-nombre').textContent = usuarioActual.nombre;
+                document.getElementById('display-cedula').textContent = usuarioActual.cedula;
+                document.getElementById('display-telefono').textContent = usuarioActual.telefono || 'No registrado';
+                document.getElementById('display-ciudad').textContent = usuarioActual.ciudad || 'No registrada';
+                cargarApuestasUsuario();
+                cargarPartidos();
+                cargarRanking();
+                cargarResultados();
+            }
+        }
+        
+        // ============================================
+        // APUESTAS
+        // ============================================
+        async function cargarApuestasUsuario() {
+            if (!usuarioActual) return;
+            try {
+                const response = await fetch(`${API_URL}/api/admin/apuestas?proveedor=${PROVEEDOR}`);
+                const todasApuestas = await response.json();
+                const misApuestas = todasApuestas.filter(a => a.usuario_cedula === usuarioActual.cedula);
+                
+                apuestasUsuario = {};
+                misApuestas.forEach(apuesta => {
+                    apuestasUsuario[apuesta.partido_id] = {
+                        golesLocal: apuesta.goles_local,
+                        golesVisitante: apuesta.goles_visitante,
+                        tarjetasAmarillas: apuesta.tarjetas_amarillas,
+                        tarjetasRojas: apuesta.tarjetas_rojas,
+                        equipoLocal: apuesta.equipo_local,
+                        equipoVisitante: apuesta.equipo_visitante,
+                        fechaPartido: apuesta.fecha_partido
+                    };
+                });
+                
+                mostrarMisApuestas();
+            } catch (error) { console.error('Error cargando apuestas:', error); }
+        }
+        
+        function mostrarMisApuestas() {
+            const container = document.getElementById('mis-apuestas-container');
+            const apuestasArray = Object.values(apuestasUsuario);
+            
+            if (apuestasArray.length === 0) {
+                container.innerHTML = '<div class="no-data"><i class="fas fa-inbox" style="font-size: 48px; opacity: 0.5; margin-bottom: 15px;"></i><p>Aún no has realizado ninguna apuesta</p></div>';
+                return;
+            }
+            
+            container.innerHTML = apuestasArray.map(a => `
+                <div class="apuesta-realizada-card">
+                    <div class="apuesta-realizada-header">
+                        <div class="apuesta-realizada-equipos">${a.equipoLocal || '?'} vs ${a.equipoVisitante || '?'}</div>
+                        <div class="apuesta-realizada-fecha">📅 ${a.fechaPartido ? new Date(a.fechaPartido).toLocaleString() : 'Fecha no disponible'}</div>
+                    </div>
+                    <div class="apuesta-realizada-body">
+                        <div class="apuesta-realizada-detalle">
+                            <div class="apuesta-item"><strong>⚽ Resultado:</strong> ${a.golesLocal} - ${a.golesVisitante}</div>
+                            <div class="apuesta-item"><strong>🟨 Amarillas:</strong> ${a.tarjetasAmarillas}</div>
+                            <div class="apuesta-item"><strong>🟥 Rojas:</strong> ${a.tarjetasRojas}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // ============================================
+        // PARTIDOS CON ACORDEONES
+        // ============================================
+        async function cargarPartidos() {
+            try {
+                const response = await fetch(`${API_URL}/api/partidos`);
+                todosLosPartidos = await response.json();
+                
+                fechaLimiteGlobal = calcularFechaLimiteGlobal();
+                plazoCerrado = fechaLimiteGlobal ? new Date() >= fechaLimiteGlobal : false;
+                actualizarBannerGlobal();
+                
+                partidosAgrupados = {};
+                jornadas = [];
+                
+                todosLosPartidos.forEach(partido => {
+                    const jornada = partido.jornada || 0;
+                    if (!partidosAgrupados[jornada]) {
+                        partidosAgrupados[jornada] = [];
+                        jornadas.push(jornada);
+                    }
+                    partidosAgrupados[jornada].push(partido);
+                });
+                
+                jornadas.sort((a, b) => a - b);
+                
+                mostrarPartidosAgrupados();
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('partidos-container').innerHTML = '<div class="loading">Error al cargar partidos</div>';
+            }
+        }
+        
+        function mostrarPartidosAgrupados() {
+            const container = document.getElementById('partidos-container');
+            
+            if (jornadas.length === 0) {
+                container.innerHTML = '<div class="no-data">No hay partidos disponibles</div>';
+                return;
+            }
+            
+            let html = '';
+            const puedeApostarGlobal = puedeApostar();
+            
+            for (const jornada of jornadas) {
+                const partidosJornada = partidosAgrupados[jornada];
+                const partidosNoApostados = partidosJornada.filter(p => !apuestasUsuario[p.id]);
+                const totalPartidos = partidosJornada.length;
+                const apostados = totalPartidos - partidosNoApostados.length;
+                
+                html += `
+                    <div class="accordion">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <h3>
+                                <i class="fas fa-calendar-alt"></i>
+                                Jornada ${jornada}
+                                <span class="badge">${apostados}/${totalPartidos} apostados</span>
+                            </h3>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="partidos-grid">
+                                ${generarTarjetasPartidos(partidosJornada, puedeApostarGlobal)}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+        }
+        
+        function generarTarjetasPartidos(partidos, puedeApostarGlobal) {
+            return partidos.map(partido => {
+                const yaAposto = apuestasUsuario[partido.id] !== undefined;
+                const puede = !plazoCerrado && !yaAposto && puedeApostarGlobal;
+                const apuestaGuardada = apuestasUsuario[partido.id];
+                
+                let statusClass = '';
+                let statusText = '📝 Disponible';
+                if (yaAposto) {
+                    statusClass = 'apostado';
+                    statusText = '✅ Apostado';
+                } else if (!puedeApostarGlobal) {
+                    statusClass = 'cerrado';
+                    statusText = '🔒 Plazo Cerrado';
+                }
+                
+                return `
+                    <div class="match-card ${!puede && !yaAposto ? 'disabled' : ''}" id="match-${partido.id}">
+                        <div class="match-header">
+                            <div class="match-date">
+                                <i class="far fa-calendar-alt"></i> ${new Date(partido.fecha_partido).toLocaleDateString()}
+                                <i class="far fa-clock" style="margin-left: 8px;"></i> ${new Date(partido.fecha_partido).toLocaleTimeString()}
+                            </div>
+                            <div class="match-status ${statusClass}">${statusText}</div>
+                        </div>
+                        <div class="match-teams">
+                            <div class="team">
+                                <div class="team-name">${partido.equipo_local_nombre}</div>
+                            </div>
+                            <div class="match-vs">VS</div>
+                            <div class="team">
+                                <div class="team-name">${partido.equipo_visitante_nombre}</div>
+                            </div>
+                        </div>
+                        <div class="match-bet">
+                            <div class="bet-row">
+                                <div class="bet-label">📊 Resultado:</div>
+                                <div class="bet-fields">
+                                    <input type="number" id="local_${partido.id}" placeholder="0" min="0" step="1" ${!puede ? 'disabled' : ''} value="${apuestaGuardada?.golesLocal || ''}">
+                                    <span>-</span>
+                                    <input type="number" id="visit_${partido.id}" placeholder="0" min="0" step="1" ${!puede ? 'disabled' : ''} value="${apuestaGuardada?.golesVisitante || ''}">
+                                </div>
+                            </div>
+                            <div class="bet-row">
+                                <div class="bet-label">🟨 Tarjetas Amarillas:</div>
+                                <div class="bet-fields">
+                                    <input type="number" id="amarillas_${partido.id}" placeholder="0" min="0" step="1" ${!puede ? 'disabled' : ''} value="${apuestaGuardada?.tarjetasAmarillas || ''}">
+                                </div>
+                            </div>
+                            <div class="bet-row">
+                                <div class="bet-label">🟥 Tarjetas Rojas:</div>
+                                <div class="bet-fields">
+                                    <input type="number" id="rojas_${partido.id}" placeholder="0" min="0" step="1" ${!puede ? 'disabled' : ''} value="${apuestaGuardada?.tarjetasRojas || ''}">
+                                </div>
+                            </div>
+                            ${!puede && !yaAposto && plazoCerrado ? `<div class="match-time-left" style="background:#f8d7da; color:#721c24;">🔒 El plazo global de apuestas ha finalizado</div>` : ''}
+                            ${yaAposto && apuestaGuardada ? `
+                                <div class="my-bet-badge">
+                                    <strong>✅ Tu pronóstico:</strong> ${apuestaGuardada.golesLocal} - ${apuestaGuardada.golesVisitante} | 
+                                    🟨 ${apuestaGuardada.tarjetasAmarillas} | 🟥 ${apuestaGuardada.tarjetasRojas}
+                                </div>
+                            ` : ''}
+                            ${puede ? `<button class="match-btn" onclick="enviarApuestaPartido(${partido.id})">🚀 Enviar Pronóstico</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        async function enviarApuestaPartido(partidoId) {
+            if (!usuarioActual) {
+                mostrarToast('Debes iniciar sesión primero', 'error');
+                return;
+            }
+            
+            if (plazoCerrado || !puedeApostar()) {
+                mostrarToast('🔒 El plazo para realizar apuestas ha finalizado', 'error');
+                return;
+            }
+            
+            const golesLocal = document.getElementById(`local_${partidoId}`)?.value;
+            const golesVisitante = document.getElementById(`visit_${partidoId}`)?.value;
+            const tarjetasAmarillas = document.getElementById(`amarillas_${partidoId}`)?.value;
+            const tarjetasRojas = document.getElementById(`rojas_${partidoId}`)?.value;
+            
+            if (!golesLocal || !golesVisitante) {
+                mostrarToast('Ingresa el resultado del partido', 'error');
+                return;
+            }
+            
+            const apuesta = {
+                partidoId: partidoId,
+                golesLocal: parseInt(golesLocal),
+                golesVisitante: parseInt(golesVisitante),
+                tarjetasAmarillas: parseInt(tarjetasAmarillas) || 0,
+                tarjetasRojas: parseInt(tarjetasRojas) || 0,
+                huboPenales: false,
+                golesPenalesLocal: 0,
+                golesPenalesVisitante: 0
+            };
+            
+            const btn = event.target;
+            const btnText = btn.innerHTML;
+            btn.innerHTML = '⏳ Enviando...';
+            btn.disabled = true;
+            
+            try {
+                const response = await fetch(`${API_URL}/api/apostar`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        nombre: usuarioActual.nombre,
+                        cedula: usuarioActual.cedula,
+                        telefono: usuarioActual.telefono,
+                        ciudad: usuarioActual.ciudad,
+                        apuestas: [apuesta]
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    mostrarToast('✅ Pronóstico guardado correctamente', 'success');
+                    await cargarApuestasUsuario();
+                    await cargarPartidos();
+                    cargarRanking();
+                } else {
+                    mostrarToast(data.error || 'Error al guardar', 'error');
+                }
+            } catch (error) {
+                mostrarToast('Error de conexión', 'error');
+            } finally {
+                btn.innerHTML = btnText;
+                btn.disabled = false;
+            }
+        }
+        
+        // ============================================
+        // RANKING Y RESULTADOS
+        // ============================================
+        async function cargarRanking() {
+            try {
+                const response = await fetch(`${API_URL}/api/ranking?proveedor=${PROVEEDOR}`);
+                const ranking = await response.json();
+                const container = document.getElementById('ranking-container');
+                if (!ranking || ranking.length === 0) {
+                    container.innerHTML = '<div class="no-data">Aún no hay participantes</div>';
+                    return;
+                }
+                container.innerHTML = `
+                    <div class="table-responsive">
+                        <table style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th style="padding: 12px;">#</th>
+                                    <th style="padding: 12px;">Participante</th>
+                                    <th style="padding: 12px;">Puntos</th>
+                                    <th style="padding: 12px;">Exactos</th>
+                                    <th style="padding: 12px;">Ganador</th>
+                                    <th style="padding: 12px;">Tarjetas</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${ranking.map((r, i) => `
+                                    <tr style="border-bottom: 1px solid #eee;">
+                                        <td style="padding: 12px;"><strong>${i+1}</strong></td>
+                                        <td style="padding: 12px;">${r.nombre}</td>
+                                        <td style="padding: 12px;"><strong style="color:#e94560; font-size:1.1em;">${r.total_puntos || 0}</strong></td>
+                                        <td style="padding: 12px;">${r.aciertos_exactos || 0}</td>
+                                        <td style="padding: 12px;">${r.aciertos_ganador || 0}</td>
+                                        <td style="padding: 12px;">${(r.aciertos_amarillas || 0) + (r.aciertos_rojas || 0)}<\/td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } catch (error) { console.error(error); }
+        }
+        
+        async function cargarResultados() {
+            try {
+                const response = await fetch(`${API_URL}/api/resultados`);
+                const resultados = await response.json();
+                const container = document.getElementById('resultados-container');
+                if (!resultados || resultados.length === 0) {
+                    container.innerHTML = '<div class="no-data">Aún no hay resultados disponibles</div>';
+                    return;
+                }
+                container.innerHTML = `
+                    <div class="table-responsive">
+                        <table style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th style="padding: 12px;">Partido</th>
+                                    <th style="padding: 12px;">Resultado</th>
+                                    <th style="padding: 12px;">Amarillas</th>
+                                    <th style="padding: 12px;">Rojas</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${resultados.map(r => `
+                                    <tr style="border-bottom: 1px solid #eee;">
+                                        <td style="padding: 12px;">${r.local} vs ${r.visitante}<\/td>
+                                        <td style="padding: 12px;"><strong>${r.resultado_local || 0} - ${r.resultado_visitante || 0}</strong></td>
+                                        <td style="padding: 12px;">${r.tarjetas_amarillas_real || 0}<\/td>
+                                        <td style="padding: 12px;">${r.tarjetas_rojas_real || 0}<\/td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } catch (error) { console.error(error); }
+        }
+        
+        function showTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(`tab-${tab}`).classList.add('active');
+            event.target.classList.add('active');
+            if (tab === 'ranking') cargarRanking();
+            if (tab === 'resultados') cargarResultados();
+            if (tab === 'mis-apuestas') mostrarMisApuestas();
+            if (tab === 'apostar') cargarPartidos();
+        }
+        
+        function mostrarToast(msg, tipo) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.className = `toast ${tipo}`;
+            setTimeout(() => { toast.style.display = 'none'; toast.className = 'toast'; }, 3000);
+        }
+        
+        // Exponer funciones globalmente
+        window.toggleAccordion = function(element) {
+            element.classList.toggle('active');
+            const content = element.nextElementSibling;
+            content.classList.toggle('active');
+        };
+        window.enviarApuestaPartido = enviarApuestaPartido;
+        window.mostrarModalReglas = mostrarModalReglas;
+        window.cerrarModalReglas = cerrarModalReglas;
+        
+        // Inicializar
+        window.addEventListener('load', function() {
+            cargarConfigImagenes();
+            cargarReglas();
+            checkSession();
+            setTimeout(function() {
+                mostrarModalReglas();
+            }, 500);
+        });
+        
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('modalReglas').addEventListener('click', function(e) {
+            if (e.target === this) {
+                cerrarModalReglas();
+            }
+        });
+        
+        // Cerrar modal con tecla ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && document.getElementById('modalReglas').classList.contains('active')) {
+                cerrarModalReglas();
+            }
+        });
+    </script>
+</body>
+</html>
