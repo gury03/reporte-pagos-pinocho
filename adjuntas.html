@@ -17,19 +17,18 @@
         }
         
         .container { 
-            max-width: 1400px; 
-            margin: 0 auto; 
+            max-width: 1400px;
+            margin: 0 auto;
             padding: 20px;
             flex: 1;
         }
         
-        /* Header */
         .header {
             position: relative;
-            border-radius: 30px;
+            border-radius: 20px;
             margin-bottom: 30px;
             overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         .header-bg {
             position: absolute;
@@ -54,31 +53,25 @@
         .header-content {
             position: relative;
             z-index: 2;
-            padding: 50px 40px;
+            padding: 30px 40px;
             text-align: center;
             color: white;
         }
         .logo-container {
             display: flex;
             justify-content: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         .logo-img {
-            max-height: 70px;
-            max-width: 200px;
+            max-height: 60px;
+            max-width: 180px;
         }
         .header h1 {
-            font-size: 2.8em;
+            font-size: 2em;
             font-weight: 700;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-        .header p {
-            font-size: 1.1em;
-            opacity: 0.9;
+            margin-bottom: 5px;
         }
         
-        /* Login Section */
         .login-section {
             max-width: 450px;
             margin: 50px auto;
@@ -88,15 +81,7 @@
             text-align: center;
             box-shadow: 0 25px 50px rgba(0,0,0,0.2);
         }
-        .login-section h2 {
-            color: #e94560;
-            margin-bottom: 10px;
-            font-size: 1.8em;
-        }
-        .login-section p {
-            color: #666;
-            margin-bottom: 25px;
-        }
+        .login-section h2 { color: #e94560; margin-bottom: 10px; }
         .login-section input {
             width: 100%;
             padding: 14px;
@@ -105,10 +90,6 @@
             border-radius: 12px;
             font-size: 16px;
             text-align: center;
-        }
-        .login-section input:focus {
-            outline: none;
-            border-color: #e94560;
         }
         .login-section button {
             background: linear-gradient(135deg, #e94560, #533483);
@@ -120,107 +101,26 @@
             font-weight: bold;
             cursor: pointer;
             width: 100%;
-            transition: all 0.3s;
-        }
-        .login-section button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(233,69,96,0.3);
-        }
-        .login-error {
-            color: #dc3545;
-            margin-top: 15px;
-            font-size: 14px;
         }
         
-        /* Info Banner */
-        .info-banner {
-            background: linear-gradient(135deg, #e94560, #533483);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 30px;
-            text-align: center;
-            color: white;
-        }
-        .info-banner h3 {
-            font-size: 1.2em;
-            margin-bottom: 5px;
-        }
-        .info-banner p {
-            font-size: 0.9em;
-            opacity: 0.9;
-        }
-        .info-banner.warning {
-            background: linear-gradient(135deg, #dc3545, #c82333);
-        }
-        
-        /* Tabs */
-        .tabs {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .tab {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            color: white;
-            padding: 12px 28px;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        .tab:hover {
-            transform: translateY(-2px);
-            background: rgba(255,255,255,0.2);
-        }
-        .tab.active {
-            background: linear-gradient(135deg, #e94560, #533483);
-            box-shadow: 0 5px 15px rgba(233,69,96,0.3);
-        }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        
-        /* User Card */
         .user-card {
-            background: white;
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        }
-        .user-header {
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 15px;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid rgba(0,0,0,0.1);
         }
-        .user-title h3 {
-            color: #e94560;
-            font-size: 1.3em;
-        }
-        .user-title p {
-            color: #666;
-            font-size: 0.9em;
-        }
-        .user-stats {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
+        .user-title h3 { color: #e94560; }
+        .user-stats { display: flex; gap: 15px; flex-wrap: wrap; }
         .stat-badge {
             background: white;
-            padding: 8px 16px;
-            border-radius: 50px;
-            font-size: 0.85em;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.75em;
             color: #533483;
             font-weight: bold;
         }
@@ -228,265 +128,249 @@
             background: #6c757d;
             color: white;
             border: none;
-            padding: 8px 20px;
-            border-radius: 50px;
+            padding: 6px 16px;
+            border-radius: 30px;
             cursor: pointer;
-            transition: all 0.3s;
-        }
-        .logout-btn:hover {
-            background: #5a6268;
-            transform: translateY(-2px);
         }
         
-        /* Section Title */
-        .section-title {
-            font-size: 1.8em;
+        .info-banner {
+            background: linear-gradient(135deg, #e94560, #533483);
+            border-radius: 15px;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            text-align: center;
             color: white;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
-        .section-title i {
-            color: #e94560;
-        }
+        .info-banner.closed { background: linear-gradient(135deg, #6c757d, #495057); }
         
-        /* Partidos Grid */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .tab {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 10px 24px;
+            border: none;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .tab.active {
+            background: linear-gradient(135deg, #e94560, #533483);
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        .accordion {
+            margin-bottom: 20px;
+            border-radius: 15px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .accordion-header {
+            background: linear-gradient(135deg, #533483, #e94560);
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+        .accordion-header i { transition: transform 0.3s; }
+        .accordion-header.active i { transform: rotate(180deg); }
+        .accordion-content { display: none; background: #f8f9fa; }
+        .accordion-content.active { display: block; }
+        
         .partidos-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
-        .partido-card {
-            background: white;
-            border-radius: 20px;
-            overflow: hidden;
-            transition: all 0.3s;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        .partido-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        }
-        .partido-header {
-            background: linear-gradient(135deg, #533483, #e94560);
-            padding: 15px;
-            text-align: center;
-            color: white;
-        }
-        .partido-fecha {
-            font-size: 0.85em;
-            opacity: 0.9;
-        }
-        .partido-equipos {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 25px 20px;
-            background: #f8f9fa;
-        }
-        .equipo {
-            text-align: center;
-            flex: 1;
-        }
-        .equipo-nombre {
-            font-weight: bold;
-            font-size: 1.1em;
-            color: #333;
-            margin-bottom: 5px;
-        }
-        .vs {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #e94560;
-            margin: 0 15px;
-        }
-        .partido-apuesta {
+            gap: 15px;
             padding: 20px;
         }
-        .apuesta-row {
+        
+        .match-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border: 1px solid #e0e0e0;
+        }
+        .match-card.disabled { opacity: 0.7; background: #f5f5f5; }
+        
+        .match-header {
+            background: linear-gradient(135deg, #533483, #e94560);
+            padding: 10px 15px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75em;
+        }
+        .match-status.apostado { background: #28a745; }
+        .match-status.cerrado { background: #dc3545; }
+        
+        .match-teams {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 20px 15px;
+            background: #f8f9fa;
+        }
+        .team-name { font-weight: bold; }
+        .match-vs { color: #e94560; font-weight: bold; }
+        
+        .match-bet { padding: 15px; }
+        .bet-row {
+            display: flex;
+            justify-content: space-between;
             margin-bottom: 12px;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
         }
-        .apuesta-label {
-            font-size: 13px;
-            font-weight: 600;
-            color: #533483;
-            min-width: 100px;
-        }
-        .apuesta-fields {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .apuesta-fields input {
-            width: 70px;
-            padding: 10px;
-            text-align: center;
-            font-size: 16px;
-            font-weight: bold;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-        }
-        .apuesta-fields input:focus {
-            border-color: #e94560;
-            outline: none;
-        }
-        .apuesta-fields input:disabled {
-            background: #f0f0f0;
-            color: #999;
-            cursor: not-allowed;
-        }
-        .tiempo-restante {
-            background: #fff3cd;
+        .bet-label { font-weight: 600; color: #533483; min-width: 90px; }
+        .bet-fields input {
+            width: 60px;
             padding: 8px;
-            border-radius: 10px;
             text-align: center;
-            font-size: 12px;
-            color: #856404;
-            margin-top: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
         }
-        .btn-apostar {
+        .match-btn {
             background: linear-gradient(135deg, #28a745, #20c997);
             color: white;
             border: none;
-            padding: 14px;
-            border-radius: 50px;
-            font-size: 16px;
+            padding: 10px;
+            border-radius: 25px;
             font-weight: bold;
             cursor: pointer;
             width: 100%;
-            margin-top: 20px;
-            transition: all 0.3s;
+            margin-top: 15px;
         }
-        .btn-apostar:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(40,167,69,0.3);
-        }
-        .btn-apostar:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        .mi-apuesta-badge {
+        .my-bet-badge {
             background: #d4edda;
             color: #155724;
             padding: 8px;
-            border-radius: 10px;
+            border-radius: 8px;
             text-align: center;
-            font-size: 12px;
+            font-size: 0.7em;
             margin-top: 10px;
         }
         
-        /* Mis Apuestas */
         .apuesta-realizada-card {
             background: white;
-            border-radius: 20px;
-            margin-bottom: 15px;
-            overflow: hidden;
-            border-left: 5px solid #28a745;
-        }
-        .apuesta-realizada-card:hover {
-            transform: translateX(5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            border-left: 4px solid #28a745;
         }
         .apuesta-realizada-header {
             background: #f8f9fa;
-            padding: 15px 20px;
+            padding: 12px 15px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
             flex-wrap: wrap;
-            gap: 10px;
-        }
-        .apuesta-realizada-equipos {
-            font-weight: bold;
-            font-size: 1.1em;
-            color: #333;
-        }
-        .apuesta-realizada-fecha {
-            font-size: 0.8em;
-            color: #999;
         }
         .apuesta-realizada-body {
-            padding: 15px 20px;
+            padding: 12px 15px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-        .apuesta-realizada-detalle {
-            display: flex;
-            gap: 20px;
             flex-wrap: wrap;
         }
         .apuesta-item {
             background: #f0f0f0;
-            padding: 8px 15px;
-            border-radius: 50px;
-            font-size: 0.85em;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75em;
         }
         
-        /* Ranking y Resultados */
         .ranking-table, .resultados-table {
             background: white;
-            border-radius: 20px;
+            border-radius: 15px;
             overflow-x: auto;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-        th {
-            background: linear-gradient(135deg, #533483, #e94560);
-            color: white;
-        }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: linear-gradient(135deg, #533483, #e94560); color: white; }
         
-        .no-data {
-            text-align: center;
-            padding: 60px;
-            color: #999;
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-contenido {
             background: white;
             border-radius: 20px;
+            width: 90%;
+            max-width: 850px;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            background: linear-gradient(135deg, #e94560, #533483);
+            color: white;
+            padding: 20px;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        .modal-cerrar {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+        }
+        .modal-body { padding: 25px; }
+        
+        .reglamento-section {
+            margin-bottom: 25px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+        .reglamento-section h3 { color: #e94560; margin-bottom: 10px; }
+        .premio-card {
+            background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+            border-left: 4px solid #ff9800;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        .badge-regla {
+            display: inline-block;
+            background: #e94560;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-right: 8px;
         }
         
-        /* Footer */
         .footer {
             background: linear-gradient(135deg, #1a1a2e 0%, #0f0c29 100%);
             color: #888;
             text-align: center;
-            padding: 25px 20px;
-            margin-top: 50px;
-            border-top: 1px solid rgba(255,255,255,0.1);
+            padding: 20px;
+            margin-top: 40px;
         }
-        .footer p {
-            margin: 5px 0;
-        }
-        .footer a {
-            color: #e94560;
-            text-decoration: none;
-        }
-        .footer a:hover {
-            text-decoration: underline;
-        }
+        .footer a { color: #e94560; text-decoration: none; }
         
         .toast {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            padding: 15px 25px;
+            padding: 12px 20px;
             border-radius: 10px;
             display: none;
             z-index: 1000;
@@ -494,18 +378,8 @@
         }
         .toast.success { background: #28a745; color: white; display: block; }
         .toast.error { background: #dc3545; color: white; display: block; }
-        .toast.warning { background: #ffc107; color: #333; display: block; }
         
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 60px;
-            color: white;
-        }
+        .loading { text-align: center; padding: 40px; color: white; }
         .spinner {
             border: 3px solid rgba(255,255,255,0.3);
             border-top: 3px solid white;
@@ -515,25 +389,18 @@
             animation: spin 1s linear infinite;
             margin: 0 auto 15px;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
         @media (max-width: 768px) {
             .container { padding: 15px; }
-            .header h1 { font-size: 1.8em; }
-            .header-content { padding: 30px 20px; }
             .partidos-grid { grid-template-columns: 1fr; }
-            .user-header { flex-direction: column; text-align: center; }
-            .user-stats { justify-content: center; }
-            .footer { font-size: 12px; }
+            .match-teams { flex-direction: column; gap: 10px; }
+            .user-card { flex-direction: column; text-align: center; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
         <div class="header" id="headerContainer">
             <div class="header-bg" id="headerBg"></div>
             <div class="header-overlay"></div>
@@ -546,245 +413,241 @@
             </div>
         </div>
         
-        <!-- Login Section -->
         <div id="loginContainer" class="login-section">
             <h2>🔐 Acceso a la Quiniela</h2>
             <p>Ingresa tu número de cédula para participar</p>
-            <input type="text" id="cedulaInput" placeholder="Ej: 12345678" maxlength="10" autocomplete="off">
+            <input type="text" id="cedulaInput" placeholder="Ej: 12345678" maxlength="10">
             <button onclick="verificarUsuario()">Ingresar</button>
             <div id="loginError" class="login-error"></div>
         </div>
         
-        <!-- Main Content -->
         <div id="mainContent" style="display: none;">
-            <!-- User Card -->
             <div class="user-card">
-                <div class="user-header">
-                    <div class="user-title">
-                        <h3><i class="fas fa-user-circle"></i> <span id="display-nombre">-</span></h3>
-                        <p>Cédula: <span id="display-cedula">-</span></p>
-                    </div>
-                    <div class="user-stats">
-                        <div class="stat-badge"><i class="fas fa-phone"></i> <span id="display-telefono">-</span></div>
-                        <div class="stat-badge"><i class="fas fa-map-marker-alt"></i> <span id="display-ciudad">-</span></div>
-                    </div>
-                    <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Salir</button>
+                <div class="user-title">
+                    <h3><i class="fas fa-user-circle"></i> <span id="display-nombre">-</span></h3>
+                    <p>Cédula: <span id="display-cedula">-</span></p>
                 </div>
+                <div class="user-stats">
+                    <div class="stat-badge"><i class="fas fa-phone"></i> <span id="display-telefono">-</span></div>
+                    <div class="stat-badge"><i class="fas fa-map-marker-alt"></i> <span id="display-ciudad">-</span></div>
+                </div>
+                <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Salir</button>
             </div>
             
-            <!-- Info Banner -->
             <div id="infoBanner" class="info-banner"></div>
             
-            <!-- Tabs -->
             <div class="tabs">
                 <button class="tab active" onclick="showTab('apostar')">🎯 Apostar</button>
                 <button class="tab" onclick="showTab('mis-apuestas')">📋 Mis Apuestas</button>
                 <button class="tab" onclick="showTab('ranking')">🏅 Ranking</button>
                 <button class="tab" onclick="showTab('resultados')">📊 Resultados</button>
+                <button class="tab tab-reglas" onclick="mostrarModalReglas()">📋 Reglas</button>
             </div>
             
-            <!-- Tab Apostar -->
-            <div id="tab-apostar" class="tab-content active">
-                <div class="section-title">
-                    <i class="fas fa-futbol"></i>
-                    <span>Todos los Partidos</span>
-                </div>
-                <div id="partidos-container"><div class="loading"><div class="spinner"></div>Cargando partidos...</div></div>
-            </div>
-            
-            <!-- Tab Mis Apuestas -->
-            <div id="tab-mis-apuestas" class="tab-content">
-                <div class="section-title">
-                    <i class="fas fa-list-check"></i>
-                    <span>Mis Pronósticos Realizados</span>
-                </div>
-                <div id="mis-apuestas-container"><div class="loading"><div class="spinner"></div>Cargando tus apuestas...</div></div>
-            </div>
-            
-            <!-- Tab Ranking -->
-            <div id="tab-ranking" class="tab-content">
-                <div class="section-title">
-                    <i class="fas fa-trophy"></i>
-                    <span>Tabla de Posiciones</span>
-                </div>
-                <div class="ranking-table" id="ranking-container"><div class="loading"><div class="spinner"></div>Cargando ranking...</div></div>
-            </div>
-            
-            <!-- Tab Resultados -->
-            <div id="tab-resultados" class="tab-content">
-                <div class="section-title">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Resultados Finalizados</span>
-                </div>
-                <div class="resultados-table" id="resultados-container"><div class="loading"><div class="spinner"></div>Cargando resultados...</div></div>
-            </div>
+            <div id="tab-apostar" class="tab-content active"><div id="partidos-container"><div class="loading"><div class="spinner"></div>Cargando partidos...</div></div></div>
+            <div id="tab-mis-apuestas" class="tab-content"><div id="mis-apuestas-container"><div class="loading"><div class="spinner"></div>Cargando...</div></div></div>
+            <div id="tab-ranking" class="tab-content"><div id="ranking-container"><div class="loading"><div class="spinner"></div>Cargando...</div></div></div>
+            <div id="tab-resultados" class="tab-content"><div id="resultados-container"><div class="loading"><div class="spinner"></div>Cargando...</div></div></div>
         </div>
     </div>
     
-    <!-- Footer -->
+    <div id="modalReglas" class="modal-overlay">
+        <div class="modal-contenido">
+            <div class="modal-header">
+                <h2 id="modalTituloReglas"><i class="fas fa-scroll"></i> Reglamento</h2>
+                <button class="modal-cerrar" onclick="cerrarModalReglas()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalReglasBody"><div class="loading">Cargando...</div></div>
+        </div>
+    </div>
+    
     <div class="footer">
         <p>© 2026 - Robertsystems. Todos los derechos reservados.</p>
-        <p>Diseñado por <a href="https://robertsystems.org" target="_blank">Robertsystems.org</a> | 
-           <i class="fas fa-phone"></i> <a href="tel:04128856847">0412-8856847</a></p>
-        <p><i class="fas fa-heart" style="color: #e94560;"></i> Conectando con el mundo <i class="fas fa-heart" style="color: #e94560;"></i></p>
+        <p>Diseñado por <a href="https://robertsystems.org" target="_blank">Robertsystems.org</a></p>
     </div>
     
     <div id="toast" class="toast"></div>
     
     <script>
-        // ============================================
-        // CONFIGURACIÓN
-        // ============================================
         const API_URL = 'https://quiniela-mundial.thecrow859.workers.dev';
         const PROVEEDOR = 'adjuntas';
         
         let usuarioActual = null;
         let todosLosPartidos = [];
-        let partidosDisponibles = [];
+        let partidosAgrupados = {};
         let apuestasUsuario = {};
+        let jornadas = [];
         let fechaLimiteGlobal = null;
+        let plazoCerrado = false;
         
-        // ============================================
-        // CARGAR CONFIGURACIÓN DE IMÁGENES
-        // ============================================
+        // ========== SEGURIDAD: HORA OFICIAL DESDE INTERNET ==========
+        let horaOficialActual = null;
+        let intervaloActualizacionHora = null;
+        
+        // Obtiene la hora oficial desde internet (Venezuela UTC-4)
+        async function obtenerHoraOficial() {
+            try {
+                const response = await fetch('https://worldtimeapi.org/api/timezone/America/Caracas');
+                const data = await response.json();
+                if (data && data.datetime) {
+                    return new Date(data.datetime);
+                }
+                throw new Error('No se pudo obtener la hora oficial');
+            } catch (error) {
+                console.error('Error obteniendo hora oficial:', error);
+                try {
+                    const response2 = await fetch('https://timeapi.io/api/Time/current/zone?timeZone=America/Caracas');
+                    const data2 = await response2.json();
+                    if (data2 && data2.dateTime) {
+                        return new Date(data2.dateTime);
+                    }
+                } catch (error2) {
+                    console.error('Error con API secundaria:', error2);
+                }
+                mostrarToast('⚠️ No se pudo verificar la hora oficial. Verifica tu conexión a internet.', 'error');
+                return null;
+            }
+        }
+        
+        async function actualizarHoraOficial() {
+            const hora = await obtenerHoraOficial();
+            if (hora) {
+                horaOficialActual = hora;
+                return true;
+            }
+            return false;
+        }
+        
+        function getHoraActual() {
+            if (!horaOficialActual) {
+                console.warn('Hora oficial no disponible');
+                return null;
+            }
+            return new Date(horaOficialActual);
+        }
+        
+        async function calcularFechaLimiteGlobalAsync() {
+            if (!todosLosPartidos || todosLosPartidos.length === 0) return null;
+            const fechas = todosLosPartidos.map(p => new Date(p.fecha_partido));
+            const primerPartido = new Date(Math.min(...fechas));
+            const fechaLimite = new Date(primerPartido.getTime() - 30 * 60 * 1000);
+            return fechaLimite;
+        }
+        
+        function puedeApostar() {
+            if (!horaOficialActual) return false;
+            return !plazoCerrado && (!fechaLimiteGlobal || horaOficialActual < fechaLimiteGlobal);
+        }
+        
+        async function actualizarBannerGlobal() {
+            const banner = document.getElementById('infoBanner');
+            if (!horaOficialActual) {
+                await actualizarHoraOficial();
+            }
+            const ahora = horaOficialActual;
+            if (!ahora) {
+                banner.innerHTML = `<h3>⚠️ VERIFICANDO HORA OFICIAL...</h3><p>Conectando con servidor de tiempo...</p>`;
+                banner.classList.remove('closed');
+                return false;
+            }
+            if (plazoCerrado || (fechaLimiteGlobal && ahora >= fechaLimiteGlobal)) {
+                plazoCerrado = true;
+                banner.innerHTML = `<h3>⏰ PLAZO DE APUESTAS CERRADO</h3><p>Gracias por participar</p>`;
+                banner.classList.add('closed');
+                return false;
+            }
+            if (fechaLimiteGlobal) {
+                const diff = fechaLimiteGlobal - ahora;
+                const horas = Math.floor(diff / (1000 * 60 * 60));
+                const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const segundos = Math.floor((diff % (1000 * 60)) / 1000);
+                banner.innerHTML = `<h3>⏰ APERTURA DE APUESTAS</h3><p>Tiempo restante: ${horas}h ${minutos}m ${segundos}s</p>`;
+                banner.classList.remove('closed');
+            }
+            return true;
+        }
+        // ========== FIN SEGURIDAD ==========
+        
+        function mostrarToast(msg, tipo) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.className = `toast ${tipo}`;
+            setTimeout(() => { toast.style.display = 'none'; toast.className = 'toast'; }, 3000);
+        }
+        
+        // Modal Reglas
+        function mostrarModalReglas() { document.getElementById('modalReglas').classList.add('active'); }
+        function cerrarModalReglas() { document.getElementById('modalReglas').classList.remove('active'); }
+        
+        async function cargarReglas() {
+            try {
+                const response = await fetch(`${API_URL}/api/config-reglas?proveedor=${PROVEEDOR}`);
+                const data = await response.json();
+                if (data.success && data.reglas) {
+                    document.getElementById('modalTituloReglas').innerHTML = `<i class="fas fa-scroll"></i> ${data.titulo || 'Reglamento'}`;
+                    document.getElementById('modalReglasBody').innerHTML = data.reglas;
+                } else {
+                    document.getElementById('modalReglasBody').innerHTML = obtenerReglasDefaultHTML();
+                }
+            } catch (error) {
+                document.getElementById('modalReglasBody').innerHTML = obtenerReglasDefaultHTML();
+            }
+        }
+        
+        function obtenerReglasDefaultHTML() {
+            return `<div class="reglamento-section"><h3>Reglamento</h3><p>Contenido por defecto. Edita desde el panel admin.</p></div>`;
+        }
+        
         async function cargarConfigImagenes() {
             try {
                 const response = await fetch(`${API_URL}/api/config-imagenes?proveedor=${PROVEEDOR}`);
                 const config = await response.json();
-                
-                if (config.logo_url && config.logo_url !== '') {
-                    const logoContainer = document.getElementById('logoContainer');
-                    const logoImg = document.getElementById('logoImg');
-                    logoImg.src = config.logo_url;
-                    logoContainer.style.display = 'flex';
+                if (config.logo_url) {
+                    document.getElementById('logoImg').src = config.logo_url;
+                    document.getElementById('logoContainer').style.display = 'flex';
                 }
-                
-                if (config.fondo_header_url && config.fondo_header_url !== '') {
-                    const headerBg = document.getElementById('headerBg');
-                    headerBg.style.backgroundImage = `url('${config.fondo_header_url}')`;
+                if (config.fondo_header_url) {
+                    document.getElementById('headerBg').style.backgroundImage = `url('${config.fondo_header_url}')`;
                 }
-            } catch (error) {
-                console.error('Error cargando configuración:', error);
-            }
+            } catch (error) { console.error(error); }
         }
         
-        // ============================================
-        // FUNCIONES DE FECHAS
-        // ============================================
-        function obtenerFechaLimiteGlobal() {
-            if (!todosLosPartidos || todosLosPartidos.length === 0) return null;
-            // Encontrar el partido más cercano en el futuro
-            const ahora = new Date();
-            const partidosFuturos = todosLosPartidos.filter(p => new Date(p.fecha_partido) > ahora);
-            if (partidosFuturos.length === 0) return null;
-            const partidoMasCercano = partidosFuturos.reduce((a, b) => new Date(a.fecha_partido) < new Date(b.fecha_partido) ? a : b);
-            return new Date(new Date(partidoMasCercano.fecha_partido).getTime() - 30 * 60 * 1000);
-        }
-        
-        function verificarFechaLimite() {
-            if (!fechaLimiteGlobal) return true;
-            const ahora = new Date();
-            const puede = ahora < fechaLimiteGlobal;
-            
-            const banner = document.getElementById('infoBanner');
-            if (!puede) {
-                banner.innerHTML = `
-                    <h3><i class="fas fa-lock"></i> ⏰ PLAZO DE APUESTAS CERRADO</h3>
-                    <p>El plazo para apostar ha finalizado. ¡Gracias por participar!</p>
-                `;
-                banner.classList.add('warning');
-            } else {
-                const diff = fechaLimiteGlobal - ahora;
-                const horas = Math.floor(diff / (1000 * 60 * 60));
-                const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                banner.innerHTML = `
-                    <h3><i class="fas fa-hourglass-half"></i> ⏰ PLAZO PARA APOSTAR</h3>
-                    <p>El plazo se cierra en ${horas} horas y ${minutos} minutos. ¡No esperes al último momento!</p>
-                `;
-                banner.classList.remove('warning');
-            }
-            
-            return puede;
-        }
-        
-        function puedeApostarPartido(fechaPartido) {
-            if (!fechaPartido) return false;
-            const ahora = new Date();
-            const fecha = new Date(fechaPartido);
-            const limite = new Date(fecha.getTime() - 30 * 60 * 1000);
-            return ahora < limite;
-        }
-        
-        function obtenerTiempoRestante(fechaPartido) {
-            if (!fechaPartido) return '';
-            const fecha = new Date(fechaPartido);
-            const ahora = new Date();
-            const limite = new Date(fecha.getTime() - 30 * 60 * 1000);
-            if (ahora >= limite) return '🔒 Plazo cerrado';
-            const diff = limite - ahora;
-            const horas = Math.floor(diff / (1000 * 60 * 60));
-            const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            if (horas > 0) return `⏳ Cierra en ${horas}h ${minutos}m`;
-            if (minutos > 0) return `⏳ Cierra en ${minutos} minutos`;
-            return `⏳ Cierra en menos de 1 minuto`;
-        }
-        
-        // ============================================
-        // LOGIN
-        // ============================================
         async function verificarUsuario() {
             const cedula = document.getElementById('cedulaInput').value.trim();
             const loginError = document.getElementById('loginError');
-            
-            if (!cedula) {
-                loginError.textContent = 'Ingresa tu número de cédula';
-                return;
-            }
-            
-            if (cedula.length < 6) {
-                loginError.textContent = 'La cédula debe tener al menos 6 dígitos';
-                return;
-            }
-            
+            if (!cedula) { loginError.textContent = 'Ingresa tu cédula'; return; }
             loginError.textContent = '';
-            
             try {
                 const response = await fetch(`${API_URL}/api/verificar-usuario`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ cedula, proveedor: PROVEEDOR })
                 });
-                
                 const data = await response.json();
-                
                 if (response.ok && data.success) {
                     usuarioActual = data.usuario;
                     sessionStorage.setItem(`usuario_${PROVEEDOR}`, JSON.stringify(usuarioActual));
-                    
                     document.getElementById('loginContainer').style.display = 'none';
                     document.getElementById('mainContent').style.display = 'block';
-                    
                     document.getElementById('display-nombre').textContent = usuarioActual.nombre;
                     document.getElementById('display-cedula').textContent = usuarioActual.cedula;
                     document.getElementById('display-telefono').textContent = usuarioActual.telefono || 'No registrado';
                     document.getElementById('display-ciudad').textContent = usuarioActual.ciudad || 'No registrada';
-                    
                     await cargarApuestasUsuario();
                     await cargarPartidos();
                     cargarRanking();
                     cargarResultados();
-                    
                     mostrarToast(`✅ Bienvenido ${usuarioActual.nombre}`, 'success');
                 } else {
                     loginError.textContent = data.error || 'Cédula no encontrada';
                 }
-            } catch (error) {
-                console.error('Error:', error);
-                loginError.textContent = 'Error de conexión. Intenta de nuevo.';
-            }
+            } catch (error) { loginError.textContent = 'Error de conexión'; }
         }
         
         function logout() {
+            if (intervaloActualizacionHora) {
+                clearInterval(intervaloActualizacionHora);
+            }
             sessionStorage.removeItem(`usuario_${PROVEEDOR}`);
             usuarioActual = null;
             document.getElementById('loginContainer').style.display = 'block';
@@ -810,20 +673,15 @@
             }
         }
         
-        // ============================================
-        // CARGAR APUESTAS DEL USUARIO
-        // ============================================
         async function cargarApuestasUsuario() {
             if (!usuarioActual) return;
             try {
                 const response = await fetch(`${API_URL}/api/admin/apuestas?proveedor=${PROVEEDOR}`);
                 const todasApuestas = await response.json();
                 const misApuestas = todasApuestas.filter(a => a.usuario_cedula === usuarioActual.cedula);
-                
                 apuestasUsuario = {};
                 misApuestas.forEach(apuesta => {
                     apuestasUsuario[apuesta.partido_id] = {
-                        partidoId: apuesta.partido_id,
                         golesLocal: apuesta.goles_local,
                         golesVisitante: apuesta.goles_visitante,
                         tarjetasAmarillas: apuesta.tarjetas_amarillas,
@@ -833,162 +691,171 @@
                         fechaPartido: apuesta.fecha_partido
                     };
                 });
-                
                 mostrarMisApuestas();
-            } catch (error) { console.error('Error cargando apuestas:', error); }
+            } catch (error) { console.error(error); }
         }
         
         function mostrarMisApuestas() {
             const container = document.getElementById('mis-apuestas-container');
             const apuestasArray = Object.values(apuestasUsuario);
-            
             if (apuestasArray.length === 0) {
-                container.innerHTML = '<div class="no-data"><i class="fas fa-inbox" style="font-size: 48px; opacity: 0.5; margin-bottom: 15px;"></i><p>Aún no has realizado ninguna apuesta</p></div>';
+                container.innerHTML = '<div class="no-data">No has realizado apuestas</div>';
                 return;
             }
-            
             container.innerHTML = apuestasArray.map(a => `
                 <div class="apuesta-realizada-card">
                     <div class="apuesta-realizada-header">
-                        <div class="apuesta-realizada-equipos">${a.equipoLocal || '?'} vs ${a.equipoVisitante || '?'}</div>
-                        <div class="apuesta-realizada-fecha">📅 ${a.fechaPartido ? new Date(a.fechaPartido).toLocaleString() : 'Fecha no disponible'}</div>
+                        <span class="apuesta-realizada-equipos">${a.equipoLocal || '?'} vs ${a.equipoVisitante || '?'}</span>
+                        <span class="apuesta-realizada-fecha">📅 ${a.fechaPartido ? new Date(a.fechaPartido).toLocaleString() : ''}</span>
                     </div>
                     <div class="apuesta-realizada-body">
-                        <div class="apuesta-realizada-detalle">
-                            <div class="apuesta-item"><strong>⚽ Resultado:</strong> ${a.golesLocal} - ${a.golesVisitante}</div>
-                            <div class="apuesta-item"><strong>🟨 Amarillas:</strong> ${a.tarjetasAmarillas}</div>
-                            <div class="apuesta-item"><strong>🟥 Rojas:</strong> ${a.tarjetasRojas}</div>
-                        </div>
+                        <div class="apuesta-item">⚽ ${a.golesLocal} - ${a.golesVisitante}</div>
+                        <div class="apuesta-item">🟨 ${a.tarjetasAmarillas}</div>
+                        <div class="apuesta-item">🟥 ${a.tarjetasRojas}</div>
                     </div>
                 </div>
             `).join('');
         }
         
-        // ============================================
-        // CARGAR PARTIDOS (TODOS)
-        // ============================================
         async function cargarPartidos() {
             try {
                 const response = await fetch(`${API_URL}/api/partidos`);
                 todosLosPartidos = await response.json();
                 
-                // Filtrar partidos NO apostados
-                partidosDisponibles = todosLosPartidos.filter(p => {
-                    return !apuestasUsuario[p.id];
-                });
+                await actualizarHoraOficial();
+                fechaLimiteGlobal = await calcularFechaLimiteGlobalAsync();
                 
-                // Calcular fecha límite global (30 min antes del partido más cercano)
-                fechaLimiteGlobal = obtenerFechaLimiteGlobal();
-                if (fechaLimiteGlobal) {
-                    verificarFechaLimite();
+                if (horaOficialActual && fechaLimiteGlobal) {
+                    plazoCerrado = horaOficialActual >= fechaLimiteGlobal;
                 }
                 
-                mostrarPartidos();
+                await actualizarBannerGlobal();
+                
+                if (intervaloActualizacionHora) {
+                    clearInterval(intervaloActualizacionHora);
+                }
+                intervaloActualizacionHora = setInterval(async () => {
+                    const actualizado = await actualizarHoraOficial();
+                    if (actualizado) {
+                        await actualizarBannerGlobal();
+                        if (horaOficialActual && fechaLimiteGlobal) {
+                            const nuevoPlazoCerrado = horaOficialActual >= fechaLimiteGlobal;
+                            if (nuevoPlazoCerrado !== plazoCerrado) {
+                                plazoCerrado = nuevoPlazoCerrado;
+                                mostrarPartidosAgrupados();
+                            }
+                        }
+                    }
+                }, 10000);
+                
+                partidosAgrupados = {};
+                jornadas = [];
+                todosLosPartidos.forEach(partido => {
+                    const jornada = partido.jornada || 0;
+                    if (!partidosAgrupados[jornada]) {
+                        partidosAgrupados[jornada] = [];
+                        jornadas.push(jornada);
+                    }
+                    partidosAgrupados[jornada].push(partido);
+                });
+                jornadas.sort((a, b) => a - b);
+                mostrarPartidosAgrupados();
             } catch (error) {
-                console.error('Error:', error);
                 document.getElementById('partidos-container').innerHTML = '<div class="loading">Error al cargar partidos</div>';
             }
         }
         
-        function mostrarPartidos() {
+        function mostrarPartidosAgrupados() {
             const container = document.getElementById('partidos-container');
-            
-            if (partidosDisponibles.length === 0) {
-                if (Object.keys(apuestasUsuario).length > 0) {
-                    container.innerHTML = '<div class="no-data"><i class="fas fa-check-circle" style="font-size: 48px; opacity: 0.5; margin-bottom: 15px; color: #28a745;"></i><p>✅ ¡Ya has realizado todas tus apuestas!</p><p>Espera los resultados de los partidos.</p></div>';
-                } else {
-                    container.innerHTML = '<div class="no-data"><i class="fas fa-info-circle" style="font-size: 48px; opacity: 0.5; margin-bottom: 15px;"></i><p>No hay partidos disponibles para apostar en este momento.</p></div>';
-                }
+            if (jornadas.length === 0) {
+                container.innerHTML = '<div class="no-data">No hay partidos</div>';
                 return;
             }
-            
-            // Ordenar partidos por fecha (los más cercanos primero)
-            partidosDisponibles.sort((a, b) => new Date(a.fecha_partido) - new Date(b.fecha_partido));
-            
-            container.innerHTML = '';
-            
-            partidosDisponibles.forEach(partido => {
-                const finalizado = partido.finalizado === 1 || partido.finalizado === true;
-                const puede = !finalizado && puedeApostarPartido(partido.fecha_partido);
-                const tiempoRestante = obtenerTiempoRestante(partido.fecha_partido);
-                
-                const card = document.createElement('div');
-                card.className = 'partido-card';
-                card.innerHTML = `
-                    <div class="partido-header">
-                        <div class="partido-fecha">📅 ${new Date(partido.fecha_partido).toLocaleString()}</div>
-                    </div>
-                    <div class="partido-equipos">
-                        <div class="equipo">
-                            <div class="equipo-nombre">${partido.equipo_local_nombre}</div>
+            let html = '';
+            const puedeApostarGlobal = puedeApostar();
+            for (const jornada of jornadas) {
+                const partidosJornada = partidosAgrupados[jornada];
+                const apostados = partidosJornada.filter(p => apuestasUsuario[p.id]).length;
+                html += `
+                    <div class="accordion">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <h3>📅 Jornada ${jornada} <span class="badge">${apostados}/${partidosJornada.length} apostados</span></h3>
+                            <i class="fas fa-chevron-down"></i>
                         </div>
-                        <div class="vs">VS</div>
-                        <div class="equipo">
-                            <div class="equipo-nombre">${partido.equipo_visitante_nombre}</div>
-                        </div>
-                    </div>
-                    <div class="partido-apuesta">
-                        <div class="apuesta-row">
-                            <div class="apuesta-label">📊 Resultado:</div>
-                            <div class="apuesta-fields">
-                                <input type="number" id="local_${partido.id}" placeholder="0" min="0" step="1" ${!puede || finalizado ? 'disabled' : ''}>
-                                <span>-</span>
-                                <input type="number" id="visit_${partido.id}" placeholder="0" min="0" step="1" ${!puede || finalizado ? 'disabled' : ''}>
+                        <div class="accordion-content">
+                            <div class="partidos-grid">
+                                ${generarTarjetasPartidos(partidosJornada, puedeApostarGlobal)}
                             </div>
                         </div>
-                        <div class="apuesta-row">
-                            <div class="apuesta-label">🟨 Tarjetas Amarillas:</div>
-                            <div class="apuesta-fields">
-                                <input type="number" id="amarillas_${partido.id}" placeholder="0" min="0" step="1" ${!puede || finalizado ? 'disabled' : ''}>
-                            </div>
-                        </div>
-                        <div class="apuesta-row">
-                            <div class="apuesta-label">🟥 Tarjetas Rojas:</div>
-                            <div class="apuesta-fields">
-                                <input type="number" id="rojas_${partido.id}" placeholder="0" min="0" step="1" ${!puede || finalizado ? 'disabled' : ''}>
-                            </div>
-                        </div>
-                        ${!puede && !finalizado ? `<div class="tiempo-restante">${tiempoRestante}</div>` : ''}
-                        ${puede ? `<button class="btn-apostar" onclick="enviarApuestaPartido(${partido.id})">🚀 Enviar Pronóstico</button>` : ''}
                     </div>
                 `;
-                
-                container.appendChild(card);
-            });
+            }
+            container.innerHTML = html;
         }
         
-        async function enviarApuestaPartido(partidoId) {
-            if (!usuarioActual) {
-                mostrarToast('Debes iniciar sesión primero', 'error');
-                return;
+        function generarTarjetasPartidos(partidos, puedeApostarGlobal) {
+            return partidos.map(partido => {
+                const yaAposto = apuestasUsuario[partido.id] !== undefined;
+                const puede = !plazoCerrado && !yaAposto && puedeApostarGlobal;
+                const apuesta = apuestasUsuario[partido.id];
+                let statusClass = '', statusText = '📝 Disponible';
+                if (yaAposto) { statusClass = 'apostado'; statusText = '✅ Apostado'; }
+                else if (!puedeApostarGlobal) { statusClass = 'cerrado'; statusText = '🔒 Plazo Cerrado'; }
+                return `
+                    <div class="match-card ${!puede && !yaAposto ? 'disabled' : ''}" id="match-${partido.id}">
+                        <div class="match-header">
+                            <span>📅 ${new Date(partido.fecha_partido).toLocaleString()}</span>
+                            <span class="match-status ${statusClass}">${statusText}</span>
+                        </div>
+                        <div class="match-teams">
+                            <div class="team"><div class="team-name">${partido.equipo_local_nombre}</div></div>
+                            <div class="match-vs">VS</div>
+                            <div class="team"><div class="team-name">${partido.equipo_visitante_nombre}</div></div>
+                        </div>
+                        <div class="match-bet">
+                            <div class="bet-row">
+                                <div class="bet-label">Resultado:</div>
+                                <div class="bet-fields">
+                                    <input type="number" id="local_${partido.id}" placeholder="0" ${!puede ? 'disabled' : ''} value="${apuesta?.golesLocal || ''}">
+                                    <span>-</span>
+                                    <input type="number" id="visit_${partido.id}" placeholder="0" ${!puede ? 'disabled' : ''} value="${apuesta?.golesVisitante || ''}">
+                                </div>
+                            </div>
+                            <div class="bet-row">
+                                <div class="bet-label">🟨 Amarillas:</div>
+                                <input type="number" id="amarillas_${partido.id}" placeholder="0" ${!puede ? 'disabled' : ''} value="${apuesta?.tarjetasAmarillas || ''}" style="width:80px">
+                            </div>
+                            <div class="bet-row">
+                                <div class="bet-label">🟥 Rojas:</div>
+                                <input type="number" id="rojas_${partido.id}" placeholder="0" ${!puede ? 'disabled' : ''} value="${apuesta?.tarjetasRojas || ''}" style="width:80px">
+                            </div>
+                            ${yaAposto ? `<div class="my-bet-badge">✅ Tu pronóstico: ${apuesta.golesLocal}-${apuesta.golesVisitante} | 🟨${apuesta.tarjetasAmarillas} 🟥${apuesta.tarjetasRojas}</div>` : ''}
+                            ${puede ? `<button class="match-btn" onclick="enviarApuestaPartido(${partido.id})">🚀 Enviar Pronóstico</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        window.toggleAccordion = function(element) {
+            element.classList.toggle('active');
+            element.nextElementSibling.classList.toggle('active');
+        };
+        
+        window.enviarApuestaPartido = async function(partidoId) {
+            if (!usuarioActual) { mostrarToast('Inicia sesión', 'error'); return; }
+            if (plazoCerrado || !puedeApostar()) { 
+                mostrarToast('⏰ Plazo de apuestas cerrado', 'error'); 
+                return; 
             }
-            
-            const golesLocal = document.getElementById(`local_${partidoId}`)?.value;
-            const golesVisitante = document.getElementById(`visit_${partidoId}`)?.value;
-            const tarjetasAmarillas = document.getElementById(`amarillas_${partidoId}`)?.value;
-            const tarjetasRojas = document.getElementById(`rojas_${partidoId}`)?.value;
-            
-            if (!golesLocal || !golesVisitante) {
-                mostrarToast('Ingresa el resultado del partido', 'error');
-                return;
-            }
-            
-            const apuesta = {
-                partidoId: partidoId,
-                golesLocal: parseInt(golesLocal),
-                golesVisitante: parseInt(golesVisitante),
-                tarjetasAmarillas: parseInt(tarjetasAmarillas) || 0,
-                tarjetasRojas: parseInt(tarjetasRojas) || 0,
-                huboPenales: false,
-                golesPenalesLocal: 0,
-                golesPenalesVisitante: 0
-            };
-            
+            const golesLocal = parseInt(document.getElementById(`local_${partidoId}`)?.value) || 0;
+            const golesVisitante = parseInt(document.getElementById(`visit_${partidoId}`)?.value) || 0;
+            const tarjetasAmarillas = parseInt(document.getElementById(`amarillas_${partidoId}`)?.value) || 0;
+            const tarjetasRojas = parseInt(document.getElementById(`rojas_${partidoId}`)?.value) || 0;
             const btn = event.target;
             const btnText = btn.innerHTML;
             btn.innerHTML = '⏳ Enviando...';
             btn.disabled = true;
-            
             try {
                 const response = await fetch(`${API_URL}/api/apostar`, {
                     method: 'POST',
@@ -998,68 +865,31 @@
                         cedula: usuarioActual.cedula,
                         telefono: usuarioActual.telefono,
                         ciudad: usuarioActual.ciudad,
-                        apuestas: [apuesta]
+                        apuestas: [{ partidoId, golesLocal, golesVisitante, tarjetasAmarillas, tarjetasRojas, huboPenales: false, golesPenalesLocal: 0, golesPenalesVisitante: 0 }]
                     })
                 });
-                
                 const data = await response.json();
-                
                 if (response.ok && data.success) {
-                    mostrarToast('✅ Pronóstico guardado correctamente', 'success');
+                    mostrarToast('✅ Pronóstico guardado', 'success');
                     await cargarApuestasUsuario();
                     await cargarPartidos();
                     cargarRanking();
                 } else {
-                    mostrarToast(data.error || 'Error al guardar', 'error');
+                    mostrarToast(data.error || 'Error', 'error');
                 }
-            } catch (error) {
-                mostrarToast('Error de conexión', 'error');
-            } finally {
-                btn.innerHTML = btnText;
-                btn.disabled = false;
-            }
-        }
+            } catch (error) { mostrarToast('Error de conexión', 'error'); }
+            finally { btn.innerHTML = btnText; btn.disabled = false; }
+        };
         
-        // ============================================
-        // RANKING Y RESULTADOS
-        // ============================================
         async function cargarRanking() {
             try {
                 const response = await fetch(`${API_URL}/api/ranking?proveedor=${PROVEEDOR}`);
                 const ranking = await response.json();
                 const container = document.getElementById('ranking-container');
-                if (!ranking || ranking.length === 0) {
-                    container.innerHTML = '<div class="no-data">Aún no hay participantes</div>';
-                    return;
-                }
-                container.innerHTML = `
-                    <div class="table-responsive">
-                        <table style="width:100%">
-                            <thead>
-                                <tr>
-                                    <th style="padding: 15px;">#</th>
-                                    <th style="padding: 15px;">Participante</th>
-                                    <th style="padding: 15px;">Puntos</th>
-                                    <th style="padding: 15px;">Exactos</th>
-                                    <th style="padding: 15px;">Ganador</th>
-                                    <th style="padding: 15px;">Tarjetas</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${ranking.map((r, i) => `
-                                    <tr style="border-bottom: 1px solid #eee;">
-                                        <td style="padding: 15px;"><strong>${i+1}</strong></td>
-                                        <td style="padding: 15px;">${r.nombre}</td>
-                                        <td style="padding: 15px;"><strong style="color:#e94560; font-size:1.2em;">${r.total_puntos || 0}</strong></td>
-                                        <td style="padding: 15px;">${r.aciertos_exactos || 0}</td>
-                                        <td style="padding: 15px;">${r.aciertos_ganador || 0}</td>
-                                        <td style="padding: 15px;">${(r.aciertos_amarillas || 0) + (r.aciertos_rojas || 0)}<\/td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                `;
+                if (!ranking || ranking.length === 0) { container.innerHTML = '<div class="no-data">Sin participantes</div>'; return; }
+                container.innerHTML = `<div class="table-responsive"><table><thead><tr><th>#</th><th>Participante</th><th>Puntos</th><th>Exactos</th><th>Ganador</th></tr></thead><tbody>
+                    ${ranking.map((r, i) => `<tr><td><strong>${i+1}</strong></td><td>${r.nombre}</td><td><strong style="color:#e94560">${r.total_puntos || 0}</strong></td><td>${r.aciertos_exactos || 0}</td><td>${r.aciertos_ganador || 0}</td></tr>`).join('')}
+                </tbody></table></div>`;
             } catch (error) { console.error(error); }
         }
         
@@ -1068,34 +898,10 @@
                 const response = await fetch(`${API_URL}/api/resultados`);
                 const resultados = await response.json();
                 const container = document.getElementById('resultados-container');
-                if (!resultados || resultados.length === 0) {
-                    container.innerHTML = '<div class="no-data">Aún no hay resultados disponibles</div>';
-                    return;
-                }
-                container.innerHTML = `
-                    <div class="table-responsive">
-                        <table style="width:100%">
-                            <thead>
-                                <tr>
-                                    <th style="padding: 15px;">Partido</th>
-                                    <th style="padding: 15px;">Resultado</th>
-                                    <th style="padding: 15px;">Amarillas</th>
-                                    <th style="padding: 15px;">Rojas</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${resultados.map(r => `
-                                    <tr style="border-bottom: 1px solid #eee;">
-                                        <td style="padding: 15px;">${r.local} vs ${r.visitante}<\/td>
-                                        <td style="padding: 15px;"><strong>${r.resultado_local || 0} - ${r.resultado_visitante || 0}</strong></td>
-                                        <td style="padding: 15px;">${r.tarjetas_amarillas_real || 0}<\/td>
-                                        <td style="padding: 15px;">${r.tarjetas_rojas_real || 0}<\/td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                `;
+                if (!resultados || resultados.length === 0) { container.innerHTML = '<div class="no-data">Sin resultados</div>'; return; }
+                container.innerHTML = `<div class="table-responsive"></td><thead><tr><th>Partido</th><th>Resultado</th><th>Amarillas</th><th>Rojas</th></tr></thead><tbody>
+                    ${resultados.map(r => `<tr><td>${r.local} vs ${r.visitante}</td><td><strong>${r.resultado_local || 0} - ${r.resultado_visitante || 0}</strong></td><td>${r.tarjetas_amarillas_real || 0}</td><td>${r.tarjetas_rojas_real || 0}</td></tr>`).join('')}
+                </tbody></table></div>`;
             } catch (error) { console.error(error); }
         }
         
@@ -1110,15 +916,31 @@
             if (tab === 'apostar') cargarPartidos();
         }
         
-        function mostrarToast(msg, tipo) {
-            const toast = document.getElementById('toast');
-            toast.textContent = msg;
-            toast.className = `toast ${tipo}`;
-            setTimeout(() => { toast.style.display = 'none'; toast.className = 'toast'; }, 4000);
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && document.getElementById('modalReglas').classList.contains('active')) cerrarModalReglas();
+        });
+        document.getElementById('modalReglas').addEventListener('click', function(e) { if (e.target === this) cerrarModalReglas(); });
+        
+        // FUNCIÓN PARA MOSTRAR MODAL DE REGLAS AUTOMÁTICAMENTE AL CARGAR LA PÁGINA
+        function mostrarReglasAlCargar() {
+            // Pequeño retraso para asegurar que el contenido esté cargado
+            setTimeout(() => {
+                mostrarModalReglas();
+            }, 500);
         }
         
-        // Inicializar
+        window.showTab = showTab;
+        window.verificarUsuario = verificarUsuario;
+        window.logout = logout;
+        window.mostrarModalReglas = mostrarModalReglas;
+        window.cerrarModalReglas = cerrarModalReglas;
+        
+        // Inicializar todo
         cargarConfigImagenes();
+        cargarReglas().then(() => {
+            // Mostrar el modal de reglas automáticamente después de cargar las reglas
+            mostrarReglasAlCargar();
+        });
         checkSession();
     </script>
 </body>
